@@ -1,5 +1,16 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  --color-primary: #646cff;
+  --color-secondary: #a5a9ff;
+  --color-tertiary: #f9f9f9;
+  --color-text: #333;
+  --color-background: #f9f9f9;
+  --color-accent: #007bff;
+  --color-accent-hover: #0056b3;
+
+  --header-heigth: 3.5rem;
+
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -43,7 +54,9 @@ body {
 
 h1 {
   font-size: 3.2em;
-  line-height: 1.1;
+  /* line-height: 1.1; */
+  /* padding: 0; */
+  margin: 0;
 }
 
 button {
@@ -67,18 +80,6 @@ button:focus-visible {
 
 html {
   scroll-behavior: smooth;
-}
-
-.section {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 2rem;
-  box-sizing: border-box;
 }
 
 .canvas-container {

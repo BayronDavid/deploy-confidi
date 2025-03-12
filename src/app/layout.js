@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { isAuthEnabled } from "@/lib/auth";
 import { ScrollProvider } from "@/context/ScrollContext";
+import { LanguageProvider } from "@/config/i18n";
 import Header from "@/components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,12 +26,14 @@ export default function RootLayout({ children }) {
         className={inter.className}
       >
         <OptionalAuthProvider>
-          <ScrollProvider>
-            <Header />
-            <div className="app-container">
-              {children}
-            </div>
-          </ScrollProvider>
+          <LanguageProvider>
+            <ScrollProvider>
+              <Header />
+              <div className="app-container">
+                {children}
+              </div>
+            </ScrollProvider>
+          </LanguageProvider>
         </OptionalAuthProvider>
       </body>
     </html>

@@ -1,33 +1,35 @@
 'use client';
+
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { useTranslation } from '@/config/i18n';
+import { homePageConfig } from '@/config/pages/home';
+import './Home.css';
 import Scene from '@/components/three/Scene';
 import ScrollProgress from '@/components/ui/ScrollProgress';
-import React, { useEffect, useRef } from 'react'
-import { gsap } from "gsap";
-import './Home.css';
 
-function HomeContent() {
+export default function HomeContent() {
+  const { locale } = useTranslation();
+  const texts = homePageConfig[locale];
   const sectionsRef = useRef([]);
 
   useEffect(() => {
     const sections = sectionsRef.current;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            gsap.to(entry.target, {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            });
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          gsap.to(entry.target, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out'
+          });
+        }
+      });
+    }, { threshold: 0.1 });
 
-    sections.forEach((section) => {
+    sections.forEach(section => {
       if (section) {
         gsap.set(section, { opacity: 0, y: 50 });
         observer.observe(section);
@@ -35,13 +37,14 @@ function HomeContent() {
     });
 
     return () => {
-      sections.forEach((section) => {
+      sections.forEach(section => {
         if (section) {
           observer.unobserve(section);
         }
       });
     };
   }, []);
+
 
   return (
     <>
@@ -51,63 +54,58 @@ function HomeContent() {
       <div className="scroll-container">
         <section
           className="section intro"
-          ref={(el) => (sectionsRef.current[0] = el)}
+          ref={el => sectionsRef.current[0] = el}
         >
-          <h1>CONFIDI TRENTINO IMPRESE</h1>
-          <b>Hacemos que tu empresa acceda al crédito que necesita para crecer</b>
-          <span>Las grandes ideas merecen ser realizadas. CTI te apoya para transformar tus proyectos en realidad.</span>
+          <h1>{texts.intro.title}</h1>
+          <b>{texts.intro.subtitle}</b>
+          <span>{texts.intro.description}</span>
           <div className="scroll-down">
-            <p>Scroll Down</p>
+            <p>{texts.intro.scrollText}</p>
             <span className="arrow">↓</span>
           </div>
         </section>
 
         <section
           className="section content"
-          ref={(el) => (sectionsRef.current[1] = el)}
+          ref={el => sectionsRef.current[1] = el}
         >
           <div className="content-wrapper">
-            <h2>Section Title</h2>
-            <p>Generic content for this section.</p>
+            <h2>{texts.content.title}</h2>
+            <p>{texts.content.description}</p>
           </div>
         </section>
 
         <section
           className="section features"
-          ref={(el) => (sectionsRef.current[2] = el)}
+          ref={el => sectionsRef.current[2] = el}
         >
           <div className="content-wrapper">
-            <h2>Features</h2>
+            <h2>{texts.features.title}</h2>
             <div className="features-grid">
-              <div className="feature">
-                <h3>Feature 1</h3>
-                <p>Description for feature 1</p>
-              </div>
-              <div className="feature">
-                <h3>Feature 2</h3>
-                <p>Description for feature 2</p>
-              </div>
-              <div className="feature">
-                <h3>Feature 3</h3>
-                <p>Description for feature 3</p>
-              </div>
+              {texts.features.items.map((feature, index) => (
+                <div key={index} className="feature">
+                  <h3>{feature.title}</h3>
+                  <p>{feature.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
         <section
           className="section conclusion"
-          ref={(el) => (sectionsRef.current[3] = el)}
+          ref={el => sectionsRef.current[3] = el}
         >
           <div className="content-wrapper">
-            <h2>Conclusion</h2>
-            <p>Summary or call to action.</p>
-            <button className="cta-button">Learn More</button>
+            <h2>{texts.conclusion.title}</h2>
+            <p>{texts.conclusion.description}</p>
+            <button className="cta-button">
+              {texts.conclusion.button}
+            </button>
           </div>
         </section>
       </div>
     </>
   );
-}
 
-export default HomeContent;
+};
