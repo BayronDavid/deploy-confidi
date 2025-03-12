@@ -27,7 +27,9 @@ export default function RootLayout({ children }) {
         <OptionalAuthProvider>
           <ScrollProvider>
             <Header />
-            {children}
+            <div className="app-container">
+              {children}
+            </div>
           </ScrollProvider>
         </OptionalAuthProvider>
       </body>

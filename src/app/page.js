@@ -1,10 +1,8 @@
 'use client';
-import './page.css';
-import Header from "@/components/layout/Header";
+import HomeContent from '@/components/layout/home/HomeContent';
 
-export default function Home() {
+export default function RootPage() {
   return (
-    <div className="app-container">
-    </div>
+    <HomeContent />
   );
 }

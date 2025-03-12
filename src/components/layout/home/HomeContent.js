@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from 'react'
 import { gsap } from "gsap";
 import './Home.css';
 
-function HomePage() {
+function HomeContent() {
   const sectionsRef = useRef([]);
 
   useEffect(() => {
@@ -110,4 +110,4 @@ function HomePage() {
   );
 }
 
-export default HomePage
+export default HomeContent;
