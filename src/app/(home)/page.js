@@ -92,7 +92,7 @@ export default function HomePage() {
               <div className="circle-image">
                 {/* Imagen circular de placehold.co */}
                 <img
-                  src="https://placehold.co/150x150"
+                  src={feature.image ?? "https://placehold.co/150x150"}
                   alt={feature.title}
                 />
               </div>

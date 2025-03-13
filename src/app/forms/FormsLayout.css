@@ -15,9 +15,7 @@
 
 .forms-content{
   display: flex;
-  flex-direction: column;
-  /* justify-content: center; */
-  /* align-items: center; */
   height: 100%;
   border: 1px solid rgba(128, 128, 128, 0.432);
+  overflow-y: auto;
 }
