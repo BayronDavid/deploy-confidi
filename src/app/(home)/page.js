@@ -9,7 +9,7 @@ import ScrollProgress from '@/components/ui/ScrollProgress';
 
 import './Home.css';
 
-export default function HomeContent() {
+export default function HomePage() {
   const { locale } = useTranslation();
   const texts = homePageConfig[locale];
   const sectionsRef = useRef([]);

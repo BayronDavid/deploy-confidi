@@ -1,9 +1,7 @@
-import React from 'react'
+import { redirect } from 'next/navigation';
 
-function FormsPage() {
-  return (
-    <div>FormsPage</div>
-  )
+export default function FormsPage() {
+  redirect('/forms/servici');
+
+  return null;
 }
-
-export default FormsPage

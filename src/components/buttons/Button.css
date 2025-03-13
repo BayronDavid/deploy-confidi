@@ -1,0 +1,52 @@
+/* Base del botón */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 4px); /* Espacio entre icono y label */
+  padding: var(--spacing-md, 8px) var(--spacing-lg, 16px);
+  border: none;
+  border-radius: var(--border-radius-lg, 24px);
+  font-family: var(--font-family-base, sans-serif);
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-regular, 400);
+  text-decoration: none; /* para <a> */
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+}
+
+/* ======== Variantes ======== */
+.button--primary {
+  background-color: var(--color-primary-default, #000000);
+  color: var(--color-text-light, #ffffff);
+}
+
+.button--primary:hover:not(.button--disabled) {
+  background-color: var(--color-primary-hover, #1a1a1a);
+}
+
+.button--primary:active:not(.button--disabled) {
+  background-color: var(--color-primary-active, #2b2b2b);
+}
+
+/* Puedes agregar más variantes, por ejemplo:
+   .button--secondary, .button--accent, etc.
+   Aquí solo muestro la "primary". */
+
+/* ======== Estados ======== */
+.button--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  /* Si quieres un color distinto para disabled, lo aplicas aquí */
+}
+
+/* ======== Sub-elementos BEM ======== */
+.button__label {
+  /* Estilos específicos para el texto */
+}
+
+.button__icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain; /* Para evitar deformaciones */
+}

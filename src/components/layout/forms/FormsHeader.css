@@ -1,0 +1,8 @@
+.forms-header-container{
+    width: 100%;
+    /* border: 1px solid gray; */
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

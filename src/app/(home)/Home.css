@@ -24,7 +24,7 @@
   display: flex;
   flex-direction: column;
 
-  max-width: 700px;
+  max-width: var(--max-width);
 
   align-items: center;
   justify-content: space-between;
@@ -69,7 +69,6 @@
 }
 
 .content-section p {
-  max-width: 700px;
   margin: 0 auto;
   line-height: 1.5;
 }
@@ -79,7 +78,6 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  max-width: 700px;
   padding: 1rem;
 
   border: 1px solid red;
@@ -110,7 +108,8 @@
 }
 
 .feature-text p {
-  max-width: 600px;
+  max-width: calc(var(--max-width) - var(--max-width) * 0.1);
+
   line-height: 1.5;
 }
 
@@ -126,7 +125,8 @@
 }
 
 .conclusion-section p {
-  max-width: 600px;
+  max-width: calc(var(--max-width) - var(--max-width) * 0.1);
+
   margin: 0 auto 2rem auto;
   line-height: 1.5;
 }

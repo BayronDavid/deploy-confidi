@@ -1,0 +1,48 @@
+.stepper {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-family-base, sans-serif);
+}
+
+.stepper__item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.stepper__item:not(.stepper__item--active):hover .stepper__circle {
+  border-color: var(--color-border-hover, #1a1a1a);
+}
+
+.stepper__item--active .stepper__circle {
+  background-color: var(--color-primary-default, #000000);
+  color: var(--color-text-light, #ffffff);
+  border: none;
+}
+
+.stepper__circle {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-border-default, #000000);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: var(--spacing-sm, 4px);
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.stepper__label {
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-regular, 400);
+}
+
+/* Línea divisoria entre pasos */
+.stepper__divider {
+  flex-shrink: 0;
+  width: 32px;
+  height: 1px;
+  background-color: var(--color-border-default, #000000);
+  margin: 0 var(--spacing-sm, 4px);
+}

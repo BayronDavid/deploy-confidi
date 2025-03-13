@@ -1,0 +1,23 @@
+.forms-layout{
+  display: flex;
+  flex-direction: column;
+  width: var(--max-width);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: calc(95vh - var(--header-height));
+  /* border: 1px solid gray; */
+
+  gap: 1rem;
+}
+
+.forms-content{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+  /* align-items: center; */
+  height: 100%;
+  border: 1px solid rgba(128, 128, 128, 0.432);
+}

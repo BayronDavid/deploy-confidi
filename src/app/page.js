@@ -1,8 +1,9 @@
 'use client';
-import HomeContent from '@/components/layout/home/HomeContent';
+
+import HomePage from "./(home)/page";
 
 export default function RootPage() {
   return (
-    <HomeContent />
+    <HomePage />
   );
 }
