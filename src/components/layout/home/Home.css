@@ -1,78 +1,136 @@
+/* Contenedor general para el scroll */
 .scroll-container {
   position: relative;
   z-index: 1;
-}
 
-.section {
-  min-height: calc(100dvh - var(--header-heigth));
-  width: 100%;
-}
+  max-width: 900px;
+  padding: 0 1rem;
 
-.intro {
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: start;
-  /* background-color: red; */
 }
 
-.content-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: rgba(77, 97, 187, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 8px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+/* SECCIÓN DE INTRODUCCIÓN */
+.intro-section {
+  height: calc(100vh - var(--header-height));
+  /* height: 100%; */
+  /* border: 1px solid red; */
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: space-between;
 }
 
+
+/* Flecha para indicar scroll */
 .scroll-down {
-  position: absolute;
-  bottom: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: bounce 2s infinite;
+  margin-bottom: .5rem;
+}
+
+.scroll-down p {
+  margin: 0;
+  font-weight: 500;
 }
 
 .arrow {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 @keyframes bounce {
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
 }
 
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+/* SECCIÓN DE CONTENIDO INTERMEDIO */
+.content-section {
+  text-align: center;
+}
+
+.content-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.content-section p {
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* SECCIÓN DE FEATURES (CÍRCULOS) */
+.features-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 700px;
+  padding: 1rem;
+
+  border: 1px solid red;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
   gap: 2rem;
-  margin-top: 2rem;
 }
 
-.feature {
-  padding: 1.5rem;
-  border-radius: 8px;
-  background: rgba(100, 108, 255, 0.1);
-  transition: all 0.3s ease;
+/* Add style for reversed feature items */
+.feature-item-reverse {
+  flex-direction: row-reverse;
 }
 
-.feature:hover {
-  transform: translateY(-5px);
-  background: rgba(100, 108, 255, 0.2);
+/* Imagen circular */
+.circle-image img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.feature-text h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.feature-text p {
+  max-width: 600px;
+  line-height: 1.5;
+}
+
+/* SECCIÓN DE CONCLUSIÓN */
+.conclusion-section {
+  text-align: center;
+  margin-bottom: 6rem;
+}
+
+.conclusion-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.conclusion-section p {
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  line-height: 1.5;
 }
 
 .cta-button {
-  margin-top: 2rem;
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
   background: linear-gradient(90deg, #646cff, #a5a9ff);
   border: none;
   border-radius: 4px;
@@ -83,5 +141,5 @@
 
 .cta-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }

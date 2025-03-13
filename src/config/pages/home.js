@@ -3,100 +3,136 @@ export const homePageConfig = {
         intro: {
             title: "CONFIDI TRENTINO IMPRESE",
             subtitle: "Hacemos que tu empresa acceda al crédito que necesita para crecer",
-            description: "Las grandes ideas merecen ser realizadas. CTI te apoya para transformar tus proyectos en realidad.",
+            description:
+                "Las grandes ideas merecen ser realizadas. CTI te apoya para transformar tus proyectos en realidad.",
             scrollText: "Desplaza hacia abajo"
         },
         content: {
-            title: "Transforma tu negocio con 3D",
-            description: "Nuestra tecnología de visualización 3D dinámica ayuda a las empresas a mostrar productos, optimizar operaciones y crear experiencias memorables para los clientes."
+            title: "Financiamiento para impulsar tu empresa",
+            description:
+                "Descubre cómo podemos ayudarte a obtener la liquidez que necesitas para crecer de manera sostenible."
         },
         features: {
-            title: "Soluciones Empresariales",
+            title: "Nuestro respaldo para tu crecimiento",
             items: [
                 {
-                    title: "Exhibiciones de Producto Dinámicas",
-                    description: "Involucra a los clientes con demostraciones interactivas que impulsan las ventas."
+                    title: "El Flujo Vital del Crédito",
+                    description:
+                        "El crédito es la savia que mantiene a las empresas vivas. Apoyamos a las PYMEs con soluciones de financiación adaptadas a sus ambiciones."
                 },
                 {
-                    title: "Showrooms Virtuales",
-                    description: "Crea entornos digitales inmersivos que resaltan tus ofertas a gran escala."
+                    title: "La Puntualidad que Marca la Diferencia",
+                    description:
+                        "Sabemos que el tiempo es dinero. Por eso, ofrecemos soluciones rápidas y confiables para no detener el progreso de tu empresa."
                 },
                 {
-                    title: "Integración Multiplataforma",
-                    description: "Distribuye de forma consistente en web, dispositivos móviles y displays en tienda para un branding unificado."
+                    title: "El Repique de la Confianza",
+                    description:
+                        "La confianza es el activo más valioso en cualquier relación. Nuestra solidez te respalda para que crezcas sin límites."
+                },
+                {
+                    title: "La Suerte de Crecer Juntos",
+                    description:
+                        "Crecemos juntos. Tu éxito es nuestro compromiso. Trabajamos mano a mano para hacer realidad tus metas."
                 }
             ]
         },
         conclusion: {
-            title: "¿Listo para elevar tu negocio?",
-            description: "Únete a los líderes del sector que han incrementado el compromiso y las ventas con nuestras soluciones de visualización 3D.",
-            button: "Solicitar Demo"
+            title: "¿Listo para impulsar tu proyecto?",
+            description:
+                "Estamos aquí para ayudarte a acceder al crédito que tu empresa necesita. Contáctanos para más información.",
+            button: "Contáctanos"
         }
     },
     en: {
         intro: {
-            title: "Innovative 3D Commercial Solutions",
-            subtitle: "Discover how our interactive 3D technology can elevate your business",
+            title: "CONFIDI TRENTINO IMPRESE",
+            subtitle: "We make it easy for your company to access the credit it needs",
+            description:
+                "Great ideas deserve to be realized. CTI supports you in turning your projects into reality.",
             scrollText: "Scroll Down"
         },
         content: {
-            title: "Transform Your Business with 3D",
-            description: "Our dynamic 3D visualization technology helps businesses showcase products, streamline operations, and create memorable customer experiences."
+            title: "Financing to boost your company",
+            description:
+                "Find out how we can help you get the liquidity you need to grow sustainably."
         },
         features: {
-            title: "Business Solutions",
+            title: "Our support for your growth",
             items: [
                 {
-                    title: "Dynamic Product Showcases",
-                    description: "Engage customers with interactive product demonstrations that drive sales."
+                    title: "The Lifeblood of Credit",
+                    description:
+                        "Credit is the lifeblood that keeps businesses going. We support SMEs with tailored financing solutions."
                 },
                 {
-                    title: "Virtual Showrooms",
-                    description: "Create immersive digital environments that highlight your offerings on a large scale."
+                    title: "Punctuality that Makes the Difference",
+                    description:
+                        "We know time is money. That's why we offer quick and reliable solutions to keep your business moving."
                 },
                 {
-                    title: "Multi-platform Integration",
-                    description: "Deploy seamlessly across web, mobile, and in-store displays for consistent branding."
+                    title: "The Echo of Trust",
+                    description:
+                        "Trust is the most valuable asset in any relationship. Our solidity backs you to grow without limits."
+                },
+                {
+                    title: "The Luck of Growing Together",
+                    description:
+                        "We grow together. Your success is our commitment. We work hand in hand to make your goals a reality."
                 }
             ]
         },
         conclusion: {
-            title: "Ready to Elevate Your Business?",
-            description: "Join industry leaders who have boosted engagement and sales with our customizable 3D visualization solutions.",
-            button: "Request Demo"
+            title: "Ready to take your project further?",
+            description:
+                "We are here to help you access the credit your business needs. Contact us for more information.",
+            button: "Contact Us"
         }
     },
     it: {
         intro: {
-            title: "Soluzioni Commerciali 3D Innovative",
-            subtitle: "Scopri come la nostra tecnologia 3D interattiva può trasformare il tuo business",
+            title: "CONFIDI TRENTINO IMPRESE",
+            subtitle:
+                "Facciamo in modo che la tua azienda acceda al credito di cui ha bisogno per crescere",
+            description:
+                "Le grandi idee meritano di essere realizzate. CTI ti supporta nel trasformare i tuoi progetti in realtà.",
             scrollText: "Scorri verso il basso"
         },
         content: {
-            title: "Trasforma il Tuo Business con il 3D",
-            description: "La nostra tecnologia dinamica di visualizzazione 3D aiuta le aziende a mostrare prodotti, ottimizzare le operazioni e creare esperienze indimenticabili per i clienti."
+            title: "Finanziamenti per potenziare la tua azienda",
+            description:
+                "Scopri come possiamo aiutarti a ottenere la liquidità di cui hai bisogno per crescere in modo sostenibile."
         },
         features: {
-            title: "Soluzioni Aziendali",
+            title: "Il nostro sostegno per la tua crescita",
             items: [
                 {
-                    title: "Esposizioni di Prodotti Dinamiche",
-                    description: "Coinvolgi i clienti con dimostrazioni interattive che incrementano le vendite."
+                    title: "Il Flusso Vitale del Credito",
+                    description:
+                        "Il credito è la linfa vitale che mantiene le aziende in attività. Supportiamo le PMI con soluzioni di finanziamento su misura."
                 },
                 {
-                    title: "Showrooms Virtuali",
-                    description: "Crea ambienti digitali immersivi che evidenziano le tue offerte su larga scala."
+                    title: "La Puntualità che fa la Differenza",
+                    description:
+                        "Sappiamo che il tempo è denaro. Per questo offriamo soluzioni rapide e affidabili per non fermare i progressi della tua azienda."
                 },
                 {
-                    title: "Integrazione Multiplataforma",
-                    description: "Distribuisci in modo coerente su web, dispositivi mobili e display in-store per un branding uniforme."
+                    title: "L'Eco della Fiducia",
+                    description:
+                        "La fiducia è la risorsa più preziosa in ogni relazione. La nostra solidità ti sostiene per crescere senza limiti."
+                },
+                {
+                    title: "La Fortuna di Crescere Insieme",
+                    description:
+                        "Cresciamo insieme. Il tuo successo è il nostro impegno. Lavoriamo fianco a fianco per realizzare i tuoi obiettivi."
                 }
             ]
         },
         conclusion: {
-            title: "Pronto per elevare il tuo business?",
-            description: "Unisciti ai leader del settore che hanno aumentato l'engagement e le vendite con le nostre soluzioni di visualizzazione 3D personalizzabili.",
-            button: "Richiedi Demo"
+            title: "Pronto a dare una spinta al tuo progetto?",
+            description:
+                "Siamo qui per aiutarti ad accedere al credito di cui la tua azienda ha bisogno. Contattaci per maggiori informazioni.",
+            button: "Contattaci"
         }
     }
 };

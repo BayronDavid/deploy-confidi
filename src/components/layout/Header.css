@@ -2,11 +2,11 @@
   width: 100%;
   z-index: 1000;
   transition: all 0.3s ease;
-  padding: 0.5rem 0;
+  /* padding: 0.5rem 0; */
   background: transparent;
   /* background: red; */
 
-  height: var(--header-heigth);
+  max-height: var(--header-height);
 }
 
 .header-scrolled {
