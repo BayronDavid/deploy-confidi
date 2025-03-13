@@ -7,7 +7,7 @@ import { homePageConfig } from '@/config/pages/landing/home.config';
 import Scene from '@/components/three/Scene';
 import ScrollProgress from '@/components/ui/ScrollProgress';
 
-import './Home.css';
+// import './Home.css';
 
 export default function HomePage() {
   const { locale } = useTranslation();
