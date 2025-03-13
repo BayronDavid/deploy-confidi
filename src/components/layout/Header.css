@@ -1,4 +1,8 @@
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+
   width: 100%;
   z-index: 1000;
   transition: all 0.3s ease;
@@ -6,11 +10,11 @@
   background: transparent;
   /* background: red; */
 
-  max-height: var(--header-height);
+  height: var(--header-height);
 }
 
 .header-scrolled {
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(80px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 

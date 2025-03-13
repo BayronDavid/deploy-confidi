@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { useTranslation } from '@/config/i18n';
-import { homePageConfig } from '@/config/pages/home';
+import { homePageConfig } from '@/config/pages/landing/home.config';
 import Scene from '@/components/three/Scene';
 import ScrollProgress from '@/components/ui/ScrollProgress';
 

@@ -40,14 +40,12 @@ body {
   min-width: 320px;
   min-height: 100dvh;
   overflow-x: hidden;
-
-  display: flex;
-  flex-direction: column;
 }
 
 .app-container {
   display: flex;
   flex-direction: column;
+  margin-top: var(--header-height);
 
   width: 100%;
   /* min-height: 100vh; */

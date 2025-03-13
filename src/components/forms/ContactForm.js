@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from "@/config/i18n";
-import { formsConfig } from "@/config/pages/forms";
+import { formsConfig } from "@/config/pages/landing/forms";
 import { useState } from "react";
 import './ContactForm.css';
 
