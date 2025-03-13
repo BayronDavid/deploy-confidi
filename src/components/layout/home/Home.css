@@ -1,16 +1,17 @@
 /* Contenedor general para el scroll */
 .scroll-container {
+  width: 100vw;
   position: relative;
   z-index: 1;
 
-  max-width: 900px;
   padding: 0 1rem;
 
   display: flex;
   flex-direction: column;
   align-items: center;
-}
 
+  /* background-color: red; */
+}
 
 /* SECCIÓN DE INTRODUCCIÓN */
 .intro-section {
@@ -23,10 +24,11 @@
   display: flex;
   flex-direction: column;
 
+  max-width: 700px;
+
   align-items: center;
   justify-content: space-between;
 }
-
 
 /* Flecha para indicar scroll */
 .scroll-down {
@@ -34,7 +36,7 @@
   flex-direction: column;
   align-items: center;
   animation: bounce 2s infinite;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .scroll-down p {
@@ -47,7 +49,8 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

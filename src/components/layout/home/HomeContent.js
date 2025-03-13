@@ -63,8 +63,8 @@ export default function HomeContent() {
         >
           <div className="">
             <h1>{texts.intro.title}</h1>
-            <p className="subtitle">{texts.intro.subtitle}</p>
-            <p className="description">{texts.intro.description}</p>
+            <h3 className="subtitle">{texts.intro.subtitle}</h3>
+            <span className="description">{texts.intro.description}</span>
           </div>
 
           {/* Flecha/Texto para desplazar hacia abajo */}

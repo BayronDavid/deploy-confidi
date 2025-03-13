@@ -1,5 +1,4 @@
 :root {
-
   --color-primary: #646cff;
   --color-secondary: #a5a9ff;
   --color-tertiary: #f9f9f9;
@@ -10,7 +9,7 @@
 
   --header-height: 75px;
 
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -37,6 +36,7 @@ a:hover {
 body {
   margin: 0;
   padding: 0;
+  width: 100vw;
   min-width: 320px;
   min-height: 100dvh;
   overflow-x: hidden;
@@ -45,18 +45,23 @@ body {
   flex-direction: column;
 }
 
-.app-container{
+.app-container {
   display: flex;
   flex-direction: column;
+
+  width: 100%;
   /* min-height: 100vh; */
   /* padding: 1rem; */
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2em;
   /* line-height: 1.1; */
   /* padding: 0; */
   margin: 0;
+}
+h4 {
+  margin: 0.5rem;
 }
 
 button {

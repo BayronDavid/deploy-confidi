@@ -18,22 +18,22 @@ export const homePageConfig = {
                 {
                     title: "El Flujo Vital del Crédito",
                     description:
-                        "El crédito es la savia que mantiene a las empresas vivas. Apoyamos a las PYMEs con soluciones de financiación adaptadas a sus ambiciones."
+                        "Como la Fuente de Neptuno, que con su flujo constante aporta energía a la ciudad, el crédito es la savia que alimenta la solidez y el desarrollo de las empresas. CTI encarna este flujo, asegurando continuidad y sostenibilidad a través de la emisión de garantías."
                 },
                 {
                     title: "La Puntualidad que Marca la Diferencia",
                     description:
-                        "Sabemos que el tiempo es dinero. Por eso, ofrecemos soluciones rápidas y confiables para no detener el progreso de tu empresa."
+                        "Como el reloj de la ciudad, que marca el tiempo con precisión, CTI opera con eficiencia y rapidez, simplificando la burocracia. Gracias a procedimientos ágiles y respuestas puntuales, transforma cada solicitud en una posibilidad, permitiendo a las empresas invertir y crecer sin obstáculos."
                 },
                 {
                     title: "El Repique de la Confianza",
                     description:
-                        "La confianza es el activo más valioso en cualquier relación. Nuestra solidez te respalda para que crezcas sin límites."
+                        "El sonido de la campana resuena fuerte y claro, una señal de orientación y fiabilidad para la comunidad. Del mismo modo, CTI garantiza procesos transparentes y control en las operaciones, fortaleciendo la confianza entre empresas e instituciones de crédito y convirtiéndose en un punto de referencia para el crecimiento económico del territorio."
                 },
                 {
                     title: "La Suerte de Crecer Juntos",
                     description:
-                        "Crecemos juntos. Tu éxito es nuestro compromiso. Trabajamos mano a mano para hacer realidad tus metas."
+                        "Como la Rueda de la Suerte esculpida en el rosetón simboliza el ciclo de la vida, también el tejido económico prospera gracias a un equilibrio dinámico entre CTI, bancos y empresas. En esta relación de beneficio mutuo, CTI facilita el acceso al crédito, los bancos reducen el riesgo y las empresas encuentran nuevas oportunidades de crecimiento."
                 }
             ]
         },
