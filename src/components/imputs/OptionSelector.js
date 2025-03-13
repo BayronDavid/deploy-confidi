@@ -1,28 +1,32 @@
+// /components/OptionSelector.js
 import React from 'react';
 import './OptionSelector.css';
 import Button from '../buttons/Button';
 
 /**
- * OptionSelector: Muestra un label y una lista de opciones,
+ * OptionSelector: Muestra un label y una lista de opciones.
  *
  * Props:
- *  - label: Texto que describe el grupo de opciones
- *  - options: Array de objetos { label: string, value: string }
- *  - selectedValues: Array con los valores seleccionados actualmente
- *  - onChange: Callback que recibe el array de valores seleccionados al cambiar
- *  - allowMultiple: boolean, true = modo "checkbox", false = modo "radio"
+ *  - label: Texto descriptivo.
+ *  - options: Array de objetos { label: string, value: string }.
+ *  - selectedValues: Array con los valores seleccionados actualmente.
+ *  - onChange: Callback que recibe el array de valores seleccionados al cambiar.
+ *  - allowMultiple: boolean, true = modo "checkbox", false = modo "radio".
  */
 function OptionSelector({
     label,
     options = [],
     selectedValues = [],
     onChange,
-    allowMultiple = false, // por defecto: selección única
+    allowMultiple = false,
 }) {
-    // Maneja el clic en una opción
+    // Nos aseguramos que selectedValues es un array
+    if (!Array.isArray(selectedValues)) {
+        selectedValues = [];
+    }
+
     const handleOptionClick = (value) => {
         if (!onChange) return;
-
         if (allowMultiple) {
             // Modo "checkbox": Agrega o quita del array
             const isSelected = selectedValues.includes(value);
@@ -42,9 +46,7 @@ function OptionSelector({
             <div className="option-selector__list">
                 {options.map((option) => {
                     const isSelected = selectedValues.includes(option.value);
-
                     const buttonVariant = isSelected ? 'accent' : 'neutral';
-
                     return (
                         <Button
                             key={option.value}

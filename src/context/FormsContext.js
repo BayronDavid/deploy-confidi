@@ -8,15 +8,14 @@ const FormsContext = createContext();
 
 export const useFormsContext = () => useContext(FormsContext);
 
-export const FormsProvider = ({ children }) => {
+export function FormsProvider({ children }) {
     const pathname = usePathname();
     const steps = ['Servici', 'Documenti', 'Dati', 'PEC'];
-
     const routeToStepIndex = {
-        'servici': 0,
-        'documenti': 1,
-        'dati': 2,
-        'pec': 3
+        servici: 0,
+        documenti: 1,
+        dati: 2,
+        pec: 3,
     };
 
     const getInitialStep = () => {
@@ -27,7 +26,6 @@ export const FormsProvider = ({ children }) => {
     };
 
     const [currentStep, setCurrentStep] = useState(getInitialStep());
-
     useEffect(() => {
         if (pathname) {
             const segments = pathname.split('/');
@@ -38,39 +36,37 @@ export const FormsProvider = ({ children }) => {
         }
     }, [pathname]);
 
-    // --- Manejo de datos del formulario ---
     const LOCAL_STORAGE_KEY = 'formData';
-
     const loadInitialFormData = () => {
         try {
             const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (storedData) {
-                return JSON.parse(storedData);
-            }
+            if (storedData) return JSON.parse(storedData);
         } catch (error) {
-            console.error("Error al cargar datos del formulario:", error);
+            console.error("Error loading form data:", error);
         }
         return {};
     };
 
-    const [formData, setFormData] = useState(() => loadInitialFormData());
+    const [formData, setFormData] = useState(loadInitialFormData());
+    // Nuevo estado para la validez del formulario actual
+    const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
+    // Nuevo estado para la función de envío del formulario actual
+    const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => {});
 
     useEffect(() => {
         try {
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(formData));
         } catch (error) {
-            console.error("Error al guardar datos del formulario:", error);
+            console.error("Error saving form data:", error);
         }
     }, [formData]);
 
-    // Actualiza los datos de un grupo específico
+    // Actualización: si "data" es un array (como en OptionSelector) lo asigna directamente,
+    // de lo contrario, hace un merge con el estado previo.
     const updateFormData = (groupId, data) => {
-        setFormData(prev => ({
+        setFormData((prev) => ({
             ...prev,
-            [groupId]: {
-                ...prev[groupId],
-                ...data,
-            }
+            [groupId]: Array.isArray(data) ? data : { ...(prev[groupId] || {}), ...data },
         }));
     };
 
@@ -94,9 +90,15 @@ export const FormsProvider = ({ children }) => {
                 formData,
                 updateFormData,
                 clearFormData,
+                // Nuevos valores para el contexto
+                isCurrentFormValid,
+                setIsCurrentFormValid,
+                submitCurrentForm,
+                setSubmitCurrentForm,
             }}
         >
             {children}
         </FormsContext.Provider>
     );
-};
+}
+

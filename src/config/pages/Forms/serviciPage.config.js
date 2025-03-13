@@ -6,6 +6,22 @@ export const formsConfig = {
             description: "Complete la siguiente información",
             groups: [
                 {
+                    id: "tipo",
+                    type: "optionSelector",  // Nota: el type coincide con el case en FormInput
+                    label: "Tipo de Empresa",
+                    placeholder: "Seleccione el tipo",
+                    enabled: true,
+                    required: true,
+                    allowMultiple: false,  // Esto es para controlar el modo (radio vs checkbox)
+                    options: [
+                        { label: "Impresa Individuale", value: "impresa" },
+                        { label: "Società di Persone", value: "societa" },
+                        { label: "Altra Categoria", value: "altra" },
+                        { label: "Ulteriore Opzione", value: "ulteriore" },
+                    ],
+                    defaultValue: []  // Para OptionSelector, el default suele ser un array vacío
+                },
+                {
                     id: "grupo1",
                     title: "Datos de la Empresa",
                     description: "Ingrese los datos de su empresa",
