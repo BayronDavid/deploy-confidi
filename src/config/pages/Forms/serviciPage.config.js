@@ -16,7 +16,7 @@ export const formsConfig = {
                             label: "Seleziona a quale categoria appartieni",
                             enabled: true,
                             required: true,
-                            allowMultiple: true,
+                            allowMultiple: false,
                             options: [
                                 { label: "Impresa Individuale", value: "Impresa Individuale" },
                                 { label: "Società di Persone", value: "società persone" },
