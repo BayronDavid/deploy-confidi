@@ -4,23 +4,37 @@ import React from "react";
 import OptionSelector from "../imputs/OptionSelector";
 
 function FormInput({ config, value, onChange }) {
-    const { type, label, placeholder, enabled, min, max, options, tooltip } = config;
+    const { type, label, placeholder, enabled, min, max, options, tooltip, title, description } = config;
+
+    // Si el input está deshabilitado explícitamente, no lo renderizamos
+    if (enabled === false) {
+        return null;
+    }
+
+    // Contenedor común para todos los inputs con título y descripción opcionales
+    const renderInputWithWrapper = (inputElement) => (
+        <div style={{ marginBottom: "1rem" }}>
+            {/* Mostrar título y descripción opcionales */}
+            {title && <h3>{title}</h3>}
+            {description && <p style={{ marginBottom: "0.5rem" }}>{description}</p>}
+            
+            {inputElement}
+        </div>
+    );
 
     // Renderizamos según el tipo del input
     switch (type) {
         case "optionSelector":
             // Para OptionSelector, nos aseguramos de que el value sea un array
             const selectedValues = Array.isArray(value) ? value : [];
-            return (
-                <div style={{ marginBottom: "1rem" }}>
-                    <OptionSelector
-                        label={label}
-                        options={options}
-                        selectedValues={selectedValues}
-                        onChange={onChange}
-                        allowMultiple={config.allowMultiple || false}
-                    />
-                </div>
+            return renderInputWithWrapper(
+                <OptionSelector
+                    label={label}
+                    options={options}
+                    selectedValues={selectedValues}
+                    onChange={onChange}
+                    allowMultiple={config.allowMultiple || false}
+                />
             );
 
         case "text":
@@ -33,8 +47,8 @@ function FormInput({ config, value, onChange }) {
                 placeholder: placeholder || "",
                 disabled: enabled === false,
             };
-            return (
-                <div style={{ marginBottom: "1rem" }}>
+            return renderInputWithWrapper(
+                <div>
                     <label>
                         {label}
                         {tooltip && <span title={tooltip}> ?</span>}
@@ -50,8 +64,8 @@ function FormInput({ config, value, onChange }) {
                 placeholder: placeholder || "",
                 disabled: enabled === false,
             };
-            return (
-                <div style={{ marginBottom: "1rem" }}>
+            return renderInputWithWrapper(
+                <div>
                     <label>
                         {label}
                         {tooltip && <span title={tooltip}> ?</span>}

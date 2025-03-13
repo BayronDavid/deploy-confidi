@@ -1,0 +1,12 @@
+.form-group-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.form-group__form-input {
+  display: flex;
+
+  gap: 1rem;
+}

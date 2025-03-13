@@ -18,10 +18,10 @@ function FormContainer({ formKey }) {
     const { locale } = useTranslation();
     const formConfig = formsConfig[locale] && formsConfig[locale][formKey];
 
-
-
     // Inicializa los datos de cada grupo, ya sea un grupo de inputs o un input directo
     useEffect(() => {
+        if (!formConfig || !formConfig.groups) return;
+
         formConfig.groups.forEach((group) => {
             if (group.inputs) {
                 // Grupo con inputs: inicializamos cada input según su defaultValue
@@ -41,29 +41,81 @@ function FormContainer({ formKey }) {
         });
     }, [formConfig, formData, updateFormData]);
 
+    // Validación general del formulario - corrección clave aquí
+    useEffect(() => {
+        if (!formConfig || !formConfig.groups) return;
 
-    // Validación general del formulario
-    const isFormValid = formConfig.groups.every((group) => {
-        if (group.inputs) {
-            const groupData = formData[group.id] || {};
-            return (group.inputs || []).every((input) => {
-                if (input.required) {
-                    return groupData[input.id] && groupData[input.id] !== "";
+        const isValid = formConfig.groups.every((group) => {
+            // Si el grupo no está habilitado, no afecta la validez del formulario
+            if (group.enabled === false) return true;
+
+            if (group.inputs) {
+                const groupData = formData[group.id] || {};
+                return (group.inputs || []).every((input) => {
+                    // Solo validar si tanto el grupo como el input están habilitados
+                    if (input.enabled !== false && input.required) {
+                        // Validación especial para optionSelector
+                        if (input.type === "optionSelector") {
+                            const value = groupData[input.id];
+                            return Array.isArray(value) && value.length > 0;
+                        }
+                        return groupData[input.id] && groupData[input.id] !== "";
+                    }
+                    return true;
+                });
+            } else {
+                // Input directo - solo validar si está habilitado
+                if (group.enabled !== false && group.required) {
+                    // Validación especial para optionSelector directo
+                    if (group.type === "optionSelector") {
+                        const value = formData[group.id];
+                        return Array.isArray(value) && value.length > 0;
+                    }
+                    return formData[group.id] && formData[group.id] !== "";
                 }
                 return true;
-            });
-        } else {
-            // Input directo
-            if (group.required) {
-                return formData[group.id] && formData[group.id] !== "";
             }
-            return true;
-        }
-    });
+        });
+
+        // Actualiza el estado de validez en el contexto
+        setIsCurrentFormValid(isValid);
+    }, [formData, formConfig, setIsCurrentFormValid]);
 
     const handleSubmit = () => {
+        if (!formConfig) return false;
+
+        // Recalcular validación por seguridad
+        const isFormValid = formConfig.groups.every((group) => {
+            if (group.enabled === false) return true;
+
+            if (group.inputs) {
+                const groupData = formData[group.id] || {};
+                return (group.inputs || []).every((input) => {
+                    if (input.enabled !== false && input.required) {
+                        // Validación especial para optionSelector
+                        if (input.type === "optionSelector") {
+                            const value = groupData[input.id];
+                            return Array.isArray(value) && value.length > 0;
+                        }
+                        return groupData[input.id] && groupData[input.id] !== "";
+                    }
+                    return true;
+                });
+            } else {
+                if (group.enabled !== false && group.required) {
+                    // Validación especial para optionSelector directo
+                    if (group.type === "optionSelector") {
+                        const value = formData[group.id];
+                        return Array.isArray(value) && value.length > 0;
+                    }
+                    return formData[group.id] && formData[group.id] !== "";
+                }
+                return true;
+            }
+        });
+
         if (isFormValid) {
-            formConfig.onSubmit && formConfig.onSubmit(formData);
+            // formConfig.onSubmit && formConfig.onSubmit(formData);
             return true; // Indica que el envío fue exitoso
         } else {
             alert("Por favor, complete todos los campos requeridos.");
@@ -71,17 +123,12 @@ function FormContainer({ formKey }) {
         }
     };
 
-    // Actualiza el estado de validez del formulario en el contexto
-    useEffect(() => {
-        setIsCurrentFormValid(isFormValid);
-    }, [isFormValid, setIsCurrentFormValid]);
-
     // Proporciona la función de submit al contexto
     useEffect(() => {
         setSubmitCurrentForm(() => handleSubmit);
         // Limpieza al desmontar
-        return () => setSubmitCurrentForm(() => () => { });
-    }, [setSubmitCurrentForm, isFormValid, formData]);
+        return () => setSubmitCurrentForm(() => () => { return false; });
+    }, [setSubmitCurrentForm, formConfig, formData]);
 
     if (!hasMounted) return null;
     if (!formConfig || !formConfig.groups) {
@@ -90,9 +137,14 @@ function FormContainer({ formKey }) {
 
     return (
         <div>
-            <h1>{formConfig.title}</h1>
-            <p>{formConfig.description}</p>
+            {/* Título y descripción SOLO a nivel de formulario, si existen */}
+            {formConfig.title && <h1>{formConfig.title}</h1>}
+            {formConfig.description && <p>{formConfig.description}</p>}
+            
             {formConfig.groups.map((group) => {
+                // No renderizar grupos deshabilitados
+                if (group.enabled === false) return null;
+
                 if (group.inputs) {
                     return (
                         <FormGroup
@@ -102,17 +154,18 @@ function FormContainer({ formKey }) {
                         />
                     );
                 } else {
+                    // Para inputs directos, creamos un contenedor pero sin duplicar título/descripción
                     return (
-                        <FormInput
-                            key={group.id}
-                            config={group}
-                            value={formData[group.id]}
-                            onChange={(value) => updateFormData(group.id, value)}
-                        />
+                        <div key={group.id} style={{ margin: "1rem 0" }}>
+                            <FormInput
+                                config={group}
+                                value={formData[group.id]}
+                                onChange={(value) => updateFormData(group.id, value)}
+                            />
+                        </div>
                     );
                 }
             })}
-            {/* El botón de submit se ha eliminado, ahora se usa el de FormsFooter */}
         </div>
     );
 }
