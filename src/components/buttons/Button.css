@@ -3,7 +3,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm, 4px); /* Espacio entre icono y label */
+  gap: var(--spacing-sm, 4px);
   padding: var(--spacing-md, 8px) var(--spacing-lg, 16px);
   border: none;
   border-radius: var(--border-radius-lg, 24px);
@@ -28,25 +28,43 @@
 .button--primary:active:not(.button--disabled) {
   background-color: var(--color-primary-active, #2b2b2b);
 }
+/* Botón accent */
+.button--accent {
+  background-color: var(--color-accent-default, #c2185b);
+  color: var(--color-text-light, #ffffff);
+}
 
-/* Puedes agregar más variantes, por ejemplo:
-   .button--secondary, .button--accent, etc.
-   Aquí solo muestro la "primary". */
+.button--accent:hover:not(.button--disabled) {
+  background-color: var(--color-accent-hover, #d81b60);
+}
+
+.button--accent:active:not(.button--disabled) {
+  background-color: var(--color-accent-active, #ad1457);
+}
+
+/* Botón neutral (gris claro) */
+.button--neutral {
+  background-color: var(--color-neutral-default, #f2f2f2);
+  color: var(--color-text-dark, #000000);
+}
+
+.button--neutral:hover:not(.button--disabled) {
+  background-color: var(--color-neutral-hover, #e0e0e0);
+}
+
+.button--neutral:active:not(.button--disabled) {
+  background-color: var(--color-neutral-active, #d5d5d5);
+}
 
 /* ======== Estados ======== */
 .button--disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  /* Si quieres un color distinto para disabled, lo aplicas aquí */
 }
 
 /* ======== Sub-elementos BEM ======== */
-.button__label {
-  /* Estilos específicos para el texto */
-}
-
 .button__icon {
   width: 16px;
   height: 16px;
-  object-fit: contain; /* Para evitar deformaciones */
+  object-fit: contain;
 }
