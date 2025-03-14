@@ -6,29 +6,25 @@ import styles from "./LanguageSelector.module.css";
 export default function LanguageSelector() {
   const { locale, setLocale } = useTranslation();
   
-  const handleLanguageChange = (e) => {
-    setLocale(e.target.value);
-  };
-  
   const localeNames = {
-    'es': 'Español',
-    'en': 'English',
-    'it': 'Italiano'
+    'es': 'ES',
+    'en': 'EN',
+    'it': 'IT'
   };
   
   return (
     <div className={styles.languageSelector}>
-      <select 
-        value={locale} 
-        onChange={handleLanguageChange}
-        className={styles.select}
-      >
-        {SUPPORTED_LOCALES.map(code => (
-          <option key={code} value={code}>
-            {localeNames[code] || code}
-          </option>
-        ))}
-      </select>
+      {SUPPORTED_LOCALES.map(code => (
+        <button
+          key={code}
+          onClick={() => setLocale(code)}
+          className={`${styles.langButton} ${locale === code ? styles.active : ''}`}
+          aria-pressed={locale === code}
+          title={`Switch to ${code === 'es' ? 'Spanish' : code === 'en' ? 'English' : 'Italian'}`}
+        >
+          {localeNames[code] || code}
+        </button>
+      ))}
     </div>
   );
 }

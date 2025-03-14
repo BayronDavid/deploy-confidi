@@ -1,17 +1,25 @@
 .languageSelector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 6px;
   border-radius: 6px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
 }
 
 .select {
-  padding: 8px 12px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background-color: white;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: var(--border-width) solid var(--color-border-default);
+  background-color: var(--color-neutral-default);
+  color: var(--color-text-dark);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
   cursor: pointer;
+  transition: all 0.2s ease;
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23333' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -19,8 +27,54 @@
   padding-right: 30px;
 }
 
+.select:hover {
+  border-color: var(--color-border-hover);
+  background-color: var(--color-neutral-hover);
+}
+
 .select:focus {
+  border-color: var(--color-border-focus);
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
+}
+
+.select option {
+  background-color: white;
+  color: var(--color-text-dark);
+}
+
+.langButton {
+  background: var(--color-neutral-default);
+  color: var(--color-text-dark);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.langButton:hover {
+  background: var(--color-neutral-hover);
+  border-color: var(--color-border-hover);
+}
+
+.langButton.active {
+  background: var(--color-accent-default);
+  color: var(--color-text-light);
+  border-color: var(--color-accent-default);
+}
+
+.langButton.active:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+.langButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
 }

@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import "./Header.css";
 import { useScrollContext } from "@/context/ScrollContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTimes, faHome, faInfoCircle, faEnvelope, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faHome, faInfoCircle, faEnvelope, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import MenuPopup from "./MenuPopup";
 
 const Header = () => {
   const { scrollY } = useScrollContext();
@@ -78,11 +79,6 @@ const Header = () => {
     { title: "Forms", icon: faClipboardList, path: "/forms" }
   ];
 
-  const handleNavigation = (path) => {
-    router.push(path);
-    setIsMenuOpen(false);
-  };
-
   return (
     <header className={`header ${isScrolled ? "header-scrolled" : ""}`}>
       <div className="header-container">
@@ -101,48 +97,13 @@ const Header = () => {
               <FontAwesomeIcon icon={faBars} size="lg" />
             </button>
             
-            {isMenuOpen && (
-              <div className="menu-popup">
-                <div className="popup-header">
-                  <h3>Navigation</h3>
-                  <button 
-                    className="close-button"
-                    onClick={() => setIsMenuOpen(false)}
-                    aria-label="Close menu"
-                  >
-                    <FontAwesomeIcon icon={faTimes} />
-                  </button>
-                </div>
-                
-                <div className="breadcrumb-section">
-                  <h4>You are here:</h4>
-                  {getBreadcrumbItems()}
-                </div>
-                
-                <div className="menu-divider"></div>
-                
-                <ul className="menu-list">
-                  {menuItems.map((item) => {
-                    const isActive = pathname === item.path;
-                    return (
-                      <li key={item.title} className={isActive ? 'active' : ''}>
-                        <Link 
-                          href={item.path} 
-                          className={`menu-link ${isActive ? 'active-link' : ''}`}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <FontAwesomeIcon 
-                            icon={item.icon} 
-                            className={`menu-icon ${isActive ? 'active-icon' : ''}`} 
-                          />
-                          <span>{item.title}</span>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
+            <MenuPopup 
+              isOpen={isMenuOpen}
+              onClose={() => setIsMenuOpen(false)}
+              pathname={pathname}
+              menuItems={menuItems}
+              getBreadcrumbItems={getBreadcrumbItems}
+            />
           </div>
         </nav>
       </div>

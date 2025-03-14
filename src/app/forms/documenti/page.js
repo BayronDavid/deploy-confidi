@@ -1,9 +1,17 @@
 "use client";
 
+import FormContainer from "@/components/forms/FormContainer";
+import { useTranslation } from "@/config/i18n";
+import { formsConfig } from "@/config/pages/Forms/documenti.config";
 import { useFormsContext } from "@/context/FormsContext";
 import { useState, useEffect } from "react";
 
 export default function DocumentiPage() {
+  const formKey = "documentiPage";
+  const { locale } = useTranslation();
+  const formConfig = formsConfig[locale] && formsConfig[locale][formKey];
+
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +34,8 @@ export default function DocumentiPage() {
           const matchServicio =
             formData.servici.Servicio &&
             formData.servici.Servicio.includes(item.Servicio);
-          return matchCategoria && matchServicio;
+          const matchRequerido = item.Requerido === 1;
+          return matchCategoria && matchServicio && matchRequerido;
         });
 
         setData(filteredData);
@@ -48,6 +57,7 @@ export default function DocumentiPage() {
 
   return (
     <div>
+      <FormContainer formConfig={formConfig} />
       <table
         border="1"
         cellPadding="8"

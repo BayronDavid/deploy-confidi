@@ -2,12 +2,11 @@
 import React, { useEffect } from "react";
 import { useFormsContext } from "@/context/FormsContext";
 import FormGroup from "./FormGroup";
-import { useTranslation } from "@/config/i18n";
 import useHasMounted from "@/hooks/useHasMounted";
-import { formsConfig } from "@/config/pages/Forms/serviciPage.config";
+
 import FormInput from "./FormInput";
 
-function FormContainer({ formKey }) {
+function FormContainer({ formConfig }) {
     const hasMounted = useHasMounted();
     const {
         formData,
@@ -15,8 +14,6 @@ function FormContainer({ formKey }) {
         setIsCurrentFormValid,
         setSubmitCurrentForm
     } = useFormsContext();
-    const { locale } = useTranslation();
-    const formConfig = formsConfig[locale] && formsConfig[locale][formKey];
 
     // Inicializa los datos de cada grupo, ya sea un grupo de inputs o un input directo
     useEffect(() => {
@@ -140,7 +137,7 @@ function FormContainer({ formKey }) {
             {/* Título y descripción SOLO a nivel de formulario, si existen */}
             {formConfig.title && <h1>{formConfig.title}</h1>}
             {formConfig.description && <p>{formConfig.description}</p>}
-            
+
             {formConfig.groups.map((group) => {
                 // No renderizar grupos deshabilitados
                 if (group.enabled === false) return null;
