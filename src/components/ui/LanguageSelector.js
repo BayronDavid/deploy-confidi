@@ -5,13 +5,13 @@ import styles from "./LanguageSelector.module.css";
 
 export default function LanguageSelector() {
   const { locale, setLocale } = useTranslation();
-  
+
   const localeNames = {
+    'it': 'IT',
     'es': 'ES',
     'en': 'EN',
-    'it': 'IT'
   };
-  
+
   return (
     <div className={styles.languageSelector}>
       {SUPPORTED_LOCALES.map(code => (
