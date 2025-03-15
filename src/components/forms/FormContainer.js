@@ -19,24 +19,64 @@ function FormContainer({ formConfig }) {
     useEffect(() => {
         if (!formConfig || !formConfig.groups) return;
 
-        formConfig.groups.forEach((group) => {
-            if (group.inputs) {
-                // Grupo con inputs: inicializamos cada input según su defaultValue
-                if (!formData[group.id]) {
-                    const defaultGroupData = {};
-                    (group.inputs || []).forEach((input) => {
-                        defaultGroupData[input.id] = input.defaultValue || "";
-                    });
-                    updateFormData(group.id, defaultGroupData);
-                }
-            } else {
-                // Input directo: inicializamos con su defaultValue
-                if (formData[group.id] === undefined) {
-                    updateFormData(group.id, group.defaultValue || "");
+        const isValid = formConfig.groups.every((group) => {
+            // Si el grupo no está habilitado, no afecta la validez del formulario
+            if (group.enabled === false) return true;
+
+            // Si el input es de tipo documentRequest, validamos de forma especial
+            if (group.type === "documentRequest") {
+                const value = formData[group.id];
+                if (group.isOptional) {
+                    // Opcional: válido si se subió un archivo o se marcó "No"
+                    return (
+                        (value && typeof value === "object" && value instanceof File) ||
+                        value === "skipped"
+                    );
+                } else {
+                    // Obligatorio: solo válido si se subió un archivo
+                    return value && typeof value === "object" && value instanceof File;
                 }
             }
+
+            // Validación para inputs directos (no agrupados)
+            if (group.inputs === undefined) {
+                // Para otros tipos, se requiere que tenga algún valor
+                return formData[group.id] && formData[group.id] !== "";
+            }
+
+            // Si es un grupo con inputs, se recorre cada uno:
+            const groupData = formData[group.id] || {};
+            return (group.inputs || []).every((input) => {
+                if (input.enabled !== false && input.required) {
+                    // Validación especial para documentRequest dentro de grupos
+                    if (input.type === "documentRequest") {
+                        const value = groupData[input.id];
+                        if (input.isOptional) {
+                            // Opcional: válido si se subió un archivo o se marcó "No"
+                            return (
+                                (value && typeof value === "object" && value instanceof File) ||
+                                value === "skipped"
+                            );
+                        } else {
+                            // Obligatorio: solo válido si se subió un archivo
+                            return value && typeof value === "object" && value instanceof File;
+                        }
+                    }
+                    
+                    if (input.type === "optionSelector") {
+                        const value = groupData[input.id];
+                        return Array.isArray(value) && value.length > 0;
+                    }
+                    return groupData[input.id] && groupData[input.id] !== "";
+                }
+                return true;
+            });
         });
-    }, [formConfig, formData, updateFormData]);
+
+        // Actualiza el estado de validez en el contexto
+        setIsCurrentFormValid(isValid);
+    }, [formData, formConfig, setIsCurrentFormValid]);
+
 
     // Validación general del formulario - corrección clave aquí
     useEffect(() => {
@@ -51,6 +91,21 @@ function FormContainer({ formConfig }) {
                 return (group.inputs || []).every((input) => {
                     // Solo validar si tanto el grupo como el input están habilitados
                     if (input.enabled !== false && input.required) {
+                        // Validación especial para documentRequest dentro de grupos
+                        if (input.type === "documentRequest") {
+                            const value = groupData[input.id];
+                            if (input.isOptional) {
+                                // Opcional: válido si se subió un archivo o se marcó "No"
+                                return (
+                                    (value && typeof value === "object" && value instanceof File) ||
+                                    value === "skipped"
+                                );
+                            } else {
+                                // Obligatorio: solo válido si se subió un archivo
+                                return value && typeof value === "object" && value instanceof File;
+                            }
+                        }
+                        
                         // Validación especial para optionSelector
                         if (input.type === "optionSelector") {
                             const value = groupData[input.id];
@@ -63,6 +118,21 @@ function FormContainer({ formConfig }) {
             } else {
                 // Input directo - solo validar si está habilitado
                 if (group.enabled !== false && group.required) {
+                    // Validación especial para documentRequest directo
+                    if (group.type === "documentRequest") {
+                        const value = formData[group.id];
+                        if (group.isOptional) {
+                            // Opcional: válido si se subió un archivo o se marcó "No"
+                            return (
+                                (value && typeof value === "object" && value instanceof File) ||
+                                value === "skipped"
+                            );
+                        } else {
+                            // Obligatorio: solo válido si se subió un archivo
+                            return value && typeof value === "object" && value instanceof File;
+                        }
+                    }
+                    
                     // Validación especial para optionSelector directo
                     if (group.type === "optionSelector") {
                         const value = formData[group.id];
@@ -89,6 +159,19 @@ function FormContainer({ formConfig }) {
                 const groupData = formData[group.id] || {};
                 return (group.inputs || []).every((input) => {
                     if (input.enabled !== false && input.required) {
+                        // Validación especial para documentRequest dentro de grupos
+                        if (input.type === "documentRequest") {
+                            const value = groupData[input.id];
+                            if (input.isOptional) {
+                                return (
+                                    (value && typeof value === "object" && value instanceof File) ||
+                                    value === "skipped"
+                                );
+                            } else {
+                                return value && typeof value === "object" && value instanceof File;
+                            }
+                        }
+                        
                         // Validación especial para optionSelector
                         if (input.type === "optionSelector") {
                             const value = groupData[input.id];
@@ -100,6 +183,19 @@ function FormContainer({ formConfig }) {
                 });
             } else {
                 if (group.enabled !== false && group.required) {
+                    // Validación especial para documentRequest directo
+                    if (group.type === "documentRequest") {
+                        const value = formData[group.id];
+                        if (group.isOptional) {
+                            return (
+                                (value && typeof value === "object" && value instanceof File) ||
+                                value === "skipped"
+                            );
+                        } else {
+                            return value && typeof value === "object" && value instanceof File;
+                        }
+                    }
+                    
                     // Validación especial para optionSelector directo
                     if (group.type === "optionSelector") {
                         const value = formData[group.id];
@@ -133,7 +229,7 @@ function FormContainer({ formConfig }) {
     }
 
     return (
-        <div>
+        <>
             {/* Título y descripción SOLO a nivel de formulario, si existen */}
             {formConfig.title && <h1>{formConfig.title}</h1>}
             {formConfig.description && <p>{formConfig.description}</p>}
@@ -153,17 +249,17 @@ function FormContainer({ formConfig }) {
                 } else {
                     // Para inputs directos, creamos un contenedor pero sin duplicar título/descripción
                     return (
-                        <div key={group.id} style={{ margin: "1rem 0" }}>
+                        <>
                             <FormInput
                                 config={group}
                                 value={formData[group.id]}
                                 onChange={(value) => updateFormData(group.id, value)}
                             />
-                        </div>
+                        </>
                     );
                 }
             })}
-        </div>
+        </>
     );
 }
 

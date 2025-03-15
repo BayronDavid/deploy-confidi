@@ -2,6 +2,7 @@
 "use client";
 import React from "react";
 import OptionSelector from "../imputs/OptionSelector";
+import DocumentRequest from "../imputs/DocumentRequest";
 
 function FormInput({ config, value, onChange }) {
     const { type, label, placeholder, enabled, min, max, options, tooltip, title, description } = config;
@@ -13,19 +14,15 @@ function FormInput({ config, value, onChange }) {
 
     // Contenedor común para todos los inputs con título y descripción opcionales
     const renderInputWithWrapper = (inputElement) => (
-        <div style={{ marginBottom: "1rem" }}>
-            {/* Mostrar título y descripción opcionales */}
-            {title && <h3>{title}</h3>}
-            {description && <p style={{ marginBottom: "0.5rem" }}>{description}</p>}
-            
+        <>
+            {/* {title && <h3>{title}</h3>} */}
+            {/* {description && <p style={{ marginBottom: "0.5rem" }}>{description}</p>} */}
             {inputElement}
-        </div>
+        </>
     );
 
-    // Renderizamos según el tipo del input
     switch (type) {
         case "optionSelector":
-            // Para OptionSelector, nos aseguramos de que el value sea un array
             const selectedValues = Array.isArray(value) ? value : [];
             return renderInputWithWrapper(
                 <OptionSelector
@@ -36,7 +33,6 @@ function FormInput({ config, value, onChange }) {
                     allowMultiple={config.allowMultiple || false}
                 />
             );
-
         case "text":
         case "email":
         case "tel":
@@ -56,7 +52,6 @@ function FormInput({ config, value, onChange }) {
                     <input type={type} {...commonProps} min={min} max={max} />
                 </div>
             );
-
         case "select":
             const commonSelectProps = {
                 value: value || "",
@@ -81,7 +76,25 @@ function FormInput({ config, value, onChange }) {
                     </select>
                 </div>
             );
-
+        case "documentRequest":
+            return renderInputWithWrapper(
+                <DocumentRequest
+                    title={title}
+                    description={description}
+                    isOptional={config.isOptional}
+                    primaryButtonLabel={config.primaryButtonLabel || "Subir documento"}
+                    skipButtonLabel={config.skipButtonLabel || "No"}
+                    onPrimaryClick={(file) => {
+                        // Se asigna el archivo como valor
+                        onChange(file);
+                    }}
+                    onSkip={(skipped) => {
+                        // Si se pulsa "No", se asigna la cadena "skipped" como valor;
+                        // si se desmarca, se asigna null para indicar que no hay decisión.
+                        onChange(skipped ? "skipped" : null);
+                    }}
+                />
+            );
         default:
             return null;
     }

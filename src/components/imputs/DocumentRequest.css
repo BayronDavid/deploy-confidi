@@ -1,0 +1,116 @@
+/* Contenedor principal */
+.document-request {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 16px);
+}
+
+/* Título */
+.document-request__title {
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-bold, 700);
+  margin: 0;
+}
+
+/* Fila con descripción y acciones */
+.document-request__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Descripción a la izquierda */
+.document-request__description {
+  flex: 1;
+  margin: 0;
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
+  line-height: 1.4;
+  color: var(--color-text-dark, #000);
+  margin-right: var(--spacing-md, 16px);
+}
+
+/* Contenedor de botones a la derecha */
+.document-request__actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  align-items: center;
+}
+
+/* Retroalimentación: archivo subido o marcado “No” */
+.document-request__feedback {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  font-size: calc(var(--font-size-base, 16px) * 0.875);
+  color: var(--color-text-dark, #000);
+}
+
+/* Bloque que muestra el nombre del archivo y opción de eliminar */
+.document-request__file-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+}
+
+/* Nombre del archivo */
+.document-request__file-name {
+  font-weight: var(--font-weight-bold, 700);
+  font-size: 0.9em;
+  margin-right: 8px;
+  word-break: break-word;
+}
+
+/* Modificador para el botón de carga cuando ya se subió un archivo */
+.document-request__upload--selected {
+  /* Ejemplo: un outline usando variables globales */
+  box-shadow: 0 0 0 2px var(--color-primary-hover, #1a1a1a);
+}
+
+/* Modificador para el botón “No” cuando está seleccionado */
+.document-request__skip--selected {
+  box-shadow: 0 0 0 2px var(--color-secondary-hover, #1a1a1a);
+}
+
+/* Botón para eliminar archivo (se pueden ajustar márgenes, tipografía, etc.) */
+.document-request__remove {
+  padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+}
+
+/* Add these styles to your existing DocumentRequest.css file */
+
+.document-request__remove-icon {
+    background: none;
+    border: none;
+    color: #dc3545; /* Color rojo para el ícono de eliminar */
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 8px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.document-request__remove-icon:hover {
+    color: #c82333;
+    transform: scale(1.1);
+}
+
+.document-request__file-info {
+    display: flex;
+    align-items: center;
+}
+
+.document-request__file-name {
+    font-size: 0.9em;
+    margin-right: 8px;
+    word-break: break-word;
+}
+
+/* Styles for the upload button with icon */
+.upload-button-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-icon {
+    font-size: 0.9em;
+}

@@ -48,7 +48,7 @@ function FormGroup({ group, groupData }) {
       {group.title && <h2>{group.title}</h2>}
       {group.description && <p>{group.description}</p>}
       
-      <div className="form-group__form-input">
+      <div className={`form-group__form-input ${group.isColumn ? 'form-group__form-input--column' : ''}`}>
         {(group.inputs || []).map((input) => (
           <FormInput
             key={input.id}

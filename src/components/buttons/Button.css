@@ -12,7 +12,7 @@
   font-weight: var(--font-weight-regular, 400);
   text-decoration: none; /* para <a> */
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+  transition: background-color 0.2s, color 0.2s, opacity 0.2s, filter 0.2s;
 }
 
 /* ======== Variantes ======== */
@@ -28,6 +28,7 @@
 .button--primary:active:not(.button--disabled) {
   background-color: var(--color-primary-active, #2b2b2b);
 }
+
 /* Botón accent */
 .button--accent {
   background-color: var(--color-accent-default, #c2185b);
@@ -56,6 +57,11 @@
   background-color: var(--color-neutral-active, #d5d5d5);
 }
 
+/* Filtro para iconos en botones neutrales (convierte iconos blancos a negro) */
+.button--neutral .button__icon {
+  filter: brightness(0);
+}
+
 /* ======== Estados ======== */
 .button--disabled {
   opacity: 0.6;
@@ -67,4 +73,6 @@
   width: 16px;
   height: 16px;
   object-fit: contain;
+  transition: filter 0.2s ease;
+  /* Los iconos son blancos por defecto, no necesitan filtro en fondos oscuros */
 }
