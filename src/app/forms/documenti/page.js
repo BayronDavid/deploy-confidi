@@ -6,23 +6,31 @@ import FormContainer from "@/components/forms/FormContainer";
 import Loader from "@/components/ui/Loader";
 
 export default function DocumentiPage() {
-  const [apiData, setApiData] = useState([]);
+  const [mergeData, setMergeData] = useState([]);
+  const [docsData, setDocsData] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const { formData } = useFormsContext();
 
-  // Se obtiene la data de la API solo una vez al montar el componente.
+  // Extract values once, outside of render calculations
+  const categoriaId = formData?.servici?.Categoria?.[0] || null;
+  const servicioId = formData?.servici?.Servicio?.[0] || null;
+
+  // 1. Data fetching effect
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(
-          "https://script.google.com/macros/s/AKfycbyOU9vt2SE0aSIKnBs6utNs3acH9NJllsW7bOKYsQ2vIWEAfeAbZ3J4guCbPD-yCvUg/exec?sheet=documentale"
-        );
-        const jsonData = await res.json();
-        // Se asume que la data viene en jsonData.data
-        setApiData(jsonData.data);
+        const [mergeRes, docsRes] = await Promise.all([
+          fetch("https://script.google.com/macros/s/AKfycbyOU9vt2SE0aSIKnBs6utNs3acH9NJllsW7bOKYsQ2vIWEAfeAbZ3J4guCbPD-yCvUg/exec?sheet=[merge][documentos]"),
+          fetch("https://script.google.com/macros/s/AKfycbyOU9vt2SE0aSIKnBs6utNs3acH9NJllsW7bOKYsQ2vIWEAfeAbZ3J4guCbPD-yCvUg/exec?sheet=[documentos]")
+        ]);
+
+        const mergeJson = await mergeRes.json();
+        const docsJson = await docsRes.json();
+
+        setMergeData(mergeJson.data);
+        setDocsData(docsJson.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Errore nel recupero dei dati:", error);
       } finally {
         setLoading(false);
       }
@@ -30,55 +38,64 @@ export default function DocumentiPage() {
     fetchData();
   }, []);
 
-  // Mientras se carga, se muestra el loader
+  // 2. Filter merge data based on selected category and service
+  const filteredMerge = useMemo(() => {
+    if (!categoriaId || !servicioId) return [];
+    return mergeData.filter(
+      (item) =>
+        item.categoria_ID === categoriaId &&
+        item.servicio_ID === servicioId
+    );
+  }, [mergeData, categoriaId, servicioId]);
+
+  // 3. Calculate documents and form config
+  const { hasDocuments, selectedDocs, dynamicFormConfig } = useMemo(() => {
+    // Check if we have any documents
+    const hasDocuments = filteredMerge.length > 0;
+    
+    if (!hasDocuments) {
+      return { hasDocuments: false, selectedDocs: [], dynamicFormConfig: null };
+    }
+    
+    // Process document data
+    const docIDs = [...new Set(filteredMerge.map(item => item.documento_ID))];
+    const selectedDocs = docsData.filter(doc => docIDs.includes(doc.documento_ID));
+    
+    // Create form configuration
+    const dynamicFormConfig = {
+      groups: [
+        {
+          id: "documentiRichiestiDinamico",
+          title: "Documenti richiesti",
+          isColumn: true,
+          inputs: selectedDocs.map((doc, index) => {
+            const isRequired = doc.required === "1";
+            return {
+              id: `documento_${doc.documento_ID}_${index}`,
+              title: doc.document,
+              description: doc.description || "",
+              type: "documentRequest",
+              required: isRequired,
+              isOptional: !isRequired,
+              primaryButtonLabel: "Carica",
+              skipButtonLabel: "Salta",
+            };
+          }),
+        },
+      ],
+    };
+    
+    return { hasDocuments, selectedDocs, dynamicFormConfig };
+  }, [filteredMerge, docsData]);
+
+  // Render based on component state
   if (loading) {
-    return <Loader fullScreen text="Cargando..." />;
+    return <Loader fullScreen text="Caricamento..." />;
   }
 
-  // Se filtra la data en base a formData.servici sin volver a disparar el fetch
-  const filteredData = useMemo(() => {
-    if (!formData.servici) return [];
-    return apiData.filter((item) => {
-      const matchCategoria =
-        formData.servici.Categoria &&
-        formData.servici.Categoria.includes(item.Categoria);
-      const matchServicio =
-        formData.servici.Servicio &&
-        formData.servici.Servicio.includes(item.Servicio);
-      return matchCategoria && matchServicio;
-    });
-  }, [apiData, formData.servici]);
-
-  if (filteredData.length === 0) {
-    return <p>No se encontraron datos que coincidan.</p>;
+  if (!hasDocuments) {
+    return <p>Nessun documento trovato per la combinazione selezionata.</p>;
   }
-
-  // Se construye la configuración completa del formulario desde cero
-  const dynamicFormConfig = {
-    groups: [
-      {
-        id: "documentiRichiestiDinamico",
-        title: "Documentos requeridos",
-        isColumn: true,
-        inputs: filteredData.map((item, index) => {
-          // Por defecto, si no viene el dato, el campo es requerido.
-          const isRequired = item.Requerido === 0 ? false : true;
-          return {
-            id: `documento_${index}`,
-            title: item.Documento || "Documento",
-            // La descripción queda flexible: si no viene, se deja vacía.
-            description: item.Description || "",
-            type: "documentRequest",
-            required: isRequired,
-            // Si es requerido, se desactiva la opción de omitir; sino se habilita.
-            isOptional: !isRequired,
-            primaryButtonLabel: "Subir documento",
-            skipButtonLabel: "No",
-          };
-        }),
-      },
-    ],
-  };
 
   return (
     <div>

@@ -3,6 +3,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md, 16px);
+  border-top: 1px solid #D9D9D9;
+  padding-top: 0.5rem;
 }
 
 /* Título */
@@ -17,6 +19,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 100%;
 }
 
 /* Descripción a la izquierda */
@@ -26,17 +29,31 @@
   font-size: calc(var(--font-size-base, 16px) * 0.875);
   line-height: 1.4;
   color: var(--color-text-dark, #000);
-  margin-right: var(--spacing-md, 16px);
+  max-width: 75%;
+  padding-right: 0.5rem;
+  /* border: 1px solid #D9D9D9; */
 }
 
 /* Contenedor de botones a la derecha */
 .document-request__actions {
   display: flex;
+  flex-direction: column;
   gap: var(--spacing-sm, 8px);
   align-items: center;
+  width: 25%;
 }
 
-/* Retroalimentación: archivo subido o marcado “No” */
+.document-request__actions-buttons{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.document-request__actions-uploaded-files {
+  width: 100%;
+}
+
+/* Retroalimentación: archivos subidos o marcado “No” */
 .document-request__feedback {
   display: flex;
   align-items: center;
@@ -45,11 +62,21 @@
   color: var(--color-text-dark, #000);
 }
 
+/* Lista de archivos subidos */
+.document-request__files-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+  width: 100%;
+}
+
 /* Bloque que muestra el nombre del archivo y opción de eliminar */
 .document-request__file-info {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-sm, 8px);
+  width: 100%;
 }
 
 /* Nombre del archivo */
@@ -57,60 +84,74 @@
   font-weight: var(--font-weight-bold, 700);
   font-size: 0.9em;
   margin-right: 8px;
-  word-break: break-word;
-}
-
-/* Modificador para el botón de carga cuando ya se subió un archivo */
-.document-request__upload--selected {
-  /* Ejemplo: un outline usando variables globales */
-  box-shadow: 0 0 0 2px var(--color-primary-hover, #1a1a1a);
-}
-
-/* Modificador para el botón “No” cuando está seleccionado */
-.document-request__skip--selected {
-  box-shadow: 0 0 0 2px var(--color-secondary-hover, #1a1a1a);
-}
-
-/* Botón para eliminar archivo (se pueden ajustar márgenes, tipografía, etc.) */
-.document-request__remove {
-  padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
-}
-
-/* Add these styles to your existing DocumentRequest.css file */
-
-.document-request__remove-icon {
-    background: none;
-    border: none;
-    color: #dc3545; /* Color rojo para el ícono de eliminar */
-    cursor: pointer;
-    padding: 5px;
-    margin-left: 8px;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.document-request__remove-icon:hover {
-    color: #c82333;
-    transform: scale(1.1);
-}
-
-.document-request__file-info {
-    display: flex;
-    align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0; /* Critical for text-overflow to work in flex items */
 }
 
 .document-request__file-name {
-    font-size: 0.9em;
-    margin-right: 8px;
-    word-break: break-word;
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--font-weight-bold, 700);
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
 }
 
-/* Styles for the upload button with icon */
+.document-request__file-name svg {
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+}
+
+.document-request__file-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Botón para eliminar archivo */
+.document-request__remove-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: 8px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.document-request__remove-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.document-request__remove-icon:hover {
+  color: #c82333;
+  /* transform: scale(1.1); */
+}
+
+/* Estilos para el botón de carga con ícono */
 .upload-button-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .upload-icon {
-    font-size: 0.9em;
+  font-size: 0.9em;
+}
+
+/* Mensaje cuando se ha marcado "No" */
+.document-request__no-file {
+  color: var(--color-accent-default);
+  font-size: 0.9em;
+  padding: 0;
+  margin: 0;
 }

@@ -52,13 +52,13 @@ const MenuPopup = ({ isOpen, onClose, pathname, menuItems, getBreadcrumbItems })
       
       <div className="menu-divider"></div>
       
-      <div className="language-section">
+      {/* <div className="language-section">
         <div className="language-header">
           <FontAwesomeIcon icon={faLanguage} className="language-icon" />
           <h4>Select Language</h4>
         </div>
         <LanguageSelector />
-      </div>
+      </div> */}
     </div>
   );
 };

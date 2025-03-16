@@ -2,48 +2,28 @@ import React, { useRef, useState } from 'react';
 import './DocumentRequest.css';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faUpload } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faTrash, faUpload, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-/**
- * DocumentRequest:
- * - Muestra un título en la primera fila.
- * - En la segunda fila, a la izquierda se ubica la descripción y a la derecha dos botones:
- *   - Botón para subir el archivo (input tipo file, acepta PDF e imágenes).
- *   - Botón "No" (sólo si isOptional es true) para indicar que no se subirá documento.
- *
- * Comportamiento:
- * - Si se sube un archivo, se muestra el nombre del archivo con un botón "Eliminar" que permite quitarlo y seleccionar otro.
- * - Si se pulsa "No", el botón "No" se resalta y el botón de carga se deshabilita.
- * - Si se pulsa "No" nuevamente cuando ya está activo, se desmarca esa opción.
- *
- * Props:
- *  - title: string
- *  - description: string
- *  - isOptional: boolean (muestra el botón "No" si es true)
- *  - primaryButtonLabel: string (etiqueta del botón de carga)
- *  - skipButtonLabel: string (etiqueta del botón "No")
- *  - onPrimaryClick: callback que se invoca con el File seleccionado
- *  - onSkip: callback que se invoca al pulsar "No"
- */
 function DocumentRequest({
     title,
     description,
     isOptional = false,
-    primaryButtonLabel = 'Registrativo',
-    skipButtonLabel = 'No',
+    primaryButtonLabel = 'Carica',
+    skipButtonLabel = 'Salta',
     onPrimaryClick,
     onSkip,
 }) {
     const fileInputRef = useRef(null);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     const [skipped, setSkipped] = useState(false);
+    const maxFiles = 5;
 
-    // Al hacer clic en el botón de carga
+    // Al hacer clic en el botón de carga, se abre el input file.
     const handlePrimaryButtonClick = () => {
         if (skipped) {
             setSkipped(false);
             if (typeof onSkip === 'function') {
-                onSkip(false); // Notificar que se ha desmarcado la opción "No"
+                onSkip(false);
             }
         }
         if (fileInputRef.current) {
@@ -51,48 +31,45 @@ function DocumentRequest({
         }
     };
 
-    // Al seleccionar un archivo se actualiza el estado y se invoca el callback
+    // Al seleccionar archivos, se agrega hasta alcanzar el máximo permitido.
     const handleFileChange = (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-            setSkipped(false);
-            if (typeof onPrimaryClick === 'function') {
-                onPrimaryClick(file);
-            }
+        const files = Array.from(e.target.files);
+        let allowedFiles = files;
+        if (selectedFiles.length + files.length > maxFiles) {
+            allowedFiles = files.slice(0, maxFiles - selectedFiles.length);
+        }
+        const newFiles = [...selectedFiles, ...allowedFiles];
+        setSelectedFiles(newFiles);
+        setSkipped(false);
+        if (typeof onPrimaryClick === 'function') {
+            onPrimaryClick(newFiles);
         }
     };
 
-    // Al hacer clic en "No", se alterna el estado
+    // Alterna la opción "No". Si se activa, limpia los archivos seleccionados.
     const handleSkip = () => {
         const newSkippedState = !skipped;
         setSkipped(newSkippedState);
-        
-        // Si se marca como "No", se limpia cualquier archivo seleccionado
         if (newSkippedState) {
-            setSelectedFile(null);
+            setSelectedFiles([]);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
         }
-        
         if (typeof onSkip === 'function') {
             onSkip(newSkippedState);
         }
     };
 
-    // Permite eliminar el archivo seleccionado para poder escoger otro
-    const handleRemoveFile = () => {
-        setSelectedFile(null);
-        // Restablecer input file para permitir seleccionar el mismo archivo nuevamente
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-        
-        // Notificar al componente padre que el archivo ha sido eliminado
+    // Permite eliminar un archivo individual de la lista.
+    const handleRemoveFile = (index) => {
+        const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+        setSelectedFiles(updatedFiles);
         if (typeof onPrimaryClick === 'function') {
-            onPrimaryClick(null);
+            onPrimaryClick(updatedFiles);
         }
     };
 
-    // Crear etiqueta personalizada con ícono para el botón de subida
     const uploadButtonLabel = (
         <span className="upload-button-content">
             <span>{primaryButtonLabel}</span>
@@ -102,62 +79,69 @@ function DocumentRequest({
 
     return (
         <div className="document-request">
-            {/* Fila 1: Título */}
-            <h3 className="document-request__title xxx">{title}</h3>
-
-            {/* Fila 2: Descripción (izquierda) y botones (derecha) */}
+            <h3 className="document-request__title">{title}</h3>
             <div className="document-request__row">
-                <p className="document-request__description ccc">{description}</p>
+                <p className="document-request__description">{description}</p>
                 <div className="document-request__actions">
-                    {/* Input file oculto */}
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="application/pdf,image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                    />
-                    <Button
-                        label={primaryButtonLabel}
-                        iconUrl={"/ui/upload.svg"}
-                        variant={selectedFile ? "secondary" : "primary"}
-                        onClick={handlePrimaryButtonClick}
-                        disabled={skipped}
-                    />
-                    {isOptional && (
-                        <Button
-                            label={skipButtonLabel}
-                            variant={skipped ? "primary" : "secondary"}
-                            onClick={handleSkip}
+                    <div className="document-request__actions-uploaded-files">
+                        {selectedFiles.length > 0 && (
+                            <div className="document-request__files-list">
+                                {selectedFiles.map((file, index) => (
+                                    <div key={index} className="document-request__file-info">
+                                        <span className="document-request__file-name" title={file.name}>
+                                            <FontAwesomeIcon icon={faFile} />
+                                            <span className="document-request__file-text">{file.name}</span>
+                                        </span>
+                                        <button
+                                            className="document-request__remove-icon"
+                                            onClick={() => handleRemoveFile(index)}
+                                            aria-label="Eliminar archivo"
+                                        >
+                                            {/* <FontAwesomeIcon icon={faTrash} /> */}
+                                            <FontAwesomeIcon icon={faXmark} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="document-request__actions-buttons">
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="application/pdf,image/*"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                            multiple
                         />
-                    )}
+                        <Button
+                            label={primaryButtonLabel}
+                            iconUrl={"/ui/upload.svg"}
+                            variant={"primary"}
+                            onClick={handlePrimaryButtonClick}
+                            disabled={skipped || selectedFiles.length >= maxFiles}
+                        />
+                        {isOptional && (
+                            <Button
+                                label={skipButtonLabel}
+                                variant={skipped ? "primary" : "secondary"}
+                                onClick={handleSkip}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Retroalimentación: se muestra si hay archivo seleccionado o se marcó "No" */}
-            {(selectedFile || skipped) && (
+            {(selectedFiles.length > 0 || skipped) && (
                 <div className="document-request__feedback">
-                    {selectedFile && (
-                        <div className="document-request__file-info">
-                            <span className="document-request__file-name">
-                                {selectedFile.name}
-                            </span>
-                            <button 
-                                className="document-request__remove-icon" 
-                                onClick={handleRemoveFile} 
-                                aria-label="Eliminar archivo"
-                            >
-                                <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                        </div>
-                    )}
+
                     {skipped && (
                         <div className="document-request__no-file">
                             <span className="document-request__skipped-text">
-                                Documento descartado
+                                Doc. saltato
                             </span>
                             <span className="document-request__skipped-hint">
-                                (Haga clic nuevamente en "{skipButtonLabel}" para cambiar esta opción)
+                                (Clicca su "{skipButtonLabel}" para cambiar)
                             </span>
                         </div>
                     )}
