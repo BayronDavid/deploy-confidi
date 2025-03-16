@@ -13,6 +13,8 @@
   text-decoration: none; /* para <a> */
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, opacity 0.2s, filter 0.2s;
+  /* width: 100%; */
+  /* min-width: 250px; */
 }
 
 /* ======== Variantes ======== */
@@ -75,4 +77,44 @@
   object-fit: contain;
   transition: filter 0.2s ease;
   /* Los iconos son blancos por defecto, no necesitan filtro en fondos oscuros */
+}
+
+/* Updated tooltip styles for inside button */
+.button--with-tooltip {
+  position: relative;
+  padding-right: 36px; /* Add space for tooltip icon */
+}
+
+.button__content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 4px);
+}
+
+.button__tooltip-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: color 0.2s ease;
+}
+
+.button--neutral .button__tooltip-icon,
+.button--secondary .button__tooltip-icon {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.button__tooltip-icon:hover {
+  color: #fff;
+}
+
+.button--neutral .button__tooltip-icon:hover,
+.button--secondary .button__tooltip-icon:hover {
+  color: rgba(0, 0, 0, 0.9);
 }

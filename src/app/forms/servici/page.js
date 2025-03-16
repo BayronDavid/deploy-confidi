@@ -57,7 +57,8 @@ export default function ServiciPage() {
             allowMultiple: false,
             options: categorias.map(cat => ({
               label: cat.nombre,
-              value: cat.categoria_ID
+              value: cat.categoria_ID,
+              tooltip: cat.tooltip ?? null,
             })),
             defaultValue: []
           },
@@ -70,7 +71,8 @@ export default function ServiciPage() {
             allowMultiple: false,
             options: servicios.map(serv => ({
               label: serv.nombre,
-              value: serv.servicio_ID
+              value: serv.servicio_ID,
+              tooltip: serv.tooltip ?? null,
             })),
             defaultValue: []
           }

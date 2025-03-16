@@ -52,15 +52,15 @@ export default function DocumentiPage() {
   const { hasDocuments, selectedDocs, dynamicFormConfig } = useMemo(() => {
     // Check if we have any documents
     const hasDocuments = filteredMerge.length > 0;
-    
+
     if (!hasDocuments) {
       return { hasDocuments: false, selectedDocs: [], dynamicFormConfig: null };
     }
-    
+
     // Process document data
     const docIDs = [...new Set(filteredMerge.map(item => item.documento_ID))];
     const selectedDocs = docsData.filter(doc => docIDs.includes(doc.documento_ID));
-    
+
     // Create form configuration
     const dynamicFormConfig = {
       groups: [
@@ -76,16 +76,17 @@ export default function DocumentiPage() {
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, '_')
               .replace(/^_|_$/g, '');
-            
+
             return {
               id: `doc_${doc.documento_ID}`,  // ID simple y consistente
               title: doc.document,
               description: doc.description || "",
+              tooltip: doc.tooltip || null,
               type: "documentRequest",
               required: isRequired,
               isOptional: !isRequired,
               primaryButtonLabel: "Carica",
-              skipButtonLabel: "Salta",
+              skipButtonLabel: "No",
               // Metadatos adicionales para referencia
               docType: docSlug,
               docId: doc.documento_ID
@@ -94,7 +95,7 @@ export default function DocumentiPage() {
         },
       ],
     };
-    
+
     return { hasDocuments, selectedDocs, dynamicFormConfig };
   }, [filteredMerge, docsData]);
 
@@ -110,6 +111,9 @@ export default function DocumentiPage() {
   return (
     <div>
       <FormContainer formConfig={dynamicFormConfig} />
+      <br />
+      <br />
+      <span>*Ulteriore documentazione puo essere richiesta in fase di istruttoria</span>
     </div>
   );
 }

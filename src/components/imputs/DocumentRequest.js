@@ -2,8 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import './DocumentRequest.css';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faTrash, faUpload, faXmark, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faTrash, faUpload, faXmark, faExclamationCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { useFormsContext } from '@/context/FormsContext';
+import Modal from '../modal/Modal';
 
 function DocumentRequest({
     title,
@@ -13,19 +14,21 @@ function DocumentRequest({
     skipButtonLabel = 'Salta',
     onPrimaryClick,
     onSkip,
-    value // Valor proporcionado desde el componente padre
+    value, 
+    tooltip 
 }) {
     const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [skipped, setSkipped] = useState(false);
     const [hasAction, setHasAction] = useState(false);
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const maxFiles = 5;
     const { getFileFromStorage } = useFormsContext();
 
     // Inicializar estado basado en el valor recibido - Mejorado para manejar datos deserializados
     useEffect(() => {
         console.log("Valor recibido en DocumentRequest:", value);
-        
+
         if (value) {
             if (value === "skipped") {
                 setSkipped(true);
@@ -92,16 +95,16 @@ function DocumentRequest({
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
-        
+
         let allowedFiles = files;
         if (selectedFiles.length + files.length > maxFiles) {
             allowedFiles = files.slice(0, maxFiles - selectedFiles.length);
         }
-        
+
         const newFiles = [...selectedFiles, ...allowedFiles];
         setSelectedFiles(newFiles);
         setSkipped(false);
-        
+
         if (typeof onPrimaryClick === 'function') {
             // Si solo permitimos un archivo, enviamos solo el primero
             onPrimaryClick(newFiles.length === 1 ? newFiles[0] : newFiles);
@@ -134,17 +137,20 @@ function DocumentRequest({
         }
     };
 
-    const uploadButtonLabel = (
-        <span className="upload-button-content">
-            <span>{primaryButtonLabel}</span>
-            {/* <FontAwesomeIcon icon={faUpload} className="upload-icon" /> */}
-        </span>
-    );
+    // Nuevo manejador para abrir/cerrar el tooltip modal
+    const handleTooltipToggle = () => {
+        setIsTooltipOpen(!isTooltipOpen);
+    };
 
     return (
         <div className={`document-request ${isOptional && !hasAction ? 'document-request--pending-action' : ''}`}>
             <h3 className="document-request__title">
                 {title}
+                {tooltip && (
+                    <span className="document-request__tooltip-icon" onClick={handleTooltipToggle}>
+                        <FontAwesomeIcon icon={faQuestionCircle} />
+                    </span>
+                )}
                 {isOptional && (
                     <span className="document-request__optional-tag">
                         {hasAction ? ' (Completato)' : ' (Richiede azione)'}
@@ -223,6 +229,17 @@ function DocumentRequest({
                         </div>
                     )}
                 </div>
+            )}
+
+            {/* Modal para el tooltip */}
+            {tooltip && (
+                <Modal 
+                    isOpen={isTooltipOpen} 
+                    onClose={() => setIsTooltipOpen(false)}
+                    title={title}
+                >
+                    <div>{tooltip}</div>
+                </Modal>
             )}
         </div>
     );

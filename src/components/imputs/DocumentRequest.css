@@ -181,3 +181,18 @@
     gap: 8px;
     font-size: 0.9rem;
 }
+
+.document-request__tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.document-request__tooltip-icon:hover {
+    color: var(--color-accent-hover);
+}

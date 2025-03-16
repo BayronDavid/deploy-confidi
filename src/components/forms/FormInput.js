@@ -28,6 +28,7 @@ function FormInput({ config, value, onChange }) {
                 <OptionSelector
                     label={label}
                     options={options}
+                    tooltip={tooltip}
                     selectedValues={selectedValues}
                     onChange={onChange}
                     allowMultiple={config.allowMultiple || false}
@@ -81,6 +82,7 @@ function FormInput({ config, value, onChange }) {
                 <DocumentRequest
                     title={title}
                     description={description}
+                    tooltip={tooltip}
                     isOptional={config.isOptional}
                     primaryButtonLabel={config.primaryButtonLabel || "Subir documento"}
                     skipButtonLabel={config.skipButtonLabel || "No"}

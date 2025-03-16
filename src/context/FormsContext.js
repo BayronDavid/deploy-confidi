@@ -1,4 +1,3 @@
-// /context/FormsContext.js
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -37,52 +36,52 @@ export function FormsProvider({ children }) {
     }, [pathname]);
 
     const LOCAL_STORAGE_KEY = 'formData';
-    // Nuevo almacén en memoria para archivos
+    // almace en memoria para archivos
     const [filesStorage, setFilesStorage] = useState({});
-    
+
     const loadInitialFormData = () => {
-        try {
-            const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (storedData) {
-                const parsedData = JSON.parse(storedData);
-                // Restaurar referencias a archivos previamente guardados
-                return parsedData;
+        if (typeof window !== 'undefined') {
+            try {
+                const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (storedData) {
+                    return JSON.parse(storedData);
+                }
+            } catch (error) {
+                console.error("Error loading form data:", error);
             }
-        } catch (error) {
-            console.error("Error loading form data:", error);
         }
         return {};
     };
 
     const [formData, setFormData] = useState(loadInitialFormData());
-    // Nuevo estado para la validez del formulario actual
     const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
-    // Nuevo estado para la función de envío del formulario actual
-    const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => {});
+    const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
 
     useEffect(() => {
-        try {
-            // Necesitamos crear una copia del formData que sea serializable
-            const serializableData = serializeFormData(formData);
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializableData));
-        } catch (error) {
-            console.error("Error saving form data:", error);
+        if (typeof window !== 'undefined') {
+            try {
+                // Necesitamos crear una copia del formData que sea serializable
+                const serializableData = serializeFormData(formData);
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(serializableData));
+            } catch (error) {
+                console.error("Error saving form data:", error);
+            }
         }
     }, [formData]);
 
-    // Función para serializar datos del formulario, convirtiendo File objects a metadatos
+    // serializar datos del formulario, convirtiendo File objects a metadatos
     const serializeFormData = (data) => {
         const result = { ...data };
-        
+
         // Recorre los grupos del formulario
         Object.keys(result).forEach(groupId => {
             const group = result[groupId];
-            
+
             // Si es un objeto File directo en el grupo
             if (group instanceof File) {
                 // Guardamos el archivo en el almacén de archivos
-                setFilesStorage(prev => ({ ...prev, [`${groupId}`]: group }));
-                
+                setFilesStorage(prev => ({ ...prev, [groupId]: group }));
+
                 // Reemplazamos con metadatos
                 result[groupId] = {
                     __isFile: true,
@@ -98,7 +97,7 @@ export function FormsProvider({ children }) {
                     if (group[key] instanceof File) {
                         // Guardamos el archivo en el almacén de archivos
                         setFilesStorage(prev => ({ ...prev, [`${groupId}.${key}`]: group[key] }));
-                        
+
                         // Reemplazamos con metadatos
                         result[groupId][key] = {
                             __isFile: true,
@@ -111,7 +110,7 @@ export function FormsProvider({ children }) {
                 });
             }
         });
-        
+
         return result;
     };
 
@@ -119,7 +118,7 @@ export function FormsProvider({ children }) {
     const updateFormData = (groupId, data) => {
         setFormData((prev) => {
             // Si estamos actualizando con un archivo o una lista que contiene archivos
-            if (data instanceof File || 
+            if (data instanceof File ||
                 (Array.isArray(data) && data.some(item => item instanceof File))) {
                 // Guardar los archivos en memoria
                 if (Array.isArray(data)) {
@@ -161,18 +160,20 @@ export function FormsProvider({ children }) {
     const clearFormData = () => {
         setFormData({});
         setFilesStorage({});
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        if (typeof window !== 'undefined') {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+        }
     };
 
-    // Función para obtener los archivos reales cuando sean necesarios
+    // obtener los archivos reales cuando sean necesarios
     const getFileFromStorage = (fileKey) => {
         return filesStorage[fileKey] || null;
     };
 
-    // Función para verificar si un valor es un archivo (original o serializado)
+    // verificar si un valor es un archivo (original o serializado)
     const isFileValue = (value) => {
-        return value instanceof File || 
-               (value && typeof value === 'object' && value.__isFile);
+        return value instanceof File ||
+            (value && typeof value === 'object' && value.__isFile);
     };
 
     const getRouteForStep = (index) => {
@@ -190,12 +191,10 @@ export function FormsProvider({ children }) {
                 formData,
                 updateFormData,
                 clearFormData,
-                // Nuevos valores para el contexto
                 isCurrentFormValid,
                 setIsCurrentFormValid,
                 submitCurrentForm,
                 setSubmitCurrentForm,
-                // Nueva función para obtener archivos
                 getFileFromStorage,
                 isFileValue,
             }}
@@ -204,4 +203,3 @@ export function FormsProvider({ children }) {
         </FormsContext.Provider>
     );
 }
-
