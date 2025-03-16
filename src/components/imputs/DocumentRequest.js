@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './DocumentRequest.css';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faTrash, faUpload, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faTrash, faUpload, faXmark, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { useFormsContext } from '@/context/FormsContext';
 
 function DocumentRequest({
     title,
@@ -12,11 +13,67 @@ function DocumentRequest({
     skipButtonLabel = 'Salta',
     onPrimaryClick,
     onSkip,
+    value // Valor proporcionado desde el componente padre
 }) {
     const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [skipped, setSkipped] = useState(false);
+    const [hasAction, setHasAction] = useState(false);
     const maxFiles = 5;
+    const { getFileFromStorage } = useFormsContext();
+
+    // Inicializar estado basado en el valor recibido - Mejorado para manejar datos deserializados
+    useEffect(() => {
+        console.log("Valor recibido en DocumentRequest:", value);
+        
+        if (value) {
+            if (value === "skipped") {
+                setSkipped(true);
+                setSelectedFiles([]);
+                setHasAction(true);
+            } else if (value instanceof File) {
+                // Archivo directo
+                setSelectedFiles([value]);
+                setSkipped(false);
+                setHasAction(true);
+            } else if (Array.isArray(value)) {
+                // Array de archivos
+                const validFiles = value.filter(item => item && (item instanceof File || item.__isFile));
+                setSelectedFiles(validFiles);
+                setSkipped(false);
+                setHasAction(validFiles.length > 0);
+            } else if (typeof value === 'object') {
+                // Metadatos de archivo restaurados de localStorage
+                if (value.__isFile) {
+                    setSelectedFiles([{
+                        name: value.name || "Documento",
+                        size: value.size || 0,
+                        type: value.type || "",
+                        isMetadata: true
+                    }]);
+                    setSkipped(false);
+                    setHasAction(true);
+                } else {
+                    // Objeto no reconocido
+                    console.log("Objeto no reconocido como archivo:", value);
+                    setSelectedFiles([]);
+                    setSkipped(false);
+                    setHasAction(false);
+                }
+            } else {
+                // Valor no reconocido
+                console.log("Valor no reconocido:", value);
+                setSelectedFiles([]);
+                setSkipped(false);
+                setHasAction(false);
+            }
+        } else {
+            // Sin valor
+            setSelectedFiles([]);
+            setSkipped(false);
+            setHasAction(false);
+        }
+    }, [value]);
 
     // Al hacer clic en el botón de carga, se abre el input file.
     const handlePrimaryButtonClick = () => {
@@ -34,15 +91,21 @@ function DocumentRequest({
     // Al seleccionar archivos, se agrega hasta alcanzar el máximo permitido.
     const handleFileChange = (e) => {
         const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        
         let allowedFiles = files;
         if (selectedFiles.length + files.length > maxFiles) {
             allowedFiles = files.slice(0, maxFiles - selectedFiles.length);
         }
+        
         const newFiles = [...selectedFiles, ...allowedFiles];
         setSelectedFiles(newFiles);
         setSkipped(false);
+        
         if (typeof onPrimaryClick === 'function') {
-            onPrimaryClick(newFiles);
+            // Si solo permitimos un archivo, enviamos solo el primero
+            onPrimaryClick(newFiles.length === 1 ? newFiles[0] : newFiles);
+            setHasAction(true);
         }
     };
 
@@ -58,6 +121,7 @@ function DocumentRequest({
         }
         if (typeof onSkip === 'function') {
             onSkip(newSkippedState);
+            setHasAction(true);
         }
     };
 
@@ -78,8 +142,15 @@ function DocumentRequest({
     );
 
     return (
-        <div className="document-request">
-            <h3 className="document-request__title">{title}</h3>
+        <div className={`document-request ${isOptional && !hasAction ? 'document-request--pending-action' : ''}`}>
+            <h3 className="document-request__title">
+                {title}
+                {isOptional && (
+                    <span className="document-request__optional-tag">
+                        {hasAction ? ' (Completato)' : ' (Richiede azione)'}
+                    </span>
+                )}
+            </h3>
             <div className="document-request__row">
                 <p className="document-request__description">{description}</p>
                 <div className="document-request__actions">
@@ -97,7 +168,6 @@ function DocumentRequest({
                                             onClick={() => handleRemoveFile(index)}
                                             aria-label="Eliminar archivo"
                                         >
-                                            {/* <FontAwesomeIcon icon={faTrash} /> */}
                                             <FontAwesomeIcon icon={faXmark} />
                                         </button>
                                     </div>
@@ -131,6 +201,13 @@ function DocumentRequest({
                     </div>
                 </div>
             </div>
+
+            {!hasAction && isOptional && (
+                <div className="document-request__warning">
+                    <FontAwesomeIcon icon={faExclamationCircle} />
+                    <span>È necessario caricare un documento o fare clic su "{skipButtonLabel}"</span>
+                </div>
+            )}
 
             {(selectedFiles.length > 0 || skipped) && (
                 <div className="document-request__feedback">

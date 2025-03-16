@@ -84,6 +84,7 @@ function FormInput({ config, value, onChange }) {
                     isOptional={config.isOptional}
                     primaryButtonLabel={config.primaryButtonLabel || "Subir documento"}
                     skipButtonLabel={config.skipButtonLabel || "No"}
+                    value={value} // Asegurarse de pasar el valor correctamente
                     onPrimaryClick={(file) => {
                         // Se asigna el archivo como valor
                         onChange(file);

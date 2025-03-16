@@ -155,3 +155,29 @@
   padding: 0;
   margin: 0;
 }
+
+/* Añadir a tu archivo CSS existente */
+.document-request--pending-action {
+    border-left: 3px solid #ffc107;
+    padding-left: 10px;
+    background-color: rgba(255, 248, 225, 0.3);
+}
+
+.document-request__optional-tag {
+    font-size: 0.8rem;
+    margin-left: 8px;
+    font-weight: normal;
+    color: #666;
+}
+
+.document-request__warning {
+    color: #856404;
+    background-color: #fff3cd;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}

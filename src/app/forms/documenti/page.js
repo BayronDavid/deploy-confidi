@@ -65,13 +65,20 @@ export default function DocumentiPage() {
     const dynamicFormConfig = {
       groups: [
         {
-          id: "documentiRichiestiDinamico",
+          id: "documentiRichiesti",
           title: "Documenti richiesti",
           isColumn: true,
-          inputs: selectedDocs.map((doc, index) => {
+          inputs: selectedDocs.map((doc) => {
             const isRequired = doc.required === "1";
+            // Crear un ID más significativo basado en el ID del documento
+            // y un slug del nombre para mejor legibilidad en localStorage
+            const docSlug = doc.document
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '_')
+              .replace(/^_|_$/g, '');
+            
             return {
-              id: `documento_${doc.documento_ID}_${index}`,
+              id: `doc_${doc.documento_ID}`,  // ID simple y consistente
               title: doc.document,
               description: doc.description || "",
               type: "documentRequest",
@@ -79,6 +86,9 @@ export default function DocumentiPage() {
               isOptional: !isRequired,
               primaryButtonLabel: "Carica",
               skipButtonLabel: "Salta",
+              // Metadatos adicionales para referencia
+              docType: docSlug,
+              docId: doc.documento_ID
             };
           }),
         },
