@@ -1,11 +1,38 @@
 // /components/FormInput.js
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import OptionSelector from "../imputs/OptionSelector";
 import DocumentRequest from "../imputs/DocumentRequest";
+import { useFormsContext } from "@/context/FormsContext";
 
 function FormInput({ config, value, onChange }) {
-    const { type, label, placeholder, enabled, min, max, options, tooltip, title, description } = config;
+    const { type, label, placeholder, enabled, min, max, options, tooltip, tc, title, description, required } = config;
+    const { setIsCurrentFormValid } = useFormsContext();
+
+    // Validar el valor actual y notificar al contexto si es inválido
+    useEffect(() => {
+        if (enabled !== false && required) {
+            let isValid = true;
+            
+            if (type === "documentRequest") {
+                // Es válido solo si: es opcional y está marcado como skipped, o tiene un archivo válido
+                isValid = (config.isOptional && value === "skipped") || 
+                         (value instanceof File || (value && typeof value === 'object' && (value.__isFile || 
+                          (Array.isArray(value) && value.some(item => 
+                            item instanceof File || (item && typeof item === 'object' && item.__isFile)
+                          )))));
+            } else if (type === "optionSelector") {
+                isValid = Array.isArray(value) && value.length > 0;
+            } else {
+                isValid = Boolean(value && value !== "");
+            }
+            
+            // Si este campo es inválido, forzar a que el formulario se marque como inválido
+            if (!isValid) {
+                setIsCurrentFormValid(false);
+            }
+        }
+    }, [value, required, type, enabled, config.isOptional]);
 
     // Si el input está deshabilitado explícitamente, no lo renderizamos
     if (enabled === false) {
@@ -83,6 +110,7 @@ function FormInput({ config, value, onChange }) {
                     title={title}
                     description={description}
                     tooltip={tooltip}
+                    tc={tc}
                     isOptional={config.isOptional}
                     primaryButtonLabel={config.primaryButtonLabel || "Subir documento"}
                     skipButtonLabel={config.skipButtonLabel || "No"}

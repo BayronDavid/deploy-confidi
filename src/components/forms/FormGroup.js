@@ -6,7 +6,7 @@ import { useFormsContext } from "@/context/FormsContext";
 import "./FormGroup.css";
 
 function FormGroup({ group, groupData }) {
-  const { updateFormData } = useFormsContext();
+  const { updateFormData, setIsCurrentFormValid } = useFormsContext();
   const [localData, setLocalData] = useState(groupData || {});
   
   // Verificar si el grupo está habilitado, por defecto es true
@@ -21,11 +21,30 @@ function FormGroup({ group, groupData }) {
     let isValid = true;
     (group.inputs || []).forEach((input) => {
       // Solo validar los inputs requeridos si el grupo está habilitado
-      if (isGroupEnabled && input.required && (!localData[input.id] || localData[input.id] === "")) {
-        isValid = false;
+      if (isGroupEnabled && input.required && input.enabled !== false) {
+        // Validación específica por tipo
+        if (input.type === "documentRequest") {
+          const value = localData[input.id];
+          // Validación específica para documentRequest
+          if (!(input.isOptional && value === "skipped") && 
+              !(value instanceof File || (value && typeof value === 'object' && value.__isFile))) {
+            isValid = false;
+          }
+        } else if (input.type === "optionSelector") {
+          const value = localData[input.id];
+          if (!Array.isArray(value) || value.length === 0) {
+            isValid = false;
+          }
+        } else if (!localData[input.id] || localData[input.id] === "") {
+          isValid = false;
+        }
       }
     });
-    // Aquí podrías actualizar un estado de validez si es necesario
+    
+    // Disparar una actualización en el contexto para forzar re-validación
+    if (!isValid) {
+      setIsCurrentFormValid(false);
+    }
   }, [localData, group.inputs, isGroupEnabled]);
 
   const handleInputChange = (inputId, value) => {

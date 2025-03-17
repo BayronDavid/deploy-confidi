@@ -82,6 +82,7 @@ export default function DocumentiPage() {
               title: doc.document,
               description: doc.description || "",
               tooltip: doc.tooltip || null,
+              tc: doc.termsAndConditions || null,
               type: "documentRequest",
               required: isRequired,
               isOptional: !isRequired,

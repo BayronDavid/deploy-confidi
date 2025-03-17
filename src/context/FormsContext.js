@@ -44,7 +44,8 @@ export function FormsProvider({ children }) {
             try {
                 const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
                 if (storedData) {
-                    return JSON.parse(storedData);
+                    const parsedData = JSON.parse(storedData);
+                    return parsedData;
                 }
             } catch (error) {
                 console.error("Error loading form data:", error);
@@ -54,8 +55,25 @@ export function FormsProvider({ children }) {
     };
 
     const [formData, setFormData] = useState(loadInitialFormData());
+    // Siempre iniciar como inválido para forzar validación
     const [isCurrentFormValid, setIsCurrentFormValid] = useState(false);
-    const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { });
+    const [submitCurrentForm, setSubmitCurrentForm] = useState(() => () => { return false; });
+
+    // Asegurarse de que después de recargar la página, se empieza siempre con validez falsa
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const initialLoad = sessionStorage.getItem('initialLoad');
+            if (!initialLoad) {
+                setIsCurrentFormValid(false);
+                sessionStorage.setItem('initialLoad', 'true');
+            }
+        }
+    }, []);
+
+    // Al navegar entre rutas, reiniciar el estado de validez
+    useEffect(() => {
+        setIsCurrentFormValid(false);
+    }, [pathname]);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -69,13 +87,18 @@ export function FormsProvider({ children }) {
         }
     }, [formData]);
 
-    // serializar datos del formulario, convirtiendo File objects a metadatos
+    // Mejorado: serializar datos del formulario, convirtiendo File objects a metadatos
     const serializeFormData = (data) => {
         const result = { ...data };
 
         // Recorre los grupos del formulario
         Object.keys(result).forEach(groupId => {
             const group = result[groupId];
+
+            // Si es "skipped", mantenerlo así
+            if (group === "skipped") {
+                return;
+            }
 
             // Si es un objeto File directo en el grupo
             if (group instanceof File) {
@@ -91,21 +114,66 @@ export function FormsProvider({ children }) {
                     lastModified: group.lastModified,
                 };
             }
-            // Si es un objeto con posibles archivos en sus propiedades
-            else if (typeof group === 'object' && group !== null && !(group instanceof Array)) {
-                Object.keys(group).forEach(key => {
-                    if (group[key] instanceof File) {
+            // Si es un array que podría contener archivos
+            else if (Array.isArray(group)) {
+                const newArray = group.map((item, index) => {
+                    if (item instanceof File) {
                         // Guardamos el archivo en el almacén de archivos
-                        setFilesStorage(prev => ({ ...prev, [`${groupId}.${key}`]: group[key] }));
+                        setFilesStorage(prev => ({ ...prev, [`${groupId}[${index}]`]: item }));
+                        
+                        // Reemplazamos con metadatos
+                        return {
+                            __isFile: true,
+                            name: item.name,
+                            size: item.size,
+                            type: item.type,
+                            lastModified: item.lastModified,
+                        };
+                    }
+                    return item;
+                });
+                result[groupId] = newArray;
+            }
+            // Si es un objeto con posibles archivos en sus propiedades
+            else if (typeof group === 'object' && group !== null) {
+                Object.keys(group).forEach(key => {
+                    const value = group[key];
+                    
+                    // Si es "skipped", mantenerlo así
+                    if (value === "skipped") {
+                        return;
+                    }
+                    
+                    if (value instanceof File) {
+                        // Guardamos el archivo en el almacén de archivos
+                        setFilesStorage(prev => ({ ...prev, [`${groupId}.${key}`]: value }));
 
                         // Reemplazamos con metadatos
                         result[groupId][key] = {
                             __isFile: true,
-                            name: group[key].name,
-                            size: group[key].size,
-                            type: group[key].type,
-                            lastModified: group[key].lastModified,
+                            name: value.name,
+                            size: value.size,
+                            type: value.type,
+                            lastModified: value.lastModified,
                         };
+                    } else if (Array.isArray(value)) {
+                        const newArray = value.map((item, index) => {
+                            if (item instanceof File) {
+                                // Guardamos el archivo en el almacén de archivos
+                                setFilesStorage(prev => ({ ...prev, [`${groupId}.${key}[${index}]`]: item }));
+                                
+                                // Reemplazamos con metadatos
+                                return {
+                                    __isFile: true,
+                                    name: item.name,
+                                    size: item.size,
+                                    type: item.type,
+                                    lastModified: item.lastModified,
+                                };
+                            }
+                            return item;
+                        });
+                        result[groupId][key] = newArray;
                     }
                 });
             }
@@ -114,7 +182,7 @@ export function FormsProvider({ children }) {
         return result;
     };
 
-    // Actualización: gestiona archivos preservando su instancia en memoria
+    // Actualización mejorada: gestiona archivos preservando su instancia en memoria
     const updateFormData = (groupId, data) => {
         setFormData((prev) => {
             // Si estamos actualizando con un archivo o una lista que contiene archivos
@@ -152,7 +220,7 @@ export function FormsProvider({ children }) {
 
             return {
                 ...prev,
-                [groupId]: Array.isArray(data) ? data : { ...(prev[groupId] || {}), ...data },
+                [groupId]: data
             };
         });
     };
@@ -165,15 +233,19 @@ export function FormsProvider({ children }) {
         }
     };
 
-    // obtener los archivos reales cuando sean necesarios
+    // obtener los archivos reales cuando sean necesarios - sin logging
     const getFileFromStorage = (fileKey) => {
-        return filesStorage[fileKey] || null;
+        const file = filesStorage[fileKey];
+        return file || null;
     };
 
-    // verificar si un valor es un archivo (original o serializado)
+    // verificar si un valor es un archivo (original o serializado) - sin logging
     const isFileValue = (value) => {
         return value instanceof File ||
-            (value && typeof value === 'object' && value.__isFile);
+            (value && typeof value === 'object' && value.__isFile) ||
+            (Array.isArray(value) && value.some(item => 
+                item instanceof File || (item && typeof item === 'object' && item.__isFile)
+            ));
     };
 
     const getRouteForStep = (index) => {

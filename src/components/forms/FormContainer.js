@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormsContext } from "@/context/FormsContext";
 import FormGroup from "./FormGroup";
 import useHasMounted from "@/hooks/useHasMounted";
@@ -7,6 +7,7 @@ import FormInput from "./FormInput";
 
 function FormContainer({ formConfig }) {
     const hasMounted = useHasMounted();
+    const initialValidationDone = useRef(false);
     const {
         formData,
         updateFormData,
@@ -15,143 +16,238 @@ function FormContainer({ formConfig }) {
         getFileFromStorage
     } = useFormsContext();
 
-    // Función auxiliar para verificar si un valor es un archivo válido
-    const isValidFile = (value, fileKey) => {
+    // Establece inicialmente el formulario como inválido hasta que se complete la validación
+    useEffect(() => {
+        setIsCurrentFormValid(false);
+    }, []);
+
+    // Función auxiliar mejorada para verificar si un valor es un archivo válido
+    const isValidFile = (value) => {
         // Primero verificar si es un objeto File directo
         if (value instanceof File) {
             return true;
         }
         
-        // Si es un objeto con indicador de archivo, buscar en fileStorage
+        // Si es un arreglo, verificar si contiene al menos un archivo válido
+        if (Array.isArray(value) && value.length > 0) {
+            return value.some(item => item instanceof File || (item && typeof item === 'object' && item.__isFile));
+        }
+        
+        // Si es un objeto con indicador de archivo
         if (value && typeof value === 'object' && value.__isFile) {
-            // Para validación, consideramos válido incluso si no tenemos el archivo
-            // porque el archivo se habrá perdido al recargar, pero sus metadatos siguen siendo válidos
             return true;
         }
         
         return false;
     };
 
-    // Función para verificar si un campo de documento es válido
-    const isDocumentFieldValid = (value, fileKey, isOptional) => {
-        // Para campos opcionales, debe tener un valor explícito: o un archivo o "skipped"
-        if (isOptional) {
-            // Debe tener algún valor, no puede estar indefinido o null
-            return value === "skipped" || isValidFile(value, fileKey);
+    // Función mejorada para verificar si un campo de documento es válido
+    const isDocumentFieldValid = (value, isOptional) => {
+        // Si es opcional y está explícitamente marcado como "skipped"
+        if (isOptional && value === "skipped") {
+            return true;
         }
         
-        // Para campos requeridos, sólo se acepta un archivo válido
-        return isValidFile(value, fileKey);
+        // Para campos opcionales sin valor explícito o campos requeridos
+        return isValidFile(value);
     };
 
-    // Validación general del formulario
+    // Efecto de validación específico que se ejecuta una sola vez al montar el componente
     useEffect(() => {
-        if (!formConfig || !formConfig.groups) return;
+        if (!formConfig || !formConfig.groups || !hasMounted || initialValidationDone.current) return;
+        
+        // Realizar validación inicial completa contra la estructura
+        let formIsValid = true;
+        
+        // Verificar cada grupo definido en la configuración
+        for (const group of formConfig.groups) {
+            // Saltar grupos deshabilitados
+            if (group.enabled === false) continue;
+            
+            if (group.inputs) {
+                const groupData = formData[group.id] || {};
+                
+                // Verificar cada input definido en la configuración
+                for (const input of (group.inputs || [])) {
+                    if (input.enabled !== false && input.required) {
+                        let inputIsValid = false;
+                        
+                        if (input.type === "documentRequest") {
+                            const value = groupData[input.id];
+                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
+                        } else if (input.type === "optionSelector") {
+                            const value = groupData[input.id];
+                            inputIsValid = Array.isArray(value) && value.length > 0;
+                        } else {
+                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
+                        }
+                        
+                        if (!inputIsValid) {
+                            formIsValid = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!formIsValid) break;
+            } else {
+                // Input directo
+                if (group.enabled !== false && group.required) {
+                    let inputIsValid = false;
+                    
+                    if (group.type === "documentRequest") {
+                        const value = formData[group.id];
+                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
+                    } else if (group.type === "optionSelector") {
+                        const value = formData[group.id];
+                        inputIsValid = Array.isArray(value) && value.length > 0;
+                    } else {
+                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
+                    }
+                    
+                    if (!inputIsValid) {
+                        formIsValid = false;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Actualizar estado de validez
+        setIsCurrentFormValid(formIsValid);
+        initialValidationDone.current = true;
+    }, [formConfig, formData, hasMounted]);
 
-        const isValid = formConfig.groups.every((group) => {
-            // Si el grupo no está habilitado, no afecta la validez del formulario
-            if (group.enabled === false) return true;
+    // Validación general del formulario - Se ejecuta en cada cambio
+    useEffect(() => {
+        if (!formConfig || !formConfig.groups) {
+            setIsCurrentFormValid(false);
+            return;
+        }
+
+        // Siempre iniciar con validación positiva
+        let formIsValid = true;
+
+        // Verificar cada grupo
+        for (const group of formConfig.groups) {
+            // Si el grupo no está habilitado, lo saltamos
+            if (group.enabled === false) continue;
 
             if (group.inputs) {
                 const groupData = formData[group.id] || {};
-                return (group.inputs || []).every((input) => {
-                    // Solo validar si tanto el grupo como el input están habilitados
+                
+                // Verificar cada input en el grupo
+                for (const input of (group.inputs || [])) {
+                    // Solo validar si tanto el grupo como el input están habilitados y son requeridos
                     if (input.enabled !== false && input.required) {
-                        // Validación especial para documentRequest dentro de grupos
+                        let inputIsValid = false;
+                        
+                        // Validación específica por tipo
                         if (input.type === "documentRequest") {
                             const value = groupData[input.id];
-                            return isDocumentFieldValid(
-                                value, 
-                                `${group.id}.${input.id}`, 
-                                input.isOptional
-                            );
+                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
+                        } else if (input.type === "optionSelector") {
+                            const value = groupData[input.id];
+                            inputIsValid = Array.isArray(value) && value.length > 0;
+                        } else {
+                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
                         }
                         
-                        if (input.type === "optionSelector") {
-                            const value = groupData[input.id];
-                            return Array.isArray(value) && value.length > 0;
+                        // Si cualquier campo requerido no es válido, el formulario no es válido
+                        if (!inputIsValid) {
+                            formIsValid = false;
+                            break;
                         }
-                        return groupData[input.id] && groupData[input.id] !== "";
                     }
-                    return true;
-                });
+                }
+                
+                // Si ya encontramos un campo inválido, no necesitamos revisar más
+                if (!formIsValid) break;
             } else {
-                // Input directo - solo validar si está habilitado
+                // Input directo - solo validar si está habilitado y es requerido
                 if (group.enabled !== false && group.required) {
-                    // Validación especial para documentRequest directo
+                    let inputIsValid = false;
+                    
+                    // Validación específica por tipo
                     if (group.type === "documentRequest") {
                         const value = formData[group.id];
-                        return isDocumentFieldValid(
-                            value, 
-                            group.id, 
-                            group.isOptional
-                        );
+                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
+                    } else if (group.type === "optionSelector") {
+                        const value = formData[group.id];
+                        inputIsValid = Array.isArray(value) && value.length > 0;
+                    } else {
+                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
                     }
                     
-                    if (group.type === "optionSelector") {
-                        const value = formData[group.id];
-                        return Array.isArray(value) && value.length > 0;
+                    // Si cualquier campo requerido no es válido, el formulario no es válido
+                    if (!inputIsValid) {
+                        formIsValid = false;
+                        break;
                     }
-                    return formData[group.id] && formData[group.id] !== "";
                 }
-                return true;
             }
-        });
+        }
 
         // Actualiza el estado de validez en el contexto
-        setIsCurrentFormValid(isValid);
-    }, [formData, formConfig, setIsCurrentFormValid, getFileFromStorage]);
+        setIsCurrentFormValid(formIsValid);
+    }, [formData, formConfig, setIsCurrentFormValid]);
 
     const handleSubmit = () => {
         if (!formConfig) return false;
 
-        // Recalcular validación por seguridad usando las mismas funciones auxiliares
-        const isFormValid = formConfig.groups.every((group) => {
-            if (group.enabled === false) return true;
+        // Recalcular validación por seguridad usando el mismo algoritmo
+        let isFormValid = true;
+
+        // Verificar cada grupo
+        for (const group of formConfig.groups) {
+            if (group.enabled === false) continue;
 
             if (group.inputs) {
                 const groupData = formData[group.id] || {};
-                return (group.inputs || []).every((input) => {
+                
+                for (const input of (group.inputs || [])) {
                     if (input.enabled !== false && input.required) {
-                        // Validación especial para documentRequest dentro de grupos
+                        let inputIsValid = false;
+                        
                         if (input.type === "documentRequest") {
                             const value = groupData[input.id];
-                            return isDocumentFieldValid(
-                                value, 
-                                `${group.id}.${input.id}`, 
-                                input.isOptional
-                            );
+                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
+                        } else if (input.type === "optionSelector") {
+                            const value = groupData[input.id];
+                            inputIsValid = Array.isArray(value) && value.length > 0;
+                        } else {
+                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
                         }
                         
-                        if (input.type === "optionSelector") {
-                            const value = groupData[input.id];
-                            return Array.isArray(value) && value.length > 0;
+                        if (!inputIsValid) {
+                            isFormValid = false;
+                            break;
                         }
-                        return groupData[input.id] && groupData[input.id] !== "";
                     }
-                    return true;
-                });
+                }
+                
+                if (!isFormValid) break;
             } else {
                 if (group.enabled !== false && group.required) {
-                    // Validación especial para documentRequest directo
+                    let inputIsValid = false;
+                    
                     if (group.type === "documentRequest") {
                         const value = formData[group.id];
-                        return isDocumentFieldValid(
-                            value, 
-                            group.id, 
-                            group.isOptional
-                        );
+                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
+                    } else if (group.type === "optionSelector") {
+                        const value = formData[group.id];
+                        inputIsValid = Array.isArray(value) && value.length > 0;
+                    } else {
+                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
                     }
                     
-                    if (group.type === "optionSelector") {
-                        const value = formData[group.id];
-                        return Array.isArray(value) && value.length > 0;
+                    if (!inputIsValid) {
+                        isFormValid = false;
+                        break;
                     }
-                    return formData[group.id] && formData[group.id] !== "";
                 }
-                return true;
             }
-        });
+        }
 
         if (isFormValid) {
             return true;
@@ -172,9 +268,6 @@ function FormContainer({ formConfig }) {
     if (!formConfig || !formConfig.groups) {
         return <div>Configuración no encontrada para el formulario</div>;
     }
-
-    // Logging para depuración
-    console.log("FormData actual:", formData);
 
     return (
         <>

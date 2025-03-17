@@ -38,7 +38,11 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: #666;
+  color: var(--color-accent-default);
+}
+
+.modal-close:hover {
+  color: var(--color-accent-hover);
 }
 
 .modal-content {

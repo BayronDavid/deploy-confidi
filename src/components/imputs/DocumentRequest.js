@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import './DocumentRequest.css';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFile, faTrash, faUpload, faXmark, faExclamationCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faTrash, faUpload, faXmark, faExclamationCircle, faQuestionCircle, faDownload, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useFormsContext } from '@/context/FormsContext';
 import Modal from '../modal/Modal';
 
@@ -14,8 +14,9 @@ function DocumentRequest({
     skipButtonLabel = 'Salta',
     onPrimaryClick,
     onSkip,
-    value, 
-    tooltip 
+    value,
+    tooltip,
+    tc
 }) {
     const fileInputRef = useRef(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -25,47 +26,41 @@ function DocumentRequest({
     const maxFiles = 5;
     const { getFileFromStorage } = useFormsContext();
 
+    // Función mejorada para verificar si un valor es un archivo válido
+    const isValidFileValue = (val) => {
+        if (!val) return false;
+        
+        if (val instanceof File) return true;
+        
+        if (Array.isArray(val)) {
+            return val.some(item => item instanceof File || (item && typeof item === 'object' && item.__isFile));
+        }
+        
+        return val && typeof val === 'object' && val.__isFile;
+    };
+
     // Inicializar estado basado en el valor recibido - Mejorado para manejar datos deserializados
     useEffect(() => {
-        console.log("Valor recibido en DocumentRequest:", value);
-
         if (value) {
             if (value === "skipped") {
                 setSkipped(true);
                 setSelectedFiles([]);
                 setHasAction(true);
-            } else if (value instanceof File) {
-                // Archivo directo
-                setSelectedFiles([value]);
-                setSkipped(false);
-                setHasAction(true);
-            } else if (Array.isArray(value)) {
-                // Array de archivos
-                const validFiles = value.filter(item => item && (item instanceof File || item.__isFile));
-                setSelectedFiles(validFiles);
-                setSkipped(false);
-                setHasAction(validFiles.length > 0);
-            } else if (typeof value === 'object') {
-                // Metadatos de archivo restaurados de localStorage
-                if (value.__isFile) {
-                    setSelectedFiles([{
-                        name: value.name || "Documento",
-                        size: value.size || 0,
-                        type: value.type || "",
-                        isMetadata: true
-                    }]);
+            } else if (isValidFileValue(value)) {
+                if (Array.isArray(value)) {
+                    // Array de archivos
+                    const validFiles = value.filter(item => isValidFileValue(item));
+                    setSelectedFiles(validFiles);
+                    setSkipped(false);
+                    setHasAction(validFiles.length > 0);
+                } else {
+                    // Archivo individual
+                    setSelectedFiles([value]);
                     setSkipped(false);
                     setHasAction(true);
-                } else {
-                    // Objeto no reconocido
-                    console.log("Objeto no reconocido como archivo:", value);
-                    setSelectedFiles([]);
-                    setSkipped(false);
-                    setHasAction(false);
                 }
             } else {
-                // Valor no reconocido
-                console.log("Valor no reconocido:", value);
+                // Valor no reconocido como válido
                 setSelectedFiles([]);
                 setSkipped(false);
                 setHasAction(false);
@@ -151,11 +146,11 @@ function DocumentRequest({
                         <FontAwesomeIcon icon={faQuestionCircle} />
                     </span>
                 )}
-                {isOptional && (
+                {/* {isOptional && (
                     <span className="document-request__optional-tag">
-                        {hasAction ? ' (Completato)' : ' (Richiede azione)'}
+                        {hasAction ? <FontAwesomeIcon icon={faCheck} style={{color: 'green'}} /> : ' (Richiede azione)'}
                     </span>
-                )}
+                )} */}
             </h3>
             <div className="document-request__row">
                 <p className="document-request__description">{description}</p>
@@ -208,10 +203,14 @@ function DocumentRequest({
                 </div>
             </div>
 
-            {!hasAction && isOptional && (
+            {!hasAction && (
                 <div className="document-request__warning">
                     <FontAwesomeIcon icon={faExclamationCircle} />
-                    <span>È necessario caricare un documento o fare clic su "{skipButtonLabel}"</span>
+                    {isOptional ? (
+                        <span>È necessario caricare un documento o fare clic su "{skipButtonLabel}"</span>
+                    ) : (
+                        <span>È necessario caricare un documento</span>
+                    )}
                 </div>
             )}
 
@@ -233,12 +232,18 @@ function DocumentRequest({
 
             {/* Modal para el tooltip */}
             {tooltip && (
-                <Modal 
-                    isOpen={isTooltipOpen} 
+                <Modal
+                    isOpen={isTooltipOpen}
                     onClose={() => setIsTooltipOpen(false)}
                     title={title}
                 >
                     <div>{tooltip}</div>
+                    {tc && (
+
+                        <div className="document-request__modal_download_tc">
+                            <a href={tc} target='_blank' >Scarica T&C <FontAwesomeIcon icon={faDownload} size='1x' /></a>
+                        </div>
+                    )}
                 </Modal>
             )}
         </div>
