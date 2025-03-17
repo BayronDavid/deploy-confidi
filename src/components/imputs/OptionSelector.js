@@ -1,10 +1,11 @@
 // /components/OptionSelector.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './OptionSelector.css';
 import Button from '../buttons/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../modal/Modal';
+import { useFormsContext } from '@/context/FormsContext';
 
 /**
  * OptionSelector: Muestra un label y una lista de opciones.
@@ -17,6 +18,7 @@ import Modal from '../modal/Modal';
  *  - allowMultiple: boolean, true = modo "checkbox", false = modo "radio".
  *  - tooltip: Contenido de información adicional para mostrar en un modal.
  *  - buttonWidth: Ancho consistente para todos los botones (ej: '150px', '100%').
+ *  - isOptional: boolean, indica si la selección es opcional.
  */
 function OptionSelector({
     label,
@@ -26,15 +28,23 @@ function OptionSelector({
     allowMultiple = false,
     tooltip,
     buttonWidth = "90%",
+    isOptional = false,
 }) {
+    const { formSubmitAttempted } = useFormsContext();
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const [activeOptionTooltip, setActiveOptionTooltip] = useState(null);
     const [activeOptionLabel, setActiveOptionLabel] = useState("");
+    const [hasAction, setHasAction] = useState(false);
 
     // Nos aseguramos que selectedValues es un array
     if (!Array.isArray(selectedValues)) {
         selectedValues = [];
     }
+
+    // Verificar si el usuario ha seleccionado alguna opción
+    useEffect(() => {
+        setHasAction(selectedValues && selectedValues.length > 0);
+    }, [selectedValues]);
 
     const handleOptionClick = (value) => {
         if (!onChange) return;
@@ -62,7 +72,7 @@ function OptionSelector({
     };
 
     return (
-        <div className="option-selector">
+        <div className={`option-selector ${isOptional && !hasAction && formSubmitAttempted ? 'option-selector--pending-action' : ''}`}>
             {label && (
                 <div className="option-selector__label">
                     {label}
@@ -92,6 +102,14 @@ function OptionSelector({
                     );
                 })}
             </div>
+
+            {/* Solo mostrar advertencia después de un intento de envío */}
+            {!hasAction && formSubmitAttempted && (
+                <div className="option-selector__warning">
+                    <FontAwesomeIcon icon={faExclamationCircle} />
+                    <span>È necessario selezionare un'opzione</span>
+                </div>
+            )}
 
             {/* Modal para el tooltip del selector o de una opción específica */}
             <Modal 

@@ -24,20 +24,23 @@ function DocumentRequest({
     const [hasAction, setHasAction] = useState(false);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const maxFiles = 5;
-    const { getFileFromStorage } = useFormsContext();
+    const { getFileFromStorage, formSubmitAttempted } = useFormsContext();
 
-    // Función mejorada para verificar si un valor es un archivo válido
+    //verificar si un valor es un archivo válido
     const isValidFileValue = (val) => {
         if (!val) return false;
-        
+        // Si es un objeto vacío, lo consideramos inválido
+        if (typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0) return false;
+
         if (val instanceof File) return true;
-        
+
         if (Array.isArray(val)) {
             return val.some(item => item instanceof File || (item && typeof item === 'object' && item.__isFile));
         }
-        
+
         return val && typeof val === 'object' && val.__isFile;
     };
+
 
     // Inicializar estado basado en el valor recibido - Mejorado para manejar datos deserializados
     useEffect(() => {
@@ -138,7 +141,7 @@ function DocumentRequest({
     };
 
     return (
-        <div className={`document-request ${isOptional && !hasAction ? 'document-request--pending-action' : ''}`}>
+        <div className={`document-request ${isOptional && !hasAction && formSubmitAttempted ? 'document-request--pending-action' : ''}`}>
             <h3 className="document-request__title">
                 {title}
                 {tooltip && (
@@ -146,11 +149,6 @@ function DocumentRequest({
                         <FontAwesomeIcon icon={faQuestionCircle} />
                     </span>
                 )}
-                {/* {isOptional && (
-                    <span className="document-request__optional-tag">
-                        {hasAction ? <FontAwesomeIcon icon={faCheck} style={{color: 'green'}} /> : ' (Richiede azione)'}
-                    </span>
-                )} */}
             </h3>
             <div className="document-request__row">
                 <p className="document-request__description">{description}</p>
@@ -203,29 +201,14 @@ function DocumentRequest({
                 </div>
             </div>
 
-            {!hasAction && (
+            {/* Solo mostrar advertencia después de un intento de envío */}
+            {!hasAction && formSubmitAttempted && (
                 <div className="document-request__warning">
                     <FontAwesomeIcon icon={faExclamationCircle} />
                     {isOptional ? (
                         <span>È necessario caricare un documento o fare clic su "{skipButtonLabel}"</span>
                     ) : (
                         <span>È necessario caricare un documento</span>
-                    )}
-                </div>
-            )}
-
-            {(selectedFiles.length > 0 || skipped) && (
-                <div className="document-request__feedback">
-
-                    {skipped && (
-                        <div className="document-request__no-file">
-                            <span className="document-request__skipped-text">
-                                Doc. saltato
-                            </span>
-                            <span className="document-request__skipped-hint">
-                                (Clicca su "{skipButtonLabel}" para cambiar)
-                            </span>
-                        </div>
                     )}
                 </div>
             )}

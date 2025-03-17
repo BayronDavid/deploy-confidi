@@ -12,20 +12,26 @@ function FormsFooter() {
         steps, 
         getRouteForStep,
         isCurrentFormValid,
-        submitCurrentForm 
+        submitCurrentForm,
+        setFormSubmitAttempted
     } = useFormsContext();
     
     // Check if this is the last step
     const isLastStep = currentStep === steps.length - 1;
     
     const handleNextStep = () => {
-        // Primero validamos y enviamos el formulario actual
+        // Marcamos que hubo un intento de envío
+        setFormSubmitAttempted(true);
+        
+        // Intentamos validar y enviar el formulario actual
         const isSubmitSuccessful = submitCurrentForm();
         
         // Solo navegamos al siguiente paso si el formulario es válido y se envió correctamente
         if (isSubmitSuccessful && currentStep < steps.length - 1) {
             const nextStep = currentStep + 1;
             const nextRoute = getRouteForStep(nextStep);
+            // Reseteamos el estado ya que vamos a un nuevo formulario
+            setFormSubmitAttempted(false);
             router.push(nextRoute);
         }
     };
@@ -42,7 +48,7 @@ function FormsFooter() {
                 iconUrl="/ui/Chevron_Right.svg"
                 onClick={handleNextStep}
                 variant="primary"
-                disabled={!isCurrentFormValid}
+                // El botón ahora siempre es clickeable (eliminamos disabled)
             />
         </div>
     );

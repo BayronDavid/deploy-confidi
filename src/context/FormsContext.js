@@ -232,6 +232,9 @@ export function FormsProvider({ children }) {
             localStorage.removeItem(LOCAL_STORAGE_KEY);
         }
     };
+    
+    // Nuevo estado para rastrear intentos de envío del formulario
+    const [formSubmitAttempted, setFormSubmitAttempted] = useState(false);
 
     // obtener los archivos reales cuando sean necesarios - sin logging
     const getFileFromStorage = (fileKey) => {
@@ -269,6 +272,8 @@ export function FormsProvider({ children }) {
                 setSubmitCurrentForm,
                 getFileFromStorage,
                 isFileValue,
+                formSubmitAttempted,
+                setFormSubmitAttempted,
             }}
         >
             {children}

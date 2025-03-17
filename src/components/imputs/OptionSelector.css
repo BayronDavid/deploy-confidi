@@ -58,3 +58,22 @@
 .option-selector__option-tooltip-icon:hover {
   color: var(--color-accent-hover);
 }
+
+/* Estilos para la advertencia de campo no rellenado */
+.option-selector--pending-action {
+  border-left: 3px solid #ffc107;
+  background-color: rgba(255, 248, 225, 0.1);
+}
+
+.option-selector__warning {
+  color: #856404;
+  background-color: #fff3cd;
+  padding: 0.2rem 0.5rem;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}

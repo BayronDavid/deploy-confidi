@@ -5,6 +5,82 @@ import FormGroup from "./FormGroup";
 import useHasMounted from "@/hooks/useHasMounted";
 import FormInput from "./FormInput";
 
+/**
+ * Verifica si un valor es un archivo o lista de archivos válidos.
+ */
+function isValidFile(value) {
+    if (!value) return false;
+
+    // Caso: archivo único
+    if (value instanceof File) return true;
+
+    // Caso: array de archivos
+    if (Array.isArray(value)) {
+        return value.some(
+            (item) =>
+                item instanceof File ||
+                (item && typeof item === "object" && item.__isFile)
+        );
+    }
+
+    // Caso: objeto con marca de __isFile
+    return value && typeof value === "object" && value.__isFile;
+}
+
+/**
+ * Valida el valor de un "documentRequest".
+ * - Si es opcional, "skipped" cuenta como válido.
+ * - Si es requerido, no se permite "skipped".
+ * - En ambos casos, si no es "skipped", debe haber un archivo válido.
+ */
+function validateDocumentRequest(value, isOptional) {
+    // Si es opcional y está "skipped", es válido
+    if (isOptional && value === "skipped") {
+        return true;
+    }
+    // Si no es opcional y está "skipped", es inválido
+    if (!isOptional && value === "skipped") {
+        return false;
+    }
+    // En cualquier otro caso, debe ser un archivo válido
+    return isValidFile(value);
+}
+
+/**
+ * Valida un input cualquiera según su tipo, su configuración (required, isOptional, etc.) y su valor en formData.
+ */
+function validateInput(groupData, input) {
+    // Si el input está deshabilitado, lo saltamos (lo consideramos válido).
+    if (input.enabled === false) return true;
+
+    const value = groupData[input.id];
+
+    // 1) Documentos
+    if (input.type === "documentRequest") {
+        return validateDocumentRequest(value, input.isOptional);
+
+        // 2) Selector de opciones
+    } else if (input.type === "optionSelector") {
+        // Si es requerido, debe tener al menos un valor seleccionado
+        if (input.required) {
+            return Array.isArray(value) && value.length > 0;
+        } else {
+            // Si es opcional, lo consideramos válido aunque esté vacío
+            return true;
+        }
+
+        // 3) Campos de texto, email, number, etc.
+    } else {
+        // Si es requerido, debe tener un valor no vacío
+        if (input.required) {
+            return Boolean(value && value !== "");
+        } else {
+            // Opcional => puede estar vacío
+            return true;
+        }
+    }
+}
+
 function FormContainer({ formConfig }) {
     const hasMounted = useHasMounted();
     const initialValidationDone = useRef(false);
@@ -13,255 +89,126 @@ function FormContainer({ formConfig }) {
         updateFormData,
         setIsCurrentFormValid,
         setSubmitCurrentForm,
-        getFileFromStorage
     } = useFormsContext();
 
-    // Establece inicialmente el formulario como inválido hasta que se complete la validación
+    // Al montar, forzamos inicialmente el formulario a "inválido" hasta que termine la validación
     useEffect(() => {
         setIsCurrentFormValid(false);
     }, []);
 
-    // Función auxiliar mejorada para verificar si un valor es un archivo válido
-    const isValidFile = (value) => {
-        // Primero verificar si es un objeto File directo
-        if (value instanceof File) {
-            return true;
-        }
-        
-        // Si es un arreglo, verificar si contiene al menos un archivo válido
-        if (Array.isArray(value) && value.length > 0) {
-            return value.some(item => item instanceof File || (item && typeof item === 'object' && item.__isFile));
-        }
-        
-        // Si es un objeto con indicador de archivo
-        if (value && typeof value === 'object' && value.__isFile) {
-            return true;
-        }
-        
-        return false;
-    };
-
-    // Función mejorada para verificar si un campo de documento es válido
-    const isDocumentFieldValid = (value, isOptional) => {
-        // Si es opcional y está explícitamente marcado como "skipped"
-        if (isOptional && value === "skipped") {
-            return true;
-        }
-        
-        // Para campos opcionales sin valor explícito o campos requeridos
-        return isValidFile(value);
-    };
-
-    // Efecto de validación específico que se ejecuta una sola vez al montar el componente
+    /**
+     * Efecto: Validación inicial (solo una vez).
+     * Recorre todos los grupos e inputs para determinar si el formulario es válido al cargar.
+     */
     useEffect(() => {
         if (!formConfig || !formConfig.groups || !hasMounted || initialValidationDone.current) return;
-        
-        // Realizar validación inicial completa contra la estructura
+
         let formIsValid = true;
-        
-        // Verificar cada grupo definido en la configuración
+
         for (const group of formConfig.groups) {
-            // Saltar grupos deshabilitados
+            // Ignorar grupos deshabilitados
             if (group.enabled === false) continue;
-            
+
+            // Grupo con sub-inputs
             if (group.inputs) {
                 const groupData = formData[group.id] || {};
-                
-                // Verificar cada input definido en la configuración
-                for (const input of (group.inputs || [])) {
-                    if (input.enabled !== false && input.required) {
-                        let inputIsValid = false;
-                        
-                        if (input.type === "documentRequest") {
-                            const value = groupData[input.id];
-                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
-                        } else if (input.type === "optionSelector") {
-                            const value = groupData[input.id];
-                            inputIsValid = Array.isArray(value) && value.length > 0;
-                        } else {
-                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
-                        }
-                        
-                        if (!inputIsValid) {
-                            formIsValid = false;
-                            break;
-                        }
-                    }
-                }
-                
-                if (!formIsValid) break;
-            } else {
-                // Input directo
-                if (group.enabled !== false && group.required) {
-                    let inputIsValid = false;
-                    
-                    if (group.type === "documentRequest") {
-                        const value = formData[group.id];
-                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
-                    } else if (group.type === "optionSelector") {
-                        const value = formData[group.id];
-                        inputIsValid = Array.isArray(value) && value.length > 0;
-                    } else {
-                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
-                    }
-                    
-                    if (!inputIsValid) {
+
+                for (const input of group.inputs) {
+                    if (!validateInput(groupData, input)) {
                         formIsValid = false;
                         break;
                     }
                 }
+            } else {
+                // Grupo con un único input directo
+                if (!validateInput(formData, group)) {
+                    formIsValid = false;
+                }
             }
+
+            if (!formIsValid) break;
         }
-        
-        // Actualizar estado de validez
+
         setIsCurrentFormValid(formIsValid);
         initialValidationDone.current = true;
-    }, [formConfig, formData, hasMounted]);
+    }, [formConfig, formData, hasMounted, setIsCurrentFormValid]);
 
-    // Validación general del formulario - Se ejecuta en cada cambio
+    /**
+     * Efecto: Validación en cada cambio de formData o formConfig
+     */
     useEffect(() => {
         if (!formConfig || !formConfig.groups) {
             setIsCurrentFormValid(false);
             return;
         }
 
-        // Siempre iniciar con validación positiva
         let formIsValid = true;
 
-        // Verificar cada grupo
         for (const group of formConfig.groups) {
-            // Si el grupo no está habilitado, lo saltamos
             if (group.enabled === false) continue;
 
             if (group.inputs) {
                 const groupData = formData[group.id] || {};
-                
-                // Verificar cada input en el grupo
-                for (const input of (group.inputs || [])) {
-                    // Solo validar si tanto el grupo como el input están habilitados y son requeridos
-                    if (input.enabled !== false && input.required) {
-                        let inputIsValid = false;
-                        
-                        // Validación específica por tipo
-                        if (input.type === "documentRequest") {
-                            const value = groupData[input.id];
-                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
-                        } else if (input.type === "optionSelector") {
-                            const value = groupData[input.id];
-                            inputIsValid = Array.isArray(value) && value.length > 0;
-                        } else {
-                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
-                        }
-                        
-                        // Si cualquier campo requerido no es válido, el formulario no es válido
-                        if (!inputIsValid) {
-                            formIsValid = false;
-                            break;
-                        }
-                    }
-                }
-                
-                // Si ya encontramos un campo inválido, no necesitamos revisar más
-                if (!formIsValid) break;
-            } else {
-                // Input directo - solo validar si está habilitado y es requerido
-                if (group.enabled !== false && group.required) {
-                    let inputIsValid = false;
-                    
-                    // Validación específica por tipo
-                    if (group.type === "documentRequest") {
-                        const value = formData[group.id];
-                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
-                    } else if (group.type === "optionSelector") {
-                        const value = formData[group.id];
-                        inputIsValid = Array.isArray(value) && value.length > 0;
-                    } else {
-                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
-                    }
-                    
-                    // Si cualquier campo requerido no es válido, el formulario no es válido
-                    if (!inputIsValid) {
+                for (const input of group.inputs) {
+                    if (!validateInput(groupData, input)) {
                         formIsValid = false;
                         break;
                     }
                 }
+            } else {
+                if (!validateInput(formData, group)) {
+                    formIsValid = false;
+                }
             }
+
+            if (!formIsValid) break;
         }
 
-        // Actualiza el estado de validez en el contexto
         setIsCurrentFormValid(formIsValid);
     }, [formData, formConfig, setIsCurrentFormValid]);
 
+    /**
+     * handleSubmit: se llama cuando se hace click en "Prossimo passo".
+     * Revalida por seguridad y retorna true/false.
+     */
     const handleSubmit = () => {
         if (!formConfig) return false;
 
-        // Recalcular validación por seguridad usando el mismo algoritmo
         let isFormValid = true;
 
-        // Verificar cada grupo
         for (const group of formConfig.groups) {
             if (group.enabled === false) continue;
 
             if (group.inputs) {
                 const groupData = formData[group.id] || {};
-                
-                for (const input of (group.inputs || [])) {
-                    if (input.enabled !== false && input.required) {
-                        let inputIsValid = false;
-                        
-                        if (input.type === "documentRequest") {
-                            const value = groupData[input.id];
-                            inputIsValid = isDocumentFieldValid(value, input.isOptional);
-                        } else if (input.type === "optionSelector") {
-                            const value = groupData[input.id];
-                            inputIsValid = Array.isArray(value) && value.length > 0;
-                        } else {
-                            inputIsValid = Boolean(groupData[input.id] && groupData[input.id] !== "");
-                        }
-                        
-                        if (!inputIsValid) {
-                            isFormValid = false;
-                            break;
-                        }
-                    }
-                }
-                
-                if (!isFormValid) break;
-            } else {
-                if (group.enabled !== false && group.required) {
-                    let inputIsValid = false;
-                    
-                    if (group.type === "documentRequest") {
-                        const value = formData[group.id];
-                        inputIsValid = isDocumentFieldValid(value, group.isOptional);
-                    } else if (group.type === "optionSelector") {
-                        const value = formData[group.id];
-                        inputIsValid = Array.isArray(value) && value.length > 0;
-                    } else {
-                        inputIsValid = Boolean(formData[group.id] && formData[group.id] !== "");
-                    }
-                    
-                    if (!inputIsValid) {
+                for (const input of group.inputs) {
+                    if (!validateInput(groupData, input)) {
                         isFormValid = false;
                         break;
                     }
                 }
+            } else {
+                if (!validateInput(formData, group)) {
+                    isFormValid = false;
+                }
             }
+
+            if (!isFormValid) break;
         }
 
         if (isFormValid) {
             return true;
         } else {
-            alert("Por favor, complete todos los campos requeridos.");
+            // No mostramos un alert aquí, ya que ahora usaremos las advertencias visuales
+            // cuando formSubmitAttempted sea true
             return false;
         }
     };
 
-    // Proporciona la función de submit al contexto
+    // Se registra la función de submit en el contexto
     useEffect(() => {
         setSubmitCurrentForm(() => handleSubmit);
-        // Limpieza al desmontar
-        return () => setSubmitCurrentForm(() => () => { return false; });
+        return () => setSubmitCurrentForm(() => () => false);
     }, [setSubmitCurrentForm, formConfig, formData]);
 
     if (!hasMounted) return null;
@@ -271,14 +218,14 @@ function FormContainer({ formConfig }) {
 
     return (
         <>
-            {/* Título y descripción SOLO a nivel de formulario, si existen */}
+            {/* Título y descripción a nivel de formulario, si existen */}
             {formConfig.title && <h1>{formConfig.title}</h1>}
             {formConfig.description && <p>{formConfig.description}</p>}
 
             {formConfig.groups.map((group) => {
-                // No renderizar grupos deshabilitados
                 if (group.enabled === false) return null;
 
+                // Si el grupo tiene inputs, renderizamos un FormGroup
                 if (group.inputs) {
                     return (
                         <FormGroup
@@ -288,15 +235,15 @@ function FormContainer({ formConfig }) {
                         />
                     );
                 } else {
-                    // Para inputs directos, creamos un contenedor pero sin duplicar título/descripción
+                    // Grupo con un solo input directo
                     return (
-                        <>
+                        <div key={group.id}>
                             <FormInput
                                 config={group}
                                 value={formData[group.id]}
                                 onChange={(value) => updateFormData(group.id, value)}
                             />
-                        </>
+                        </div>
                     );
                 }
             })}
