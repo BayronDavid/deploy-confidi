@@ -186,14 +186,14 @@ function DocumentRequest({
                         <Button
                             label={primaryButtonLabel}
                             iconUrl={"/ui/upload.svg"}
-                            variant={"primary"}
+                            variant={skipped ? "gray" : "secondary"}
                             onClick={handlePrimaryButtonClick}
-                            disabled={skipped || selectedFiles.length >= maxFiles}
+                        // disabled={skipped || selectedFiles.length >= maxFiles}
                         />
                         {isOptional && (
                             <Button
                                 label={skipButtonLabel}
-                                variant={skipped ? "primary" : "secondary"}
+                                variant={skipped ? "secondary" : "white"}
                                 onClick={handleSkip}
                             />
                         )}

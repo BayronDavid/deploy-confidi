@@ -7,25 +7,25 @@ import { useRouter } from 'next/navigation';
 
 function FormsFooter() {
     const router = useRouter();
-    const { 
-        currentStep, 
-        steps, 
+    const {
+        currentStep,
+        steps,
         getRouteForStep,
         isCurrentFormValid,
         submitCurrentForm,
         setFormSubmitAttempted
     } = useFormsContext();
-    
+
     // Check if this is the last step
     const isLastStep = currentStep === steps.length - 1;
-    
+
     const handleNextStep = () => {
         // Marcamos que hubo un intento de envío
         setFormSubmitAttempted(true);
-        
+
         // Intentamos validar y enviar el formulario actual
         const isSubmitSuccessful = submitCurrentForm();
-        
+
         // Solo navegamos al siguiente paso si el formulario es válido y se envió correctamente
         if (isSubmitSuccessful && currentStep < steps.length - 1) {
             const nextStep = currentStep + 1;
@@ -36,7 +36,6 @@ function FormsFooter() {
         }
     };
 
-    // En el último paso, podríamos mostrar un botón diferente o no mostrar ninguno
     if (isLastStep) {
         return null;
     }
@@ -47,8 +46,7 @@ function FormsFooter() {
                 label="Prossimo Passo"
                 iconUrl="/ui/Chevron_Right.svg"
                 onClick={handleNextStep}
-                variant="primary"
-                // El botón ahora siempre es clickeable (eliminamos disabled)
+                variant={submitCurrentForm() ? "secondary-fancy" : "secondary"}
             />
         </div>
     );

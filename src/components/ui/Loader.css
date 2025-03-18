@@ -25,8 +25,8 @@
 
 .loader-spinner {
   border-radius: 50%;
-  border: 3px solid var(--color-neutral-default);
-  border-top-color: var(--color-accent-default);
+  border: 3px solid var(--color-brand-pink);
+  border-top-color: var(--color-neutral-white);
   animation: spin 1s linear infinite;
 }
 

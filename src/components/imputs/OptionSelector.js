@@ -65,12 +65,6 @@ function OptionSelector({
         setIsTooltipOpen(!isTooltipOpen);
     };
 
-    const handleOptionTooltipToggle = (tooltip, optionLabel) => {
-        setActiveOptionTooltip(tooltip);
-        setActiveOptionLabel(optionLabel);
-        setIsTooltipOpen(true);
-    };
-
     return (
         <div className={`option-selector ${isOptional && !hasAction && formSubmitAttempted ? 'option-selector--pending-action' : ''}`}>
             {label && (
@@ -86,7 +80,7 @@ function OptionSelector({
             <div className="option-selector__list">
                 {options.map((option) => {
                     const isSelected = selectedValues.includes(option.value);
-                    const buttonVariant = isSelected ? 'accent' : 'neutral';
+                    const buttonVariant = isSelected ? 'primary' : 'gray';
                     return (
                         <div key={option.value} className="option-selector__option-container">
                             <Button

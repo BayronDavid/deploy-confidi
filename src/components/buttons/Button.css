@@ -1,112 +1,285 @@
-/* Base del botón */
+/* =========================
+   Base del botón
+========================= */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm, 4px);
-  padding: var(--spacing-md, 8px) var(--spacing-lg, 16px);
-  border: none;
-  border-radius: var(--border-radius-lg, 24px);
-  font-family: var(--font-family-base, sans-serif);
-  font-size: var(--font-size-base, 16px);
-  font-weight: var(--font-weight-regular, 400);
-  text-decoration: none; /* para <a> */
+  padding: 6px 18px;
+  font-family: var(--font-family-base);
+  /* font-size: var(--font-size-base); */
+  /* font-weight: var(--font-weight-bold); */
+  border-radius: var(--border-radius-md);
+  border: var(--border-width) solid transparent;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, opacity 0.2s, filter 0.2s;
-  /* width: 100%; */
-  /* min-width: 250px; */
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ======== Variantes ======== */
+/* =========================
+   Variantes del botón
+========================= */
+
+/* Botón Primary (Rosa) */
 .button--primary {
-  background-color: var(--color-primary-default, #000000);
-  color: var(--color-text-light, #ffffff);
+  background-color: var(--color-brand-pink);
+  color: var(--color-neutral-white);
 }
 
 .button--primary:hover:not(.button--disabled) {
-  background-color: var(--color-primary-hover, #1a1a1a);
+  background-color: #8c154e; /* Versión más oscura del rosa */
+  box-shadow: 0 4px 8px rgba(163, 25, 91, 0.3);
 }
 
 .button--primary:active:not(.button--disabled) {
-  background-color: var(--color-primary-active, #2b2b2b);
+  background-color: #7a2545;
 }
 
-/* Botón accent */
-.button--accent {
-  background-color: var(--color-accent-default, #c2185b);
-  color: var(--color-text-light, #ffffff);
+/* Botón Black (Negro) */
+.button--black {
+  background-color: var(--color-neutral-black);
+  color: var(--color-text-inverse);
 }
 
-.button--accent:hover:not(.button--disabled) {
-  background-color: var(--color-accent-hover, #d81b60);
+.button--black:hover:not(.button--disabled) {
+  background-color: var(--color-neutral-darkness);
 }
 
-.button--accent:active:not(.button--disabled) {
-  background-color: var(--color-accent-active, #ad1457);
+.button--black:active:not(.button--disabled) {
+  background-color: var(--color-neutral-dark);
 }
 
-/* Botón neutral (gris claro) */
+/* Botón Neutral (Gris, usado para variantes deshabilitadas o neutras) */
 .button--neutral {
-  background-color: var(--color-neutral-default, #f2f2f2);
-  color: var(--color-text-dark, #000000);
+  background-color: var(--color-neutral-medium);
+  color: var(--color-text-primary); /* Texto oscuro */
 }
 
 .button--neutral:hover:not(.button--disabled) {
-  background-color: var(--color-neutral-hover, #e0e0e0);
+  background-color: var(--color-neutral-light);
 }
 
 .button--neutral:active:not(.button--disabled) {
-  background-color: var(--color-neutral-active, #d5d5d5);
+  background-color: var(--color-neutral-extra-light);
 }
 
-/* Filtro para iconos en botones neutrales (convierte iconos blancos a negro) */
+/* Variante secundaria (negro) */
+.button--secondary {
+  background-color: var(--color-neutral-black);
+  color: var(--color-neutral-white);
+}
+
+.button--secondary:hover {
+  background-color: #2a2a2a; /* Un negro ligeramente más claro */
+  box-shadow: 0 4px 8px rgba(14, 14, 14, 0.3);
+}
+
+/* Variante secundaria con hover transición de negro a rosa */
+.button--secondary-fancy {
+  background-color: var(--color-neutral-black);
+  color: var(--color-neutral-white);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  /* Aseguramos que no haya bordes visibles desde el inicio */
+  border: var(--border-width) solid var(--color-neutral-black);
+}
+
+.button--secondary-fancy::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-brand-pink);
+  transition: all 0.5s ease;
+  z-index: -1;
+  border-radius: calc(
+    var(--border-radius-md) - 1px
+  ); /* Ajustamos para que no haya espacios */
+}
+
+.button--secondary-fancy:hover::before {
+  left: 0;
+}
+
+.button--secondary-fancy:hover {
+  color: var(--color-neutral-white); /* Mantener el texto blanco */
+  border-color: var(
+    --color-brand-pink
+  ); /* Cambiamos el color del borde al color rosa durante el hover */
+}
+
+.button--secondary-fancy .button__content {
+  position: relative;
+  z-index: 2; /* Asegurarse que el contenido esté por encima del efecto */
+}
+
+/* Variante white */
+.button--white {
+  background-color: var(--color-neutral-white);
+  color: var(--color-neutral-darkness);
+  outline: 1px solid var(--color-neutral-darkness);
+}
+
+.button--white:hover {
+  background-color: var(--color-neutral-light);
+  /* color: var(--color-neutral-white); */
+  outline: none;
+}
+/* Variante gris */
+.button--gray {
+  background-color: var(--color-neutral-medium);
+  color: var(--color-neutral-black);
+  font-weight: bold;
+  /* filter: invert(1); */
+}
+
+.button--gray img {
+  filter: invert(1);
+  transition: all 0.3s ease;
+}
+
+.button--gray:hover {
+  background-color: var(--color-brand-pink);
+  color: var(--color-neutral-white);
+}
+.button--gray:hover img {
+  filter: none;
+}
+
+/* Variante deshabilitada */
+.button--disabled {
+  background-color: var(--color-neutral-light);
+  color: var(--color-neutral-dark);
+  cursor: not-allowed;
+}
+
+/* Variante con bordes */
+.button--outline {
+  background-color: transparent;
+  color: var(--color-brand-pink);
+  border: var(--border-width) solid var(--color-brand-pink);
+}
+
+.button--outline:hover {
+  background-color: var(--color-brand-pink);
+  color: var(--color-neutral-white);
+}
+
+/* Variantes de otros colores */
+.button--blue {
+  background-color: var(--color-brand-blue);
+  color: var(--color-neutral-white);
+}
+
+.button--blue:hover {
+  background-color: #27618f; /* Versión más oscura del azul */
+}
+
+.button--yellow {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-neutral-black);
+}
+
+.button--yellow:hover {
+  background-color: #d8892c; /* Versión más oscura del amarillo */
+}
+
+.button--green {
+  background-color: var(--color-brand-green);
+  color: var(--color-neutral-white);
+}
+
+.button--green:hover {
+  background-color: #3d9137; /* Versión más oscura del verde */
+}
+
+/* Tamaños de botones */
+.button--small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.button--large {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* =========================
+   Estado Disabled: se aplica inversión en los iconos
+========================= */
+.button--disabled {
+  background-color: var(--color-neutral-medium);
+  color: var(--color-text-primary);
+  cursor: not-allowed;
+}
+
+/* Cuando el botón está deshabilitado, se invierten los iconos para mantener el contraste */
+.button--disabled .button__icon {
+  filter: invert(1);
+}
+
+/* =========================
+   Iconos y sub-elementos
+========================= */
+
+/* Los iconos en el botón Black se invierten para mejorar el contraste */
+.button--black .button__icon {
+  filter: invert(1);
+}
+
+/* En los botones neutrales, se ajusta el brillo para que los iconos blancos se muestren en negro */
 .button--neutral .button__icon {
   filter: brightness(0);
 }
 
-/* ======== Estados ======== */
-.button--disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ======== Sub-elementos BEM ======== */
+/* Los iconos en el botón Primary no tienen filtro de inversión para conservar su apariencia */
 .button__icon {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-  transition: filter 0.2s ease;
-  /* Los iconos son blancos por defecto, no necesitan filtro en fondos oscuros */
+  width: 18px;
+  height: 18px;
+  margin-left: var(--spacing-sm);
 }
 
-/* Updated tooltip styles for inside button */
+/* =========================
+   Tooltip dentro del botón
+========================= */
 .button--with-tooltip {
   position: relative;
-  padding-right: 36px; /* Add space for tooltip icon */
+  padding-right: 36px; /* Espacio para el icono del tooltip */
 }
 
 .button__content {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm, 4px);
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.button__label {
+  white-space: nowrap;
 }
 
 .button__tooltip-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: color 0.2s ease;
+  margin-left: var(--spacing-md);
+  font-size: 0.875rem;
+  color: inherit;
+  opacity: 0.8;
+  position: relative;
+  z-index: 2;
 }
 
-.button--neutral .button__tooltip-icon,
-.button--secondary .button__tooltip-icon {
+.button__tooltip-icon:hover {
+  opacity: 1;
+}
+
+/* Para botones Black y Neutral, el icono del tooltip debe contrastar en negro */
+.button--black .button__tooltip-icon,
+.button--neutral .button__tooltip-icon {
   color: rgba(0, 0, 0, 0.6);
 }
 
@@ -114,7 +287,24 @@
   color: #fff;
 }
 
-.button--neutral .button__tooltip-icon:hover,
-.button--secondary .button__tooltip-icon:hover {
+.button--black .button__tooltip-icon:hover,
+.button--neutral .button__tooltip-icon:hover {
   color: rgba(0, 0, 0, 0.9);
+}
+
+/* Botón con efecto de pulso */
+.button--pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
