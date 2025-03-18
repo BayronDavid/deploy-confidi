@@ -1,310 +1,401 @@
-/* =========================
-   Base del botón
-========================= */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 18px;
+  gap: var(--spacing-md);
+
   font-family: var(--font-family-base);
-  /* font-size: var(--font-size-base); */
-  /* font-weight: var(--font-weight-bold); */
-  border-radius: var(--border-radius-md);
-  border: var(--border-width) solid transparent;
-  cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+
   text-decoration: none;
-  transition: all 0.3s ease;
+  text-align: center;
+  cursor: pointer;
+
+  border-radius: var(--border-radius-sm);
+  border: var(--border-width) solid transparent;
+  padding: var(--spacing-md) var(--spacing-lg);
+
+  transition: background-color 0.2s ease, color 0.2s ease,
+    border-color 0.2s ease, transform 0.2s ease;
+
   position: relative;
-  overflow: hidden;
-}
-
-/* =========================
-   Variantes del botón
-========================= */
-
-/* Botón Primary (Rosa) */
-.button--primary {
-  background-color: var(--color-brand-pink);
-  color: var(--color-neutral-white);
-}
-
-.button--primary:hover:not(.button--disabled) {
-  background-color: #8c154e; /* Versión más oscura del rosa */
-  box-shadow: 0 4px 8px rgba(163, 25, 91, 0.3);
-}
-
-.button--primary:active:not(.button--disabled) {
-  background-color: #7a2545;
-}
-
-/* Botón Black (Negro) */
-.button--black {
-  background-color: var(--color-neutral-black);
-  color: var(--color-text-inverse);
-}
-
-.button--black:hover:not(.button--disabled) {
-  background-color: var(--color-neutral-darkness);
-}
-
-.button--black:active:not(.button--disabled) {
-  background-color: var(--color-neutral-dark);
-}
-
-/* Botón Neutral (Gris, usado para variantes deshabilitadas o neutras) */
-.button--neutral {
-  background-color: var(--color-neutral-medium);
-  color: var(--color-text-primary); /* Texto oscuro */
-}
-
-.button--neutral:hover:not(.button--disabled) {
-  background-color: var(--color-neutral-light);
-}
-
-.button--neutral:active:not(.button--disabled) {
-  background-color: var(--color-neutral-extra-light);
-}
-
-/* Variante secundaria (negro) */
-.button--secondary {
-  background-color: var(--color-neutral-black);
-  color: var(--color-neutral-white);
-}
-
-.button--secondary:hover {
-  background-color: #2a2a2a; /* Un negro ligeramente más claro */
-  box-shadow: 0 4px 8px rgba(14, 14, 14, 0.3);
-}
-
-/* Variante secundaria con hover transición de negro a rosa */
-.button--secondary-fancy {
-  background-color: var(--color-neutral-black);
-  color: var(--color-neutral-white);
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  /* Aseguramos que no haya bordes visibles desde el inicio */
-  border: var(--border-width) solid var(--color-neutral-black);
-}
-
-.button--secondary-fancy::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-brand-pink);
-  transition: all 0.5s ease;
-  z-index: -1;
-  border-radius: calc(
-    var(--border-radius-md) - 1px
-  ); /* Ajustamos para que no haya espacios */
-}
-
-.button--secondary-fancy:hover::before {
-  left: 0;
-}
-
-.button--secondary-fancy:hover {
-  color: var(--color-neutral-white); /* Mantener el texto blanco */
-  border-color: var(
-    --color-brand-pink
-  ); /* Cambiamos el color del borde al color rosa durante el hover */
-}
-
-.button--secondary-fancy .button__content {
-  position: relative;
-  z-index: 2; /* Asegurarse que el contenido esté por encima del efecto */
-}
-
-/* Variante white */
-.button--white {
-  background-color: var(--color-neutral-white);
-  color: var(--color-neutral-darkness);
-  outline: 1px solid var(--color-neutral-darkness);
-}
-
-.button--white:hover {
-  background-color: var(--color-neutral-light);
-  /* color: var(--color-neutral-white); */
-  outline: none;
-}
-/* Variante gris */
-.button--gray {
-  background-color: var(--color-neutral-medium);
-  color: var(--color-neutral-black);
-  font-weight: bold;
-  /* filter: invert(1); */
-}
-
-.button--gray img {
-  filter: invert(1);
-  transition: all 0.3s ease;
-}
-
-.button--gray:hover {
-  background-color: var(--color-brand-pink);
-  color: var(--color-neutral-white);
-}
-.button--gray:hover img {
-  filter: none;
-}
-
-/* Variante deshabilitada */
-.button--disabled {
-  background-color: var(--color-neutral-light);
-  color: var(--color-neutral-dark);
-  cursor: not-allowed;
-}
-
-/* Variante con bordes */
-.button--outline {
   background-color: transparent;
-  color: var(--color-brand-pink);
-  border: var(--border-width) solid var(--color-brand-pink);
+  color: var(--color-neutral-900);
 }
 
-.button--outline:hover {
-  background-color: var(--color-brand-pink);
-  color: var(--color-neutral-white);
-}
-
-/* Variantes de otros colores */
-.button--blue {
-  background-color: var(--color-brand-blue);
-  color: var(--color-neutral-white);
-}
-
-.button--blue:hover {
-  background-color: #27618f; /* Versión más oscura del azul */
-}
-
-.button--yellow {
-  background-color: var(--color-brand-yellow);
-  color: var(--color-neutral-black);
-}
-
-.button--yellow:hover {
-  background-color: #d8892c; /* Versión más oscura del amarillo */
-}
-
-.button--green {
-  background-color: var(--color-brand-green);
-  color: var(--color-neutral-white);
-}
-
-.button--green:hover {
-  background-color: #3d9137; /* Versión más oscura del verde */
-}
-
-/* Tamaños de botones */
-.button--small {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-}
-
-.button--large {
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
-}
-
-/* =========================
-   Estado Disabled: se aplica inversión en los iconos
-========================= */
-.button--disabled {
-  background-color: var(--color-neutral-medium);
-  color: var(--color-text-primary);
-  cursor: not-allowed;
-}
-
-/* Cuando el botón está deshabilitado, se invierten los iconos para mantener el contraste */
-.button--disabled .button__icon {
-  filter: invert(1);
-}
-
-/* =========================
-   Iconos y sub-elementos
-========================= */
-
-/* Los iconos en el botón Black se invierten para mejorar el contraste */
-.button--black .button__icon {
-  filter: invert(1);
-}
-
-/* En los botones neutrales, se ajusta el brillo para que los iconos blancos se muestren en negro */
-.button--neutral .button__icon {
-  filter: brightness(0);
-}
-
-/* Los iconos en el botón Primary no tienen filtro de inversión para conservar su apariencia */
-.button__icon {
-  width: 18px;
-  height: 18px;
-  margin-left: var(--spacing-sm);
-}
-
-/* =========================
-   Tooltip dentro del botón
-========================= */
-.button--with-tooltip {
-  position: relative;
-  padding-right: 36px; /* Espacio para el icono del tooltip */
-}
-
+/* Contenido interno */
 .button__content {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
+  gap: var(--spacing-md);
 }
 
 .button__label {
-  white-space: nowrap;
+  /* estilo extra si deseas */
 }
 
+.button__icon {
+  width: 1em;
+  height: 1em;
+  /* Base filter - no change to white icons on dark backgrounds */
+  filter: none;
+}
+
+/* Make white icons dark on light backgrounds */
+.button--secondary .button__icon,
+.button--light .button__icon {
+  /* Convert white icons to dark for better visibility on light backgrounds */
+  filter: brightness(0) invert(0.2);
+}
+
+/* Restore white icons on hover states for all variants */
+.button--secondary:hover:not(.button--disabled):not(:disabled) .button__icon,
+.button--light:hover:not(.button--disabled):not(:disabled) .button__icon,
+.button--secondary.button--active .button__icon,
+.button--light.button--active .button__icon {
+  filter: none; /* Return to original white color on hover/active states */
+}
+
+/* Icono de tooltip */
 .button__tooltip-icon {
   margin-left: var(--spacing-md);
-  font-size: 0.875rem;
-  color: inherit;
-  opacity: 0.8;
-  position: relative;
-  z-index: 2;
+  cursor: pointer;
+  /* color: var(--color-neutral-600); */
+  transition: all 0.2s ease;
 }
-
 .button__tooltip-icon:hover {
-  opacity: 1;
+  color: var(--color-neutral-300);
+  transform: scale(1.05);
 }
 
-/* Para botones Black y Neutral, el icono del tooltip debe contrastar en negro */
-.button--black .button__tooltip-icon,
-.button--neutral .button__tooltip-icon {
-  color: rgba(0, 0, 0, 0.6);
+/* Focus */
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring-color);
 }
 
-.button__tooltip-icon:hover {
-  color: #fff;
-}
-
-.button--black .button__tooltip-icon:hover,
-.button--neutral .button__tooltip-icon:hover {
-  color: rgba(0, 0, 0, 0.9);
-}
-
-/* Botón con efecto de pulso */
-.button--pulse {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
+/* -------------------------------
+   Efecto "pulse" (animación)
+---------------------------------- */
+@keyframes pulseAnimation {
   0% {
     transform: scale(1);
   }
-  50% {
+  70% {
     transform: scale(1.05);
   }
   100% {
     transform: scale(1);
   }
+}
+.button--pulse:hover:not(.button--disabled):not(:disabled) {
+  animation: pulseAnimation 0.7s infinite;
+}
+
+/* -------------------------------
+   Tamaños
+---------------------------------- */
+.button--big {
+  font-size: 1.125rem; /* ~18px */
+  padding: calc(var(--spacing-md) * 2) calc(var(--spacing-lg) * 2);
+}
+
+.button--small {
+  font-size: 0.875rem; /* ~14px */
+  padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.button--mobile {
+  font-size: var(--font-size-base);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+/* -------------------------------
+   Estados: disabled
+---------------------------------- */
+.button--disabled,
+.button:disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+  /* Aplica estilo "disabled" a la fuerza */
+  background-color: var(--color-neutral-400) !important; /* #c6c6c6 */
+  color: var(--color-neutral-600) !important; /* #919191 */
+  border-color: var(--color-neutral-400) !important;
+  opacity: 1;
+}
+
+/* -------------------------------
+   VARIANTE: PRIMARY
+---------------------------------- */
+/* Default */
+.button--primary {
+  background-color: var(--color-neutral-900); /* #0e0e0e */
+  color: var(--color-neutral-100); /* #fff */
+  /* border-color: var(--color-neutral-900); */
+}
+/* Hover */
+.button--primary:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-primary); /* #a3195b */
+  color: var(--color-neutral-100);
+  /* border-color: var(--color-primary); */
+}
+/* Active (hover permanente) */
+.button--primary.button--active {
+  background-color: var(--color-primary);
+  color: var(--color-neutral-100);
+  /* border-color: var(--color-primary); */
+}
+
+/* -------------------------------
+   VARIANTE: SECONDARY
+---------------------------------- */
+/* Default */
+.button--secondary {
+  background-color: var(--color-neutral-100); /* #fff */
+  color: var(--color-neutral-900); /* #0e0e0e */
+  border-color: var(--color-neutral-900);
+}
+
+/* Hover */
+.button--secondary:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-primary); /* #a3195b */
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+/* Active */
+.button--secondary.button--active {
+  background-color: var(--color-primary);
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+
+/* -------------------------------
+   VARIANTE: LIGHT
+---------------------------------- */
+/* Default */
+.button--light {
+  background-color: var(--color-neutral-200); /* #e4e3e3 */
+  color: var (--color-neutral-900);
+  border-color: var(--color-neutral-200);
+}
+/* Hover */
+.button--light:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-primary); /* #a3195b */
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+/* Active */
+.button--light.button--active {
+  background-color: var(--color-primary);
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+
+/* -------------------------------
+   VARIANTE: DARK
+---------------------------------- */
+/* Default */
+.button--dark {
+  background-color: var(--color-neutral-700); /* #494949 */
+  color: var(--color-neutral-100);
+  border-color: var(--color-neutral-700);
+}
+/* Hover */
+.button--dark:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-neutral-600); /* #919191 */
+  color: var(--color-neutral-100);
+  border-color: var(--color-neutral-600);
+}
+/* Active */
+.button--dark.button--active {
+  background-color: var(--color-neutral-600);
+  color: var(--color-neutral-100);
+  border-color: var(--color-neutral-600);
+}
+
+/* -------------------------------
+   Icon-only
+---------------------------------- */
+.button--icon-only {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
+/* -------------------------------
+   Fancy hover effect (left-to-right transition)
+---------------------------------- */
+.button--fancy {
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  background-color: transparent !important;
+}
+
+/* Add an ::after pseudo-element to maintain the original background during transition */
+.button--fancy::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  border-radius: var(--border-radius-sm);
+}
+
+/* Primary variant background */
+.button--fancy.button--primary::after {
+  background-color: var(--color-neutral-900);
+}
+
+/* Secondary variant background */
+.button--fancy.button--secondary::after {
+  background-color: var(--color-neutral-100);
+}
+
+/* Light variant background */
+.button--fancy.button--light::after {
+  background-color: var(--color-neutral-200);
+}
+
+/* Dark variant background */
+.button--fancy.button--dark::after {
+  background-color: var(--color-neutral-700);
+}
+
+/* The sliding element with hover color */
+.button--fancy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  z-index: -1;
+  border-radius: var(--border-radius-sm);
+  transform: translateX(-100%);
+}
+
+/* Remove background-color override so the ::after element shows through */
+.button--fancy:hover:not(.button--disabled):not(:disabled) {
+  background-color: transparent !important;
+}
+
+/* Primary variant fancy hover */
+.button--fancy.button--primary::before {
+  background-color: var(--color-primary);
+}
+.button--fancy.button--primary:hover::before {
+  transform: translateX(0);
+}
+
+/* Secondary variant fancy hover */
+.button--fancy.button--secondary::before {
+  background-color: var(--color-primary);
+}
+.button--fancy.button--secondary:hover::before {
+  transform: translateX(0);
+}
+.button--fancy.button--secondary:hover {
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+
+/* Light variant fancy hover */
+.button--fancy.button--light::before {
+  background-color: var(--color-primary);
+}
+.button--fancy.button--light:hover::before {
+  transform: translateX(0);
+}
+.button--fancy.button--light:hover {
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+
+/* Dark variant fancy hover */
+.button--fancy.button--dark::before {
+  background-color: var(--color-neutral-600);
+}
+.button--fancy.button--dark:hover::before {
+  transform: translateX(0);
+}
+
+/* Ensure content stays on top with proper z-index */
+.button--fancy .button__content,
+.button--fancy .button__label,
+.button--fancy .button__icon,
+.button--fancy .button__tooltip-icon {
+  position: relative;
+  z-index: 2;
+}
+
+/* Ensure icons transition properly with fancy hover */
+.button--fancy:hover .button__icon {
+  position: relative;
+  z-index: 2;
+}
+
+/* Ensure text transitions properly with fancy hover */
+.button--fancy:hover .button__label {
+  position: relative;
+  z-index: 2;
+}
+
+/* -------------------------------
+   Subtle hover effect (brightness filter)
+---------------------------------- */
+/* Add specific transition for subtle buttons */
+.button--subtle {
+  transition: background-color 0.3s ease, color 0.3s ease, 
+    border-color 0.3s ease, transform 0.3s ease, filter 0.3s ease;
+}
+
+/* Disable the default hover effects for subtle buttons */
+.button--subtle:hover:not(.button--disabled):not(:disabled) {
+  /* Override border color changes but NOT background color */
+  border-color: inherit !important;
+  /* Apply subtle darkening with filter */
+  filter: brightness(0.9);
+}
+
+/* Specific background colors for subtle hover effects */
+.button--subtle.button--primary:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-neutral-700) !important; /* Dark gray instead of white */
+  color: var(--color-neutral-100) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button--subtle.button--secondary:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-neutral-200) !important; /* Very light gray */
+  color: var(--color-neutral-900) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button--subtle.button--light:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-neutral-300) !important; /* Slightly darker than original */
+  color: var(--color-neutral-900) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button--subtle.button--dark:hover:not(.button--disabled):not(:disabled) {
+  background-color: var(--color-neutral-600) !important; /* Slightly lighter */
+  color: var(--color-neutral-100) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Maintain icon appearance on subtle hover */
+.button--subtle.button--secondary:hover:not(.button--disabled):not(:disabled) .button__icon,
+.button--subtle.button--light:hover:not(.button--disabled):not(:disabled) .button__icon {
+  filter: brightness(0) invert(0.2);
+}
+
+/* Subtle effect should be disabled when fancy is also applied */
+.button--subtle.button--fancy:hover:not(.button--disabled):not(:disabled) {
+  filter: none;
 }

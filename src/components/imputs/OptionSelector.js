@@ -80,13 +80,14 @@ function OptionSelector({
             <div className="option-selector__list">
                 {options.map((option) => {
                     const isSelected = selectedValues.includes(option.value);
-                    const buttonVariant = isSelected ? 'primary' : 'gray';
+                    const buttonVariant = isSelected ? 'primary' : 'secondary';
                     return (
                         <div key={option.value} className="option-selector__option-container">
                             <Button
                                 label={option.label}
                                 variant={buttonVariant}
                                 onClick={() => handleOptionClick(option.value)}
+                                active={isSelected}
                                 tooltipTitle={option.label}
                                 width={buttonWidth}
                             >

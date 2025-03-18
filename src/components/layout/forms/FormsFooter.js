@@ -44,9 +44,11 @@ function FormsFooter() {
         <div className='forms-footer-container'>
             <Button
                 label="Prossimo Passo"
-                iconUrl="/ui/Chevron_Right.svg"
+                iconUrl="/ui/chevron-right.svg"
                 onClick={handleNextStep}
-                variant={submitCurrentForm() ? "secondary-fancy" : "secondary"}
+                variant={"primary"}
+                fancy={submitCurrentForm()}
+                subtle={true}
             />
         </div>
     );

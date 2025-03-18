@@ -1,43 +1,43 @@
 :root {
   /* ==============================
-     BRANDING
+     PALETA PRINCIPAL
      ============================== */
-  --color-brand-pink: #a3195b;
-  --color-brand-blue: #3177b1;
-  --color-brand-yellow: #ed9b36;
-  --color-brand-green: #48a941;
+  --color-primary: #a3195b;       
+  --color-secondary: #3177b1;     
+  --color-accent-yellow: #ed9b36; 
+  --color-accent-green: #48a941;  
 
   /* ==============================
-     NEUTRAL
+     NEUTRALES
      ============================== */
-  --color-neutral-black: #0e0e0e;
-  --color-neutral-darkness: #494949;
-  --color-neutral-dark: #919191;
-  --color-neutral-medium: #c6c6c6;
-  --color-neutral-light: #d9d9d9;
-  --color-neutral-extra-light: #e4e3e3;
-  --color-neutral-white: #fff;
+  --color-neutral-900: #0e0e0e;   
+  --color-neutral-700: #494949;   
+  --color-neutral-600: #919191;   
+  --color-neutral-400: #c6c6c6;   
+  --color-neutral-300: #d9d9d9;   
+  --color-neutral-200: #e4e3e3;   
+  --color-neutral-100: #fff;      
 
   /* ==============================
-     SYSTEM
+     SISTEMA (estados de alerta)
      ============================== */
   --color-system-warning: #f6e333;
   --color-system-error: #b2533e;
   --color-system-success: #04ae15;
 
   /* ==============================
-     TEXTO 
+     TEXTO
      ============================== */
-  --color-text-primary: var(--color-neutral-black);
-  --color-text-secondary: var(--color-neutral-dark);
-  --color-text-inverse: var(--color-neutral-white);
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-inverse: var(--color-neutral-100);
   --color-text-placeholder: #9e9e9e;
 
   /* ==============================
      TIPOGRAFÍA
      ============================== */
   --font-family-base: "Inter", sans-serif;
-  --font-size-base: 16px;
+  --font-size-base: 13px;
   --font-weight-regular: 400;
   --font-weight-bold: 700;
 

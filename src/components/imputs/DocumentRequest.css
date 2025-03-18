@@ -81,7 +81,7 @@
   justify-content: space-between;
   gap: var(--spacing-sm, 8px);
   width: 100%;
-  color: var(--color-primary-disabled);
+  color: var(--color-neutral-700);
 }
 
 /* Nombre del archivo */

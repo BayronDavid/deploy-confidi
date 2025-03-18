@@ -4,88 +4,39 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../modal/Modal';
 
-/**
- * Componente de botón altamente personalizable que usa las variables CSS globales.
- *
- * @component
- * 
- * @param {Object} props - Las props del componente
- * @param {string} [props.label] - Texto que se mostrará dentro del botón
- * @param {string} [props.iconUrl] - Ruta de la imagen/ícono opcional
- * @param {string} [props.url] - Si existe, el botón se renderiza como un enlace <a>
- * @param {Function} [props.onClick] - Callback al hacer clic (solo aplica cuando NO hay url)
- * @param {boolean} [props.disabled=false] - Si está deshabilitado
- * @param {string} [props.variant='primary'] - Tipo de botón
- *   - 'primary': Botón rosa con hover estándar
- *   - 'secondary': Botón negro con hover estándar
- *   - 'secondary-fancy': Botón negro que al hover cambia a rosa de izquierda a derecha
- *   - 'gray': Botón gris que cambia a rosa en hover
- *   - 'outline': Botón con borde rosa y fondo transparente
- *   - 'blue': Botón azul de marca
- *   - 'yellow': Botón amarillo de marca
- *   - 'green': Botón verde de marca
- * @param {string} [props.size] - Tamaño del botón: 'small', 'medium' (default), 'large'
- * @param {boolean} [props.pulse=false] - Añade efecto de pulso al botón
- * @param {string} [props.tooltipTitle] - Título opcional para el modal de tooltip
- * @param {React.ReactNode} [props.children] - Contenido para el tooltip modal (si existe, habilita el tooltip)
- * @param {string|number} [props.width] - Ancho personalizado del botón (puede ser en px, %, rem, etc.)
- * @param {Object} [props.rest] - Otras props opcionales (target="_blank", etc.)
- *
- * @example
- * // Botón primario básico
- * <Button label="Guardar cambios" />
- *
- * @example
- * // Botón negro que cambia a rosa en hover (de izquierda a derecha)
- * <Button 
- *   label="Efecto especial" 
- *   variant="secondary-fancy" 
- *   onClick={() => console.log('Clicked!')} 
- * />
- *
- * @example
- * // Botón gris que cambia a rosa en hover
- * <Button 
- *   label="Más información" 
- *   variant="gray" 
- *   url="/info" 
- * />
- *
- * @example
- * // Botón con tooltip
- * <Button 
- *   label="Ayuda" 
- *   variant="outline"
- *   tooltipTitle="Instrucciones"
- * >
- *   <p>Este botón proporciona ayuda sobre la funcionalidad.</p>
- * </Button>
- */
 function Button({
     label,
     iconUrl,
     url,
     onClick,
     disabled = false,
-    variant = 'primary',
-    size,
+    variant = 'primary', // "primary", "secondary", "light", "dark"
+    size,               // "big", "small", "mobile"
     pulse = false,
+    fancy = false,     
+    subtle = false,     // <--- Add subtle hover effect prop
     tooltipTitle,
     children,
     width,
+    active = false,    
     ...rest
 }) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const hasTooltip = Boolean(children);
+    const isIconOnly = iconUrl && !label;
 
-    // Construimos la clase base y modificadores BEM
+    // Construye las clases BEM según las props
     const classNames = [
         'button',
         `button--${variant}`,
         size && `button--${size}`,
         pulse && 'button--pulse',
-        disabled ? 'button--disabled' : '',
-        hasTooltip ? 'button--with-tooltip' : ''
+        fancy && 'button--fancy', // <--- Add fancy class if prop is true
+        subtle && 'button--subtle', // <--- Add subtle class if prop is true
+        disabled && 'button--disabled',
+        hasTooltip && 'button--with-tooltip',
+        isIconOnly && 'button--icon-only',
+        active && 'button--active' // <--- Aplica clase "active" si corresponde
     ]
         .filter(Boolean)
         .join(' ');
@@ -95,15 +46,12 @@ function Button({
             e.preventDefault();
             return;
         }
-
-        if (onClick) {
-            onClick(e);
-        }
+        onClick && onClick(e);
     };
 
     const handleTooltipClick = (e) => {
-        e.stopPropagation(); // Prevent button click when clicking on tooltip icon
-        e.preventDefault(); // Prevent navigation if it's a link
+        e.stopPropagation();
+        e.preventDefault();
         setIsTooltipOpen(true);
     };
 
@@ -113,9 +61,7 @@ function Button({
         <>
             <span className="button__content">
                 {label && <span className="button__label">{label}</span>}
-                {iconUrl && (
-                    <img src={iconUrl} alt="" className="button__icon" />
-                )}
+                {iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
             </span>
             {hasTooltip && (
                 <span className="button__tooltip-icon" onClick={handleTooltipClick}>
@@ -125,7 +71,7 @@ function Button({
         </>
     );
 
-    // Si tenemos `url`, renderizamos un <a>, si no, un <button>
+    // Renderiza un <a> si hay `url`, o <button> en caso contrario
     if (url) {
         return (
             <>
@@ -143,7 +89,7 @@ function Button({
                     <Modal
                         isOpen={isTooltipOpen}
                         onClose={() => setIsTooltipOpen(false)}
-                        title={tooltipTitle || label || "Información"}
+                        title={tooltipTitle || label || 'Información'}
                     >
                         <div>{children}</div>
                     </Modal>
@@ -169,7 +115,7 @@ function Button({
                 <Modal
                     isOpen={isTooltipOpen}
                     onClose={() => setIsTooltipOpen(false)}
-                    title={tooltipTitle || label || "Información"}
+                    title={tooltipTitle || label || 'Información'}
                 >
                     <div>{children}</div>
                 </Modal>
