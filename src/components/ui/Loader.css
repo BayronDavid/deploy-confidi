@@ -1,3 +1,4 @@
+/* Contenedor a pantalla completa */
 .loader-container {
   position: fixed;
   top: 0;
@@ -11,6 +12,7 @@
   z-index: 9999;
 }
 
+/* Contenedor principal del loader */
 .loader {
   display: flex;
   flex-direction: column;
@@ -23,6 +25,9 @@
   width: 100vw;
 }
 
+/* =============================
+   VARIANTE DEFAULT
+   ============================= */
 .loader-spinner {
   border-radius: 50%;
   border: 3px solid var(--color-brand-pink);
@@ -30,30 +35,148 @@
   animation: spin 1s linear infinite;
 }
 
-.loader-small .loader-spinner {
+/* =============================
+   VARIANTE DONUT
+   ============================= */
+.loader-spinner.donut {
+  position: relative;
+  animation: spin 1s linear infinite;
+}
+
+.loader-spinner.donut::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-brand-pink) 0deg 90deg,
+    var(--color-brand-blue) 90deg 180deg,
+    var(--color-brand-yellow) 180deg 270deg,
+    var(--color-brand-green) 270deg 360deg
+  );
+}
+
+.loader-spinner.donut::after {
+  content: "";
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background-color: var(--color-neutral-white);
+}
+
+/* =============================
+   VARIANTE FLOWER
+   ============================= */
+.flower-loader {
+  position: relative;
+  animation: rotateFlower 4s linear infinite;
+}
+
+.flower-loader::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20%;
+  height: 20%;
+  background-color: var(--color-neutral-white);
+  border-radius: 50%;
+}
+
+/* Pétalos de la flor */
+.petal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30%;
+  height: 10%;
+  background-color: var(--color-brand-pink);
+  border-radius: 50px;
+  transform-origin: 0% 50%;
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+/* Definición de cada pétalo con su rotación y color (el rosa predomina) */
+.petal1 { --rotation: 0deg;   background-color: var(--color-brand-pink); animation-delay: 0s; }
+.petal2 { --rotation: 60deg;  background-color: var(--color-brand-pink); animation-delay: 0.1s; }
+.petal3 { --rotation: 120deg; background-color: var(--color-brand-blue); animation-delay: 0.2s; }
+.petal4 { --rotation: 180deg; background-color: var(--color-brand-yellow); animation-delay: 0.3s; }
+.petal5 { --rotation: 240deg; background-color: var(--color-brand-green); animation-delay: 0.4s; }
+.petal6 { --rotation: 300deg; background-color: var(--color-brand-pink); animation-delay: 0.5s; }
+
+/* Posiciona cada pétalo */
+.petal {
+  transform: rotate(var(--rotation)) translateX(50%);
+}
+
+/* =============================
+   TAMAÑOS COMUNES
+   ============================= */
+/* Variante DEFAULT: spinner simple */
+.loader-small .loader-spinner,
+.loader-small .flower-loader {
   width: 20px;
   height: 20px;
 }
 
-.loader-medium .loader-spinner {
+.loader-medium .loader-spinner,
+.loader-medium .flower-loader {
   width: 40px;
   height: 40px;
 }
 
-.loader-large .loader-spinner {
+.loader-large .loader-spinner,
+.loader-large .flower-loader {
   width: 60px;
   height: 60px;
 }
 
+/* Para la variante FLOWER se ajusta un poco distinto */
+.loader-small .flower-loader {
+  width: 30px;
+  height: 30px;
+}
+.loader-medium .flower-loader {
+  width: 60px;
+  height: 60px;
+}
+.loader-large .flower-loader {
+  width: 90px;
+  height: 90px;
+}
+
+/* =============================
+   ANIMACIONES
+   ============================= */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateFlower {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% {
+    transform: rotate(var(--rotation)) translateX(45%) scale(0.9);
+  }
+  100% {
+    transform: rotate(var(--rotation)) translateX(55%) scale(1);
+  }
+}
+
+/* =============================
+   Texto del Loader
+   ============================= */
 .loader-text {
   margin-top: var(--spacing-md);
   font-family: var(--font-family-base);
-  color: var(--color-text-dark);
+  color: var(--color-text-secondary);
   font-size: var(--font-size-base);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
