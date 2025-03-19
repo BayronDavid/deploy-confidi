@@ -22,6 +22,7 @@
      SISTEMA (estados de alerta)
      ============================== */
   --color-system-warning: #f6e333;
+  --color-system-warning-contrast: #856404;
   --color-system-error: #b2533e;
   --color-system-success: #04ae15;
 

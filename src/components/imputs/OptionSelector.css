@@ -61,12 +61,12 @@
 
 /* Estilos para la advertencia de campo no rellenado */
 .option-selector--pending-action {
-  border-left: 3px solid #ffc107;
+  border-left: 3px solid var(--color-system-warning, #ffc107);
   background-color: rgba(255, 248, 225, 0.1);
 }
 
 .option-selector__warning {
-  color: #856404;
+  color: var(--color-system-warning-contrast);
   background-color: #fff3cd;
   padding: 0.2rem 0.5rem;
   margin-top: 8px;

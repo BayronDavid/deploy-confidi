@@ -166,7 +166,7 @@
 
 /* Añadir a tu archivo CSS existente */
 .document-request--pending-action {
-  border-left: 3px solid #ffc107;
+  border-left: 3px solid var(--color-system-warning, #ffc107);
   /* padding-left: 0.5rem; */
   background-color: rgba(255, 248, 225, 0.1);
 }
@@ -179,7 +179,8 @@
 }
 
 .document-request__warning {
-  color: #856404;
+  color: var(--color-system-warning-contrast);
+
   background-color: #fff3cd;
   padding: 0.2rem 0.5rem;
   /* margin-top: 10px; */

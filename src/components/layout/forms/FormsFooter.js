@@ -13,7 +13,8 @@ function FormsFooter() {
         getRouteForStep,
         isCurrentFormValid,
         submitCurrentForm,
-        setFormSubmitAttempted
+        setFormSubmitAttempted,
+        formRef
     } = useFormsContext();
 
     // Check if this is the last step
@@ -22,11 +23,44 @@ function FormsFooter() {
     const handleNextStep = () => {
         // Marcamos que hubo un intento de envío
         setFormSubmitAttempted(true);
-
-        // Intentamos validar y enviar el formulario actual
+        
+        // Técnica clave: validar de una manera que funcione consistentemente
+        let formIsValid = true;
+        
+        if (formRef && formRef.current) {
+            // Primero, hacer un reset de la validación para que el estado interno del formulario se limpie
+            // Esto es crucial para que la validación se active en cada intento
+            formRef.current.classList.remove('validated');
+            void formRef.current.offsetWidth; // Forzar un reflow
+            formRef.current.classList.add('validated');
+            
+            // Verificar validez
+            formIsValid = formRef.current.checkValidity();
+            
+            if (!formIsValid) {
+                // Obtenemos todos los inputs inválidos
+                const invalidInputs = formRef.current.querySelectorAll(':invalid');
+                
+                // Si hay inputs inválidos, enfocamos solo el primero
+                if (invalidInputs.length > 0) {
+                    // Técnica crucial para que el navegador muestre la validación:
+                    // Hacer que el elemento reporte su invalidad explícitamente
+                    invalidInputs[0].focus();
+                    
+                    // Esto es lo que hace que aparezca el mensaje nativo cada vez
+                    setTimeout(() => {
+                        invalidInputs[0].reportValidity();
+                    }, 100);
+                    
+                    return; // Detener aquí
+                }
+            }
+        }
+        
+        // Validación personalizada
         const isSubmitSuccessful = submitCurrentForm();
-
-        // Solo navegamos al siguiente paso si el formulario es válido y se envió correctamente
+        
+        // Solo navegamos al siguiente paso si ambas validaciones pasan
         if (isSubmitSuccessful && currentStep < steps.length - 1) {
             const nextStep = currentStep + 1;
             const nextRoute = getRouteForStep(nextStep);

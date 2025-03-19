@@ -1,23 +1,24 @@
 /* Contenedor principal */
-.custom-text-input-container {
+.custom-text-input {
   display: inline-block;
-  width: 240px; 
+  width: 240px;
   position: relative;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-lg);
+  /* margin-bottom: var(--spacing-lg); */
 }
 
-.input-wrapper {
+.custom-text-input__wrapper {
   position: relative;
+  border-radius: var(--border-radius-lg);
 }
 
-.input-wrapper input {
+.custom-text-input__input {
   width: calc(100% - 2rem);
   border: var(--border-width) solid var(--color-neutral-400);
-  border-radius: var(--border-radius-lg); /* Forma "pill" */
-  padding: 0.75rem 1rem 0 1rem; 
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem 1rem 0 1rem;
   font-size: calc(var(--font-size-base) * 1.15);
   color: var(--color-text-primary);
   outline: none;
@@ -27,7 +28,7 @@
 }
 
 /* Label flotante */
-.floating-label {
+.custom-text-input__label {
   position: absolute;
   top: 50%;
   left: var(--spacing-lg);
@@ -38,62 +39,63 @@
   font-size: var(--font-size-base);
 }
 
+/* Make tooltip icon clickable while keeping label non-clickable */
+.custom-text-input__label .custom-text-input__tooltip-icon {
+  pointer-events: auto; /* Override the parent's pointer-events: none */
+  z-index: 10; /* Ensure it's above other elements */
+}
+
 /* ---- Estados de interacción ---- */
 
 /* Hover */
-.custom-text-input-container:not(.disabled):hover .input-wrapper input {
-  /* border-color: var(--color-neutral-600); */
+.custom-text-input:not(.custom-text-input--disabled):hover .custom-text-input__input {
   background-color: var(--color-neutral-100);
 }
 
 /* Focus (Typing) */
-.custom-text-input-container.typing .input-wrapper input {
+.custom-text-input--typing .custom-text-input__input {
   border-color: var(--color-neutral-700);
-  /* border-color: red; */
-  /* box-shadow: 0 0 0 1px var(--color-neutral-700); */
   background-color: var(--color-neutral-100);
 }
 
 /* Mover el label hacia arriba cuando el input está en foco o tiene valor */
-.custom-text-input-container.typing .floating-label,
-.custom-text-input-container.has-value .floating-label {
+.custom-text-input--typing .custom-text-input__label,
+.custom-text-input--has-value .custom-text-input__label {
   top: var(--spacing-sm);
   transform: translateY(0);
   font-size: calc(var(--font-size-base) * 0.85);
   color: var(--color-text-primary);
 }
 
-.custom-text-input-container.typing .floating-label {
+.custom-text-input--typing .custom-text-input__label {
   color: var(--color-primary);
 }
 
-.custom-text-input-container.typing.error .floating-label,
-.custom-text-input-container.has-value.error .floating-label {
+.custom-text-input--typing.custom-text-input--error .custom-text-input__label,
+.custom-text-input--has-value.custom-text-input--error .custom-text-input__label {
   color: var(--color-system-error);
 }
 
 /* Disabled */
-.custom-text-input-container.disabled .input-wrapper input {
-  /* background-color: var(--color-neutral-200); */
-  /* border-color: var(--color-neutral-300); */
+.custom-text-input--disabled .custom-text-input__input {
   cursor: not-allowed;
   color: var(--color-neutral-600);
 }
 
-.custom-text-input-container.disabled .floating-label {
+.custom-text-input--disabled .custom-text-input__label {
   color: var(--color-neutral-400);
 }
 
 /* Error state */
-.custom-text-input-container.error .input-wrapper input {
+.custom-text-input--error .custom-text-input__input {
   border-color: var(--color-system-error);
 }
 
-.custom-text-input-container.error.typing .input-wrapper input {
+.custom-text-input--error.custom-text-input--typing .custom-text-input__input {
   box-shadow: 0 0 0 2px rgba(178, 83, 62, 0.3);
 }
 
-.error-message {
+.custom-text-input__error-message {
   color: var(--color-system-error);
   font-size: 0.85em;
   margin-top: var(--spacing-sm);
@@ -101,38 +103,70 @@
   bottom: -20px;
 }
 
-/* Tooltip */
-.tooltip-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background-color: var(--color-neutral-300);
-  color: var(--color-neutral-700);
-  font-size: 11px;
-  margin-left: var(--spacing-sm);
-  cursor: help;
-  position: relative;
-}
-
-.tooltip-icon:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-neutral-100);
-}
-
 /* When input is filled */
-.custom-text-input-container.has-value:not(.typing):not(.error) .input-wrapper input {
+.custom-text-input--has-value:not(.custom-text-input--typing):not(.custom-text-input--error)
+  .custom-text-input__input {
   border-color: var(--color-neutral-700);
 }
 
-.custom-text-input-container.has-value:not(.typing) .floating-label {
+.custom-text-input--has-value:not(.custom-text-input--typing) .custom-text-input__label {
   color: var(--color-text-secondary);
 }
 
 /* When input is filled but not focused */
-.custom-text-input-container.has-value:not(.typing):not(.disabled):hover .input-wrapper input {
+.custom-text-input--has-value:not(.custom-text-input--typing):not(.custom-text-input--disabled):hover
+  .custom-text-input__input {
   border-color: var(--color-neutral-600);
   background-color: var(--color-neutral-200);
+}
+
+/* Tooltip icon styling */
+.custom-text-input__tooltip-icon {
+  margin-left: 8px;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: color 0.2s ease;
+  display: inline-block; /* Ensure it can receive clicks */
+}
+
+.custom-text-input__tooltip-icon:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Warning message styling - consistent with OptionSelector but more compact */
+.custom-text-input__warning {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-system-warning-contrast);
+  /* background-color: #fff3cd; */
+  padding: 0.1rem 0.4rem;
+  font-size: 0.8rem;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.custom-text-input__warning svg {
+  font-size: 0.8rem;
+}
+
+/* Validation error state */
+.custom-text-input--validation-error {
+  background-color: rgba(255, 248, 225, 0.1);
+}
+
+.custom-text-input--validation-error .custom-text-input__wrapper {
+  /* border-color: var(--color-system-warning, #ffc107); */
+}
+
+.custom-text-input--validation-error .custom-text-input__input {
+  /* border-color: var(--color-system-warning-contrast, #ffc107); */
+  border-left-width: 2px; /* Makes the left border more prominent */
+  color: var(--color-system-warning-contrast, #856404);
+}
+
+.custom-text-input--validation-error .custom-text-input__input {
+  color: #dc3545;
 }

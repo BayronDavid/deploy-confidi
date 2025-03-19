@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 const FormsContext = createContext();
@@ -256,6 +256,9 @@ export function FormsProvider({ children }) {
         return `/forms/${step}`;
     };
 
+    // Nueva referencia para el formulario actual
+    const [formRef, setFormRef] = useState(null);
+
     return (
         <FormsContext.Provider
             value={{
@@ -274,6 +277,8 @@ export function FormsProvider({ children }) {
                 isFileValue,
                 formSubmitAttempted,
                 setFormSubmitAttempted,
+                formRef,
+                setFormRef,
             }}
         >
             {children}

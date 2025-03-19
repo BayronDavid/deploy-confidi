@@ -7,7 +7,7 @@ const formConfig = {
         {
             id: "personalData",
             // title: "Información Personal", // This will be shown inside the accordion content if needed
-            accordionTitle: "Datos Personales", // This will be shown in accordion header
+            accordionTitle: "Dati del Richiedente", // This will be shown in accordion header
             isAccordion: true,
             defaultOpen: true,
             layout: {
@@ -20,23 +20,119 @@ const formConfig = {
                 }
             },
             inputs: [
-                { id: "firstName", type: "text", label: "Nombre", required: true },
-                { id: "lastName", type: "text", label: "Apellido", required: true },
-                { id: "email", type: "email", label: "Correo Electrónico", required: true },
-                { id: "phone", type: "tel", label: "Teléfono", required: false },
-            ],
+                {
+                    id: "ragioneSociale",
+                    type: "text",
+                    label: "Ragione Sociale",
+                    required: true,
+                    tooltip: "Inserisci la Ragione Sociale"
+                },
+                {
+                    id: "formaGiuridica",
+                    type: "text",
+                    label: "Forma Giuridica",
+                    required: true
+                },
+                {
+                    id: "partitaIva",
+                    type: "text",
+                    label: "Partita IVA",
+                    required: true
+                },
+                {
+                    id: "codiceFiscale",
+                    type: "text",
+                    label: "Codice Fiscale",
+                    required: true
+                },
+                {
+                    id: "codiceAteco",
+                    type: "text",
+                    label: "Codice Ateco e Attività Esercitata",
+                    required: true
+                },
+                {
+                    id: "sedeLegale",
+                    type: "text",
+                    label: "Sede Legale (Via, N°, Cap, Prov.)",
+                    required: true
+                },
+                {
+                    id: "indirizzoPosta",
+                    type: "text",
+                    label: "Indirizzo di Posta (Via, N°, Cap, Prov.)",
+                    required: true
+                },
+                {
+                    id: "telefono",
+                    type: "tel",
+                    label: "Telefono",
+                    required: false
+                },
+                {
+                    id: "email",
+                    type: "email",
+                    label: "Email",
+                    required: false
+                },
+                {
+                    id: "pec",
+                    type: "email",
+                    label: "Pec",
+                    required: false
+                }
+            ]
         },
         {
             id: "address",
-            accordionTitle: "Dirección", // Only using accordionTitle if you want to hide the title inside
+            accordionTitle: "Dati del Legale Rappresentante",
             isAccordion: true,
             defaultOpen: false,
             inputs: [
-                { id: "street", type: "text", label: "Calle", required: true },
-                { id: "city", type: "text", label: "Ciudad", required: true },
-                { id: "state", type: "text", label: "Estado", required: true },
-                { id: "zip", type: "number", label: "Código Postal", required: true },
-            ],
+                {
+                    id: "nomeCognome",
+                    type: "text",
+                    label: "Nome e Cognome",
+                    required: true,
+                    tooltip: "Inserisci il nome e cognome"
+                },
+                {
+                    id: "carica",
+                    type: "text",
+                    label: "Carica",
+                    required: true
+                },
+                {
+                    id: "natoA",
+                    type: "text",
+                    label: "Nato a (Luogo e Data)",
+                    required: true
+                },
+                {
+                    id: "codiceFiscale",
+                    type: "text",
+                    label: "Codice Fiscale",
+                    required: true
+                },
+                {
+                    id: "residenza",
+                    type: "text",
+                    label: "Residenza (Via, N°, CAP, Prov.)",
+                    required: true
+                },
+                {
+                    id: "domicilio",
+                    type: "text",
+                    label: "Domicilio (se diverso da residenza)",
+                    required: false
+                },
+                {
+                    id: "telefono",
+                    type: "tel",
+                    label: "Telefono",
+                    required: true
+                }
+            ]
         },
         {
             id: "documents",

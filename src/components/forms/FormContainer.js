@@ -72,16 +72,23 @@ function validateInput(groupData, input) {
 function FormContainer({ formConfig }) {
     const hasMounted = useHasMounted();
     const initialValidationDone = useRef(false);
+    const formRef = useRef(null);
     const {
         formData,
         updateFormData,
         setIsCurrentFormValid,
         setSubmitCurrentForm,
+        setFormRef
     } = useFormsContext();
 
     // Al montar, forzamos inicialmente el formulario a "inválido" hasta que se complete la validación.
     useEffect(() => {
         setIsCurrentFormValid(false);
+        
+        // Registrar la referencia del formulario en el contexto
+        if (formRef.current) {
+            setFormRef(formRef);
+        }
     }, []);
 
     /**
@@ -163,7 +170,14 @@ function FormContainer({ formConfig }) {
      */
     const handleSubmit = () => {
         if (!formConfig) return false;
-
+        
+        // Verificar validez nativa sin forzar reportValidity
+        let nativeValidationPassed = true;
+        if (formRef.current) {
+            nativeValidationPassed = formRef.current.checkValidity();
+        }
+        
+        // Continuar con la validación personalizada existente
         let isFormValid = true;
 
         for (const group of formConfig.groups) {
@@ -186,7 +200,15 @@ function FormContainer({ formConfig }) {
             if (!isFormValid) break;
         }
 
-        return isFormValid;
+        // Devolver resultado combinado de ambas validaciones
+        return nativeValidationPassed && isFormValid;
+    };
+
+    // Manejador del evento submit del formulario
+    const onFormSubmit = (e) => {
+        e.preventDefault(); // Evitar envío real
+        // No hacemos nada más aquí, ya que el botón de "Prossimo Passo"
+        // se encargará de llamar a handleSubmit a través del contexto
     };
 
     // Se registra la función de submit en el contexto.
@@ -201,7 +223,12 @@ function FormContainer({ formConfig }) {
     }
 
     return (
-        <>
+        <form 
+            ref={formRef} 
+            onSubmit={onFormSubmit} 
+            noValidate={false} // Mantener la validación nativa activada
+            className="form-container" // Asegurar que tenga una clase para CSS
+        >
             {formConfig.title && <h1>{formConfig.title}</h1>}
             {formConfig.description && <p>{formConfig.description}</p>}
 
@@ -256,7 +283,7 @@ function FormContainer({ formConfig }) {
                     );
                 }
             })}
-        </>
+        </form>
     );
 }
 

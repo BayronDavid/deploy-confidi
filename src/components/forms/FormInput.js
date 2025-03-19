@@ -6,7 +6,6 @@ import DocumentRequest from "../imputs/DocumentRequest";
 import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
 
-
 function FormInput({ config, value, onChange }) {
     const {
         type,
@@ -21,6 +20,9 @@ function FormInput({ config, value, onChange }) {
         title,
         description,
         required,
+        pattern, // Añadimos soporte para pattern
+        minLength, // Añadimos soporte para minLength
+        maxLength, // Añadimos soporte para maxLength
     } = config;
     const { setIsCurrentFormValid } = useFormsContext();
 
@@ -100,6 +102,10 @@ function FormInput({ config, value, onChange }) {
                     disabled={enabled === false}
                     min={min}
                     max={max}
+                    required={required}
+                    pattern={pattern}
+                    minLength={minLength}
+                    maxLength={maxLength}
                     tooltip={tooltip}
                 />
             );

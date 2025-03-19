@@ -20,3 +20,20 @@
   /* border: 1px solid rgba(128, 128, 128, 0.432); */
   overflow-y: auto;
 }
+
+/* Estilos para reforzar la validación nativa */
+.form-container:invalid {
+    display: block; /* Asegurar que el formulario es visible */
+}
+
+/* Estilo para controlar los inputs inválidos cuando se ha intentado validar */
+.form-container.validated :invalid {
+    border-color: #ff4d4f; /* Color de borde rojo para inputs inválidos */
+}
+
+/* Mejorar la visibilidad de campos con errores de validación */
+.form-container.validated input:invalid:focus,
+.form-container.validated select:invalid:focus,
+.form-container.validated textarea:invalid:focus {
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2); /* Sutil resplandor rojo al enfocarse */
+}
