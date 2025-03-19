@@ -6,10 +6,19 @@ const formConfig = {
     groups: [
         {
             id: "personalData",
-            title: "Datos Personales",
+            // title: "Información Personal", // This will be shown inside the accordion content if needed
+            accordionTitle: "Datos Personales", // This will be shown in accordion header
             isAccordion: true,
             defaultOpen: true,
-            isColumn: true,
+            layout: {
+                columns: 2,               // Dos columnas por defecto
+                gap: "large",             // Espacio grande entre elementos
+                alignment: "start",       // Alineación superior
+                responsive: {
+                    tablet: 2,              // Mantener 2 columnas en tablet
+                    mobile: 1               // Una columna en móviles
+                }
+            },
             inputs: [
                 { id: "firstName", type: "text", label: "Nombre", required: true },
                 { id: "lastName", type: "text", label: "Apellido", required: true },
@@ -19,7 +28,7 @@ const formConfig = {
         },
         {
             id: "address",
-            title: "Dirección",
+            accordionTitle: "Dirección", // Only using accordionTitle if you want to hide the title inside
             isAccordion: true,
             defaultOpen: false,
             inputs: [
@@ -31,7 +40,7 @@ const formConfig = {
         },
         {
             id: "documents",
-            title: "Documentos",
+            accordionTitle: "Documentos",
             isAccordion: true,
             defaultOpen: false,
             inputs: [
@@ -53,7 +62,7 @@ const formConfig = {
         },
         {
             id: "preferences",
-            title: "Preferencias",
+            accordionTitle: "Preferencias",
             isAccordion: true,
             defaultOpen: true,
             inputs: [
@@ -81,7 +90,7 @@ const formConfig = {
         },
         {
             id: "additionalInfo",
-            title: "Información Adicional",
+            accordionTitle: "Información Adicional",
             isAccordion: true,
             defaultOpen: false,
             inputs: [

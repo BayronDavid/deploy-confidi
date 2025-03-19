@@ -5,6 +5,7 @@
   gap: var(--spacing-md, 16px);
   border-top: 1px solid #d9d9d9;
   padding-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Título */

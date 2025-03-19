@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 // Idiomas soportados
 export const SUPPORTED_LOCALES = ['es', 'en', 'it'];
-export const DEFAULT_LOCALE = 'es';
+export const DEFAULT_LOCALE = 'it';
 
 // Context para gestionar el idioma actual
 export const LanguageContext = createContext({

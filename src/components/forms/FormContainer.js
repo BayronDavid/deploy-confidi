@@ -213,11 +213,15 @@ function FormContainer({ formConfig }) {
                     return (
                         <Accordion
                             key={group.id}
-                            title={group.title || "Sección"}
+                            title={group.accordionTitle || group.title || "Sección"}
                             defaultOpen={group.defaultOpen}
                         >
                             {group.inputs ? (
-                                <FormGroup group={group} groupData={formData[group.id]} />
+                                <FormGroup 
+                                    group={group} 
+                                    groupData={formData[group.id]} 
+                                    isInAccordion={true}
+                                />
                             ) : (
                                 <div>
                                     <FormInput

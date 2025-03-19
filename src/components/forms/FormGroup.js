@@ -5,12 +5,50 @@ import FormInput from "./FormInput";
 import { useFormsContext } from "@/context/FormsContext";
 import "./FormGroup.css";
 
-function FormGroup({ group, groupData }) {
+function FormGroup({ group, groupData, isInAccordion = false }) {
   const { updateFormData, setIsCurrentFormValid } = useFormsContext();
   const [localData, setLocalData] = useState(groupData || {});
   
   // Verificar si el grupo está habilitado, por defecto es true
   const isGroupEnabled = group.enabled !== false;
+
+  // Función para generar clases de layout basadas en la configuración
+  const getLayoutClasses = () => {
+    // Si tiene configuración de layout avanzada
+    if (group.layout) {
+      const { 
+        columns = 1, 
+        gap = 'normal', 
+        alignment = 'stretch', 
+        responsive = {} 
+      } = group.layout;
+      
+      let classes = [];
+      
+      // Clase base para número de columnas
+      classes.push(`form-group__grid-cols-${columns}`);
+      
+      // Clases para espaciado
+      classes.push(`form-group__gap-${gap}`);
+      
+      // Clases para alineación
+      classes.push(`form-group__align-${alignment}`);
+      
+      // Configuraciones responsivas
+      if (responsive.tablet) {
+        classes.push(`form-group__tablet-cols-${responsive.tablet}`);
+      }
+      
+      if (responsive.mobile) {
+        classes.push(`form-group__mobile-cols-${responsive.mobile}`);
+      }
+      
+      return classes.join(' ');
+    }
+    
+    // Compatibilidad con el modo anterior
+    return group.isColumn ? 'form-group__form-input--column' : '';
+  };
 
   useEffect(() => {
     setLocalData(groupData || {});
@@ -63,11 +101,11 @@ function FormGroup({ group, groupData }) {
 
   return (
     <div className="form-group-container">
-      {/* Solo mostrar título y descripción si existen */}
+      {/* Always show title if it exists, regardless of being in an accordion */}
       {group.title && <h2>{group.title}</h2>}
       {group.description && <p>{group.description}</p>}
       
-      <div className={`form-group__form-input ${group.isColumn ? 'form-group__form-input--column' : ''}`}>
+      <div className={`form-group__form-input ${getLayoutClasses()}`}>
         {(group.inputs || []).map((input) => (
           <FormInput
             key={input.id}

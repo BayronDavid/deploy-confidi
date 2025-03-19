@@ -30,8 +30,8 @@
    ============================= */
 .loader-spinner {
   border-radius: 50%;
-  border: 3px solid var(--color-brand-pink);
-  border-top-color: var(--color-neutral-white);
+  border: 3px solid var(--color-primary);
+  border-top-color: var(--color-neutral-100);
   animation: spin 1s linear infinite;
 }
 
@@ -50,10 +50,10 @@
   height: 100%;
   border-radius: 50%;
   background: conic-gradient(
-    var(--color-brand-pink) 0deg 90deg,
-    var(--color-brand-blue) 90deg 180deg,
-    var(--color-brand-yellow) 180deg 270deg,
-    var(--color-brand-green) 270deg 360deg
+    var(--color-primary) 0deg 90deg,
+    var(--color-secondary) 90deg 180deg,
+    var(--color-accent-yellow) 180deg 270deg,
+    var(--color-accent-green) 270deg 360deg
   );
 }
 
@@ -65,7 +65,7 @@
   width: 70%;
   height: 70%;
   border-radius: 50%;
-  background-color: var(--color-neutral-white);
+  background-color: var(--color-neutral-100);
 }
 
 /* =============================
@@ -84,7 +84,7 @@
   transform: translate(-50%, -50%);
   width: 20%;
   height: 20%;
-  background-color: var(--color-neutral-white);
+  background-color: var(--color-neutral-100);
   border-radius: 50%;
 }
 
@@ -95,19 +95,19 @@
   left: 50%;
   width: 30%;
   height: 10%;
-  background-color: var(--color-brand-pink);
+  background-color: var(--color-primary);
   border-radius: 50px;
   transform-origin: 0% 50%;
   animation: pulse 1.5s ease-in-out infinite alternate;
 }
 
 /* Definición de cada pétalo con su rotación y color (el rosa predomina) */
-.petal1 { --rotation: 0deg;   background-color: var(--color-brand-pink); animation-delay: 0s; }
-.petal2 { --rotation: 60deg;  background-color: var(--color-brand-pink); animation-delay: 0.1s; }
-.petal3 { --rotation: 120deg; background-color: var(--color-brand-blue); animation-delay: 0.2s; }
-.petal4 { --rotation: 180deg; background-color: var(--color-brand-yellow); animation-delay: 0.3s; }
-.petal5 { --rotation: 240deg; background-color: var(--color-brand-green); animation-delay: 0.4s; }
-.petal6 { --rotation: 300deg; background-color: var(--color-brand-pink); animation-delay: 0.5s; }
+.petal1 { --rotation: 0deg;   background-color: var(--color-primary); animation-delay: 0s; }
+.petal2 { --rotation: 60deg;  background-color: var(--color-primary); animation-delay: 0.1s; }
+.petal3 { --rotation: 120deg; background-color: var(--color-secondary); animation-delay: 0.2s; }
+.petal4 { --rotation: 180deg; background-color: var(--color-accent-yellow); animation-delay: 0.3s; }
+.petal5 { --rotation: 240deg; background-color: var(--color-accent-green); animation-delay: 0.4s; }
+.petal6 { --rotation: 300deg; background-color: var(--color-primary); animation-delay: 0.5s; }
 
 /* Posiciona cada pétalo */
 .petal {

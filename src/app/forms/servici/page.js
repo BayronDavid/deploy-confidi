@@ -47,6 +47,15 @@ export default function ServiciPage() {
           </>
         ),
         enabled: true,
+        layout: {
+          columns: 2,               // Dos columnas por defecto
+          gap: "large",             // Espacio grande entre elementos
+          alignment: "start",       // Alineación superior
+          responsive: {
+            tablet: 2,              // Mantener 2 columnas en tablet
+            mobile: 1               // Una columna en móviles
+          }
+        },
         inputs: [
           {
             id: "Categoria",

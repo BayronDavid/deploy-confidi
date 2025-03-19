@@ -1,0 +1,138 @@
+/* Contenedor principal */
+.custom-text-input-container {
+  display: inline-block;
+  width: 240px; 
+  position: relative;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper input {
+  width: calc(100% - 2rem);
+  border: var(--border-width) solid var(--color-neutral-400);
+  border-radius: var(--border-radius-lg); /* Forma "pill" */
+  padding: 0.75rem 1rem 0 1rem; 
+  font-size: calc(var(--font-size-base) * 1.15);
+  color: var(--color-text-primary);
+  outline: none;
+  background-color: var(--color-neutral-100);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  height: 26px;
+}
+
+/* Label flotante */
+.floating-label {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing-lg);
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-text-placeholder);
+  transition: 0.3s ease all;
+  font-size: var(--font-size-base);
+}
+
+/* ---- Estados de interacción ---- */
+
+/* Hover */
+.custom-text-input-container:not(.disabled):hover .input-wrapper input {
+  /* border-color: var(--color-neutral-600); */
+  background-color: var(--color-neutral-100);
+}
+
+/* Focus (Typing) */
+.custom-text-input-container.typing .input-wrapper input {
+  border-color: var(--color-neutral-700);
+  /* border-color: red; */
+  /* box-shadow: 0 0 0 1px var(--color-neutral-700); */
+  background-color: var(--color-neutral-100);
+}
+
+/* Mover el label hacia arriba cuando el input está en foco o tiene valor */
+.custom-text-input-container.typing .floating-label,
+.custom-text-input-container.has-value .floating-label {
+  top: var(--spacing-sm);
+  transform: translateY(0);
+  font-size: calc(var(--font-size-base) * 0.85);
+  color: var(--color-text-primary);
+}
+
+.custom-text-input-container.typing .floating-label {
+  color: var(--color-primary);
+}
+
+.custom-text-input-container.typing.error .floating-label,
+.custom-text-input-container.has-value.error .floating-label {
+  color: var(--color-system-error);
+}
+
+/* Disabled */
+.custom-text-input-container.disabled .input-wrapper input {
+  /* background-color: var(--color-neutral-200); */
+  /* border-color: var(--color-neutral-300); */
+  cursor: not-allowed;
+  color: var(--color-neutral-600);
+}
+
+.custom-text-input-container.disabled .floating-label {
+  color: var(--color-neutral-400);
+}
+
+/* Error state */
+.custom-text-input-container.error .input-wrapper input {
+  border-color: var(--color-system-error);
+}
+
+.custom-text-input-container.error.typing .input-wrapper input {
+  box-shadow: 0 0 0 2px rgba(178, 83, 62, 0.3);
+}
+
+.error-message {
+  color: var(--color-system-error);
+  font-size: 0.85em;
+  margin-top: var(--spacing-sm);
+  position: absolute;
+  bottom: -20px;
+}
+
+/* Tooltip */
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--color-neutral-300);
+  color: var(--color-neutral-700);
+  font-size: 11px;
+  margin-left: var(--spacing-sm);
+  cursor: help;
+  position: relative;
+}
+
+.tooltip-icon:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-neutral-100);
+}
+
+/* When input is filled */
+.custom-text-input-container.has-value:not(.typing):not(.error) .input-wrapper input {
+  border-color: var(--color-neutral-700);
+}
+
+.custom-text-input-container.has-value:not(.typing) .floating-label {
+  color: var(--color-text-secondary);
+}
+
+/* When input is filled but not focused */
+.custom-text-input-container.has-value:not(.typing):not(.disabled):hover .input-wrapper input {
+  border-color: var(--color-neutral-600);
+  background-color: var(--color-neutral-200);
+}
