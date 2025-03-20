@@ -13,7 +13,8 @@ function FormGroup({
   parentGroupId = null,
   isRepeatable = false,
   instanceIndex = 0,
-  canDelete = false
+  canDelete = false,
+  ...restProps // Para recibir propiedades adicionales como data-group-id
 }) {
   const { 
     updateFormData, 
@@ -208,7 +209,10 @@ function FormGroup({
   };
 
   return (
-    <div className={`form-group-container ${isRepeatable ? 'repeatable-instance' : ''}`}>
+    <div 
+      className={`form-group-container ${isRepeatable ? 'repeatable-instance' : ''}`}
+      {...restProps} // Propagar atributos adicionales como data-group-id
+    >
       {/* Mostrar título solo si no está en un acordeón o es repetible */}
       {(group.title && (!isInAccordion || isRepeatable)) && (
         <div className="group-header">

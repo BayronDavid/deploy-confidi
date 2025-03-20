@@ -330,7 +330,7 @@ function FormContainer({ formConfig }) {
         return () => setSubmitCurrentForm(() => () => false);
     }, [setSubmitCurrentForm, formConfig, formData]);
 
-    // Función mejorada para duplicar grupos - solución al problema del doble clic
+    // Función mejorada para duplicar grupos con focus automático
     const handleDuplicateGroup = (groupId) => {
         console.log("Solicitando duplicación de grupo:", groupId);
         
@@ -345,10 +345,49 @@ function FormContainer({ formConfig }) {
             // Usar setTimeout para asegurar que el estado se actualice antes de duplicar
             setTimeout(() => {
                 duplicateGroup(groupId);
+                // Esperamos otro ciclo para hacer scroll a la nueva instancia
+                setTimeout(() => scrollToLastInstance(groupId), 100);
             }, 10);
         } else {
             // Si el grupo ya existe, simplemente duplicamos
             duplicateGroup(groupId);
+            // Esperamos a que el DOM se actualice antes de hacer scroll
+            setTimeout(() => scrollToLastInstance(groupId), 100);
+        }
+    };
+
+    // Función para hacer scroll a la última instancia de un grupo
+    const scrollToLastInstance = (groupId) => {
+        // Buscar todas las instancias del grupo
+        const instances = document.querySelectorAll(`[data-group-id="${groupId}"].repeatable-instance`);
+        
+        if (instances.length > 0) {
+            // Obtener la última instancia
+            const lastInstance = instances[instances.length - 1];
+            
+            // Encontrar el contenedor con scroll
+            const scrollContainer = document.querySelector('.forms-content');
+            
+            if (scrollContainer) {
+                // Calcular la posición para el scroll
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const instanceRect = lastInstance.getBoundingClientRect();
+                
+                // Hacer scroll suave hacia la nueva instancia
+                scrollContainer.scrollTo({
+                    top: scrollContainer.scrollTop + (instanceRect.top - containerRect.top) - 20,
+                    behavior: 'smooth'
+                });
+                
+                // Opcionalmente, agregar un efecto visual para destacar la nueva instancia
+                lastInstance.classList.add('highlight-new-instance');
+                setTimeout(() => {
+                    lastInstance.classList.remove('highlight-new-instance');
+                }, 2000);
+            } else {
+                // Fallback si no encontramos el contenedor específico
+                lastInstance.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
     };
 
@@ -415,6 +454,7 @@ function FormContainer({ formConfig }) {
                                             isRepeatable={true}
                                             instanceIndex={index}
                                             canDelete={index > 0} // Solo permitir eliminar si no es la primera instancia
+                                            data-group-id={group.id} // Añadir este atributo para identificar el grupo
                                         />
                                     ))}
                                     
@@ -441,6 +481,7 @@ function FormContainer({ formConfig }) {
                                     isRepeatable={true}
                                     instanceIndex={index}
                                     canDelete={index > 0} // Solo permitir eliminar si no es la primera instancia
+                                    data-group-id={group.id} // Añadir este atributo para identificar el grupo
                                 />
                             ))}
                             
