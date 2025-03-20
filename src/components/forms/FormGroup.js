@@ -106,9 +106,9 @@ function FormGroup({ group, groupData, isInAccordion = false }) {
       {group.description && <p>{group.description}</p>}
       
       <div className={`form-group__form-input ${getLayoutClasses()}`}>
-        {(group.inputs || []).map((input) => (
+        {(group.inputs || []).map((input, index) => (
           <FormInput
-            key={input.id}
+            key={`${input.id}-${index}`}
             config={{ ...input, enabled: input.enabled !== false && isGroupEnabled }}
             value={localData[input.id]}
             onChange={(value) => handleInputChange(input.id, value)}

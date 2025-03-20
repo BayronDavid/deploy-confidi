@@ -5,6 +5,7 @@ import OptionSelector from "../imputs/OptionSelector";
 import DocumentRequest from "../imputs/DocumentRequest";
 import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
+import CustomSelector from "../imputs/CustomSelector";
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -23,6 +24,8 @@ function FormInput({ config, value, onChange }) {
         pattern, // Añadimos soporte para pattern
         minLength, // Añadimos soporte para minLength
         maxLength, // Añadimos soporte para maxLength
+        multiple, // Para selectores múltiples
+        maxSelections, // Máximo de opciones seleccionables
     } = config;
     const { setIsCurrentFormValid } = useFormsContext();
 
@@ -48,6 +51,12 @@ function FormInput({ config, value, onChange }) {
             } else if (type === "optionSelector") {
                 // Validación para "optionSelector"
                 isValid = Array.isArray(value) && value.length > 0;
+            } else if (type === "select" && multiple) {
+                // Validación para selector múltiple
+                isValid = Array.isArray(value) && value.length > 0;
+            } else if (type === "select") {
+                // Validación para selector único
+                isValid = value !== null && value !== undefined && value !== "";
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");
@@ -58,7 +67,7 @@ function FormInput({ config, value, onChange }) {
                 setIsCurrentFormValid(false);
             }
         }
-    }, [value, required, type, enabled, config.isOptional]);
+    }, [value, required, type, enabled, config.isOptional, multiple]);
 
     // Si el input está deshabilitado explícitamente, no lo renderizamos
     if (enabled === false) {
@@ -111,27 +120,20 @@ function FormInput({ config, value, onChange }) {
             );
 
         case "select":
+            // Usar CustomSelector para reemplazar el select nativo
             return renderInputWithWrapper(
-                <div>
-                    <label>
-                        {label}
-                        {tooltip && <span title={tooltip}> ?</span>}
-                    </label>
-                    <select
-                        value={value || ""}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder={placeholder || ""}
-                        disabled={enabled === false}
-                    >
-                        <option value="">{placeholder || "Seleccione"}</option>
-                        {options &&
-                            options.map((option, idx) => (
-                                <option key={idx} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                    </select>
-                </div>
+                <CustomSelector
+                    label={label}
+                    options={options || []}
+                    value={multiple ? (Array.isArray(value) ? value : []) : value}
+                    onChange={onChange}
+                    disabled={enabled === false}
+                    tooltip={tooltip}
+                    required={required !== false}
+                    multiple={multiple === true}
+                    placeholder={placeholder || "Seleccione"}
+                    maxSelections={maxSelections}
+                />
             );
 
         case "documentRequest":

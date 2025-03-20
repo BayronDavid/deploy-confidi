@@ -136,24 +136,78 @@ const formConfig = {
         },
         {
             id: "documents",
-            accordionTitle: "Documentos",
+            accordionTitle: "Dati istituto di credito e tipologia di finanziamento ",
+            description: "La tipologia e la percentuale di garanzia saranno definite successivamente in accordo con la banca finanziatrice",
             isAccordion: true,
             defaultOpen: false,
             inputs: [
                 {
-                    id: "idDocument",
-                    type: "documentRequest",
-                    label: "Documento de Identidad",
-                    required: true,
-                    isOptional: false,
+                    id: "nomeIstitutoCredito",
+                    type: "text",
+                    label: "Nome Istituto Di Credito",
+                    required: true
                 },
                 {
-                    id: "proofOfAddress",
-                    type: "documentRequest",
-                    label: "Comprobante de Domicilio",
-                    required: false,
-                    isOptional: true,
+                    id: "filiale",
+                    type: "text",
+                    label: "Filiale",
+                    required: true
                 },
+                {
+                    id: "nomeReferenteBanca",
+                    type: "text",
+                    label: "Nome del Referente Banca",
+                    required: true
+                },
+                {
+                    id: "mailReferenteBanca",
+                    type: "email",
+                    label: "Mail del Referente Banca",
+                    required: true
+                },
+                {
+                    id: "telefonoReferenteBanca",
+                    type: "tel",
+                    label: "Telefono del Referente Banca",
+                    required: true
+                },
+                {
+                    id: "formaTecnica",
+                    type: "text",
+                    label: "Forma Tecnica",
+                    required: true
+                },
+                {
+                    id: "importoFinanziamento",
+                    type: "number",
+                    label: "Importo del Finanziamento",
+                    required: true
+                },
+                {
+                    id: "durata",
+                    type: "number",
+                    label: "Durata (In Mesi)",
+                    required: true
+                },
+                {
+                    id: "preammortamento",
+                    type: "number",
+                    label: "Preammortamento (In Mesi)",
+                    required: false
+                },
+                {
+                    type: "select",
+                    label: "Intereses",
+                    multiple: true,
+                    maxSelections: 4, // opcional
+                    options: [
+                        { value: "Liquidità (pagamento scorte,fornitori, servizi e personale)", label: "Liquidità (pagamento scorte,fornitori, servizi e personale)" },
+                        { value: "Investimento", label: "Investimento" },
+                        { value: "Rinegoziazione debiti a medio/lungo termine", label: "Rinegoziazione debiti a medio/lungo termine" },
+                        { value: "Consolidamento di passività a breve termine", label: "Consolidamento di passività a breve termine" }
+                    ],
+                    required: true
+                }
             ],
         },
         {

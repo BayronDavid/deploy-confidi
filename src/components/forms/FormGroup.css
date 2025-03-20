@@ -9,6 +9,7 @@
 .form-group__form-input {
   display: grid;
   width: 100%;
+  gap: 1rem;
 }
 
 .form-group__form-input--column {
