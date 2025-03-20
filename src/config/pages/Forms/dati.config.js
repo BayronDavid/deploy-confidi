@@ -11,7 +11,7 @@ const formConfig = {
             isAccordion: true,
             defaultOpen: true,
             layout: {
-                columns: 2,               // Dos columnas por defecto
+                columns: 3,           // tres columnas por defecto
                 gap: "large",             // Espacio grande entre elementos
                 alignment: "start",       // Alineación superior
                 responsive: {
@@ -88,6 +88,15 @@ const formConfig = {
             accordionTitle: "Dati del Legale Rappresentante",
             isAccordion: true,
             defaultOpen: false,
+            layout: {
+                columns: 3,           // tres columnas por defecto
+                gap: "large",             // Espacio grande entre elementos
+                alignment: "start",       // Alineación superior
+                responsive: {
+                    tablet: 2,              // Mantener 2 columnas en tablet
+                    mobile: 1               // Una columna en móviles
+                },
+            },
             inputs: [
                 {
                     id: "nomeCognome",
@@ -135,124 +144,131 @@ const formConfig = {
             ]
         },
         {
-            id: "datiIstituto",
-            accordionTitle: "Dati istituto di credito e tipologia di finanziamento ",
-            description: "La tipologia e la percentuale di garanzia saranno definite successivamente in accordo con la banca finanziatrice",
+            id: "infoBanca_",
+            accordionTitle: "Dati istituto di credito e tipologia di finanziamento",
+            description:
+                "La tipologia e la percentuale di garanzia saranno definite successivamente in accordo con la banca finanziatrice",
             isAccordion: true,
             defaultOpen: false,
-            inputs: [
+            // Para poder duplicar este bloque 
+            repeatable: true,
+            subGroups: [
                 {
-                    id: "nomeIstitutoCredito",
-                    type: "text",
-                    label: "Nome Istituto Di Credito",
-                    required: true
+                    id: "infoBanca",
+                    title: "Informazioni Principali",
+                    // Layout de 3 columnas para los campos de texto
+                    layout: {
+                        columns: 3,
+                        gap: "normal",
+                        alignment: "start",
+                        responsive: {
+                            tablet: 2,
+                            mobile: 1
+                        }
+                    },
+                    inputs: [
+                        {
+                            id: "nomeIstitutoCredito",
+                            type: "text",
+                            label: "Nome Istituto Di Credito",
+                            required: true
+                        },
+                        {
+                            id: "filiale",
+                            type: "text",
+                            label: "Filiale",
+                            required: true
+                        },
+                        {
+                            id: "nomeReferenteBanca",
+                            type: "text",
+                            label: "Nome del Referente Banca",
+                            required: true
+                        },
+                        {
+                            id: "mailReferenteBanca",
+                            type: "email",
+                            label: "Mail del Referente Banca",
+                            required: true
+                        },
+                        {
+                            id: "telefonoReferenteBanca",
+                            type: "tel",
+                            label: "Telefono del Referente Banca",
+                            required: true
+                        },
+                        {
+                            id: "formaTecnica",
+                            type: "text",
+                            label: "Forma Tecnica",
+                            required: true
+                        },
+                        {
+                            id: "importoFinanziamento",
+                            type: "number",
+                            label: "Importo del Finanziamento",
+                            required: true
+                        },
+                        {
+                            id: "durata",
+                            type: "number",
+                            label: "Durata (In Mesi)",
+                            required: true
+                        },
+                        {
+                            id: "preammortamento",
+                            type: "number",
+                            label: "Preammortamento (In Mesi)",
+                            required: false
+                        }
+                    ]
                 },
                 {
-                    id: "filiale",
-                    type: "text",
-                    label: "Filiale",
-                    required: true
-                },
-                {
-                    id: "nomeReferenteBanca",
-                    type: "text",
-                    label: "Nome del Referente Banca",
-                    required: true
-                },
-                {
-                    id: "mailReferenteBanca",
-                    type: "email",
-                    label: "Mail del Referente Banca",
-                    required: true
-                },
-                {
-                    id: "telefonoReferenteBanca",
-                    type: "tel",
-                    label: "Telefono del Referente Banca",
-                    required: true
-                },
-                {
-                    id: "formaTecnica",
-                    type: "text",
-                    label: "Forma Tecnica",
-                    required: true
-                },
-                {
-                    id: "importoFinanziamento",
-                    type: "number",
-                    label: "Importo del Finanziamento",
-                    required: true
-                },
-                {
-                    id: "durata",
-                    type: "number",
-                    label: "Durata (In Mesi)",
-                    required: true
-                },
-                {
-                    id: "preammortamento",
-                    type: "number",
-                    label: "Preammortamento (In Mesi)",
-                    required: false
-                },
-                {
-                    type: "select",
-                    label: "Intereses",
-                    multiple: true,
-                    maxSelections: 4, // opcional
-                    options: [
-                        { value: "Liquidità (pagamento scorte,fornitori, servizi e personale)", label: "Liquidità (pagamento scorte,fornitori, servizi e personale)" },
-                        { value: "Investimento", label: "Investimento" },
-                        { value: "Rinegoziazione debiti a medio/lungo termine", label: "Rinegoziazione debiti a medio/lungo termine" },
-                        { value: "Consolidamento di passività a breve termine", label: "Consolidamento di passività a breve termine" }
-                    ],
-                    required: true
-                },
-                {
-                    id: "ulteriorInformazioni",
-                    type: "textarea",
-                    label: "Ulteriori informazioni descrittive per comprendere meglio l’investimento",
-                    required: false
-                },
-            ],
-        },
-        {
-            id: "preferences",
-            accordionTitle: "Preferencias",
-            isAccordion: true,
-            defaultOpen: true,
-            inputs: [
-                {
-                    id: "contactMethod",
-                    type: "optionSelector",
-                    label: "Método de Contacto",
-                    required: true,
-                    options: [
-                        { value: "email", label: "Correo Electrónico" },
-                        { value: "phone", label: "Teléfono" },
-                    ],
-                },
-                {
-                    id: "newsletter",
-                    type: "optionSelector",
-                    label: "Suscribirse al Boletín",
-                    required: false,
-                    options: [
-                        { value: "yes", label: "Sí" },
-                        { value: "no", label: "No" },
-                    ],
-                },
-            ],
-        },
-        {
-            id: "additionalInfo",
-            accordionTitle: "Información Adicional",
-            isAccordion: true,
-            defaultOpen: false,
-            inputs: [
-                { id: "comments", type: "text", label: "Comentarios", required: false },
-            ],
-        },
+                    id: "finalitaFinanziamento",
+                    title: "Finalità del Finanziamento",
+                    // 1 sola columna para el select y textarea
+                    layout: {
+                        columns: 1,
+                        gap: "normal",
+                        alignment: "start"
+                    },
+                    inputs: [
+                        {
+                            id: "intereses",
+                            type: "select",
+                            label: "Intereses",
+                            multiple: true,
+                            maxSelections: 4, // opcional
+                            options: [
+                                {
+                                    value:
+                                        "Liquidità (pagamento scorte,fornitori, servizi e personale)",
+                                    label:
+                                        "Liquidità (pagamento scorte,fornitori, servizi e personale)"
+                                },
+                                { value: "Investimento", label: "Investimento" },
+                                {
+                                    value: "Rinegoziazione debiti a medio/lungo termine",
+                                    label: "Rinegoziazione debiti a medio/lungo termine"
+                                },
+                                {
+                                    value: "Consolidamento di passività a breve termine",
+                                    label: "Consolidamento di passività a breve termine"
+                                }
+                            ],
+                            required: true
+                        },
+                        {
+                            id: "ulteriorInformazioni",
+                            type: "textarea",
+                            label:
+                                "Ulteriori informazioni descrittive per comprendere meglio l’investimento",
+                            required: false
+                        }
+                    ]
+                }
+            ]
+        }
     ],
 };
 

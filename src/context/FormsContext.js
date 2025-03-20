@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 
 const FormsContext = createContext();
@@ -183,47 +183,41 @@ export function FormsProvider({ children }) {
     };
 
     // Actualización mejorada: gestiona archivos preservando su instancia en memoria
-    const updateFormData = (groupId, data) => {
-        setFormData((prev) => {
-            // Si estamos actualizando con un archivo o una lista que contiene archivos
-            if (data instanceof File ||
-                (Array.isArray(data) && data.some(item => item instanceof File))) {
-                // Guardar los archivos en memoria
-                if (Array.isArray(data)) {
-                    // Para arrays de archivos (multiple)
-                    data.forEach((item, index) => {
-                        if (item instanceof File) {
-                            setFilesStorage(prevFiles => ({
-                                ...prevFiles,
-                                [`${groupId}[${index}]`]: item
-                            }));
-                        }
-                    });
-                } else {
-                    // Para un solo archivo
-                    setFilesStorage(prevFiles => ({
-                        ...prevFiles,
-                        [groupId]: data
-                    }));
+    const updateFormData = useCallback((fieldId, value, instanceIndex = undefined) => {
+        setFormData(prev => {
+            // Si estamos actualizando un grupo repetible (array de objetos)
+            if (instanceIndex !== undefined) {
+                // Asegurarse de que el array existe
+                const existingGroup = Array.isArray(prev[fieldId]) 
+                    ? prev[fieldId] 
+                    : (prev[fieldId] ? [prev[fieldId]] : []);
+                
+                // Crear copia del array
+                const updatedGroup = [...existingGroup];
+                
+                // Si el índice ya existe, actualizar esa instancia
+                if (updatedGroup[instanceIndex]) {
+                    updatedGroup[instanceIndex] = {
+                        ...updatedGroup[instanceIndex],
+                        ...value,
+                        _id: updatedGroup[instanceIndex]._id || Date.now()
+                    };
+                } 
+                // Si necesitamos agregar una nueva instancia
+                else {
+                    updatedGroup[instanceIndex] = {
+                        ...value,
+                        _id: Date.now()
+                    };
                 }
-            } else if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-                // Si es un objeto (como en un grupo), revisar si alguna propiedad es un archivo
-                Object.keys(data).forEach(key => {
-                    if (data[key] instanceof File) {
-                        setFilesStorage(prevFiles => ({
-                            ...prevFiles,
-                            [`${groupId}.${key}`]: data[key]
-                        }));
-                    }
-                });
+                
+                return { ...prev, [fieldId]: updatedGroup };
             }
-
-            return {
-                ...prev,
-                [groupId]: data
-            };
+            
+            // Caso normal: actualizar un campo simple
+            return { ...prev, [fieldId]: value };
         });
-    };
+    }, []);
 
     const clearFormData = () => {
         setFormData({});
@@ -259,6 +253,102 @@ export function FormsProvider({ children }) {
     // Nueva referencia para el formulario actual
     const [formRef, setFormRef] = useState(null);
 
+    // Duplicar un grupo repetible - versión mejorada
+    const duplicateGroup = useCallback((groupId) => {
+        console.log("FormsContext - duplicando grupo:", groupId);
+        
+        setFormData(prevFormData => {
+            // Asegurarse de que el ID del grupo existe en el objeto formData
+            if (!(groupId in prevFormData)) {
+                console.log("Inicializando grupo repetible:", groupId);
+                // Si el grupo no existe, crear una primera instancia vacía
+                return {
+                    ...prevFormData,
+                    [groupId]: [{ _id: Date.now() }]
+                };
+            }
+                
+            // Obtén los datos actuales del grupo
+            const currentGroupData = Array.isArray(prevFormData[groupId])
+                ? prevFormData[groupId]
+                : (prevFormData[groupId] ? [prevFormData[groupId]] : []);
+            
+            // Si el array está vacío, crear una nueva instancia y retornar
+            if (currentGroupData.length === 0) {
+                console.log("Grupo vacío, creando primera instancia");
+                return {
+                    ...prevFormData,
+                    [groupId]: [{ _id: Date.now() }]
+                };
+            }
+            
+            // Crear copia de la última instancia, pero sin archivos o referencias complejas
+            let lastInstance;
+            try {
+                // Intenta crear una copia profunda segura
+                lastInstance = JSON.parse(JSON.stringify(
+                    // Filtramos propiedades que podrían causar problemas
+                    Object.fromEntries(
+                        Object.entries(currentGroupData[currentGroupData.length - 1] || {})
+                            .filter(([key, value]) => 
+                                // Excluir archivos y referencias circulares
+                                typeof value !== 'function' && 
+                                !(value instanceof File) &&
+                                !key.startsWith('__')
+                            )
+                    )
+                ));
+            } catch (error) {
+                console.error("Error al copiar la última instancia:", error);
+                // En caso de error, crear un objeto vacío
+                lastInstance = {};
+            }
+            
+            // Generar un ID único usando timestamp + número aleatorio
+            const newInstance = {
+                ...lastInstance,
+                _id: Date.now() + Math.floor(Math.random() * 1000)
+            };
+            
+            console.log("Añadiendo nueva instancia:", newInstance);
+            
+            // Añadir la nueva instancia al array existente
+            return {
+                ...prevFormData,
+                [groupId]: [...currentGroupData, newInstance]
+            };
+        });
+    }, []);
+
+    // Eliminar una instancia de un grupo repetible
+    const deleteGroupInstance = useCallback((groupId, instanceIndex) => {
+        setFormData(prev => {
+            // Obtener el grupo actual
+            const existingGroup = Array.isArray(prev[groupId]) 
+                ? [...prev[groupId]] 
+                : (prev[groupId] ? [prev[groupId]] : []);
+            
+            // Si solo hay una instancia y queremos eliminarla, devolver un array vacío
+            if (existingGroup.length <= 1 && instanceIndex === 0) {
+                return { ...prev, [groupId]: [] };
+            }
+            
+            // Eliminar la instancia en el índice especificado
+            existingGroup.splice(instanceIndex, 1);
+            
+            return {
+                ...prev,
+                [groupId]: existingGroup
+            };
+        });
+    }, []);
+
+    // Resetear el formulario
+    const resetForm = useCallback(() => {
+        setFormData({});
+        setIsCurrentFormValid(false);
+    }, []);
+
     return (
         <FormsContext.Provider
             value={{
@@ -279,6 +369,9 @@ export function FormsProvider({ children }) {
                 setFormSubmitAttempted,
                 formRef,
                 setFormRef,
+                resetForm,
+                duplicateGroup,
+                deleteGroupInstance
             }}
         >
             {children}

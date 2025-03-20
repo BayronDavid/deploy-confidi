@@ -1,15 +1,29 @@
+/* Base styles with box-sizing */
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
 .form-group-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    /* padding: 0.5rem; */
     width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .form-group__form-input {
   display: grid;
   width: 100%;
   gap: 1rem;
+  min-width: 0; /* Prevents grid items from overflowing */
+}
+
+.form-group__form-input > * {
+  min-width: 0; /* Ensures children properly constrain to parent width */
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .form-group__form-input--column {
@@ -17,22 +31,24 @@
   width: 100%;
 }
 
+/* Grid layout classes */
 .form-group__grid-cols-1 {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .form-group__grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .form-group__grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .form-group__grid-cols-4 {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+/* Gap sizes */
 .form-group__gap-small {
   gap: 0.5rem;
 }
@@ -45,6 +61,7 @@
   gap: 1.5rem;
 }
 
+/* Alignment classes */
 .form-group__align-start {
   align-items: start;
 }
@@ -61,26 +78,250 @@
   align-items: stretch;
 }
 
-@media (max-width: 1024px) {
-  .form-group__tablet-cols-1 {
-    grid-template-columns: 1fr;
+/* Large screens (additional breakpoint) */
+@media (max-width: 1280px) {
+  .form-group__large-cols-1 {
+    grid-template-columns: minmax(0, 1fr);
   }
   
-  .form-group__tablet-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
+  .form-group__large-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   
-  .form-group__tablet-cols-3 {
-    grid-template-columns: repeat(3, 1fr);
+  .form-group__large-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
+/* Tablet breakpoint */
+@media (max-width: 1024px) {
+  .form-group__tablet-cols-1 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  
+  .form-group__tablet-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  .form-group__tablet-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  
+  /* Ensure long content wraps properly */
+  .form-group-container h2, 
+  .form-group-container h3, 
+  .form-group-container p {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+/* Small tablet / large mobile */
+@media (max-width: 768px) {
+  .form-group__small-tablet-cols-1 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  
+  .form-group__small-tablet-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  /* Force more spacing for easier touch targets */
+  .form-group__form-input {
+    gap: 1.25rem;
+  }
+}
+
+/* Mobile breakpoint */
 @media (max-width: 640px) {
   .form-group__mobile-cols-1 {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   
   .form-group__mobile-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  /* Default to single column unless explicitly overridden */
+  .form-group__form-input:not(.form-group__mobile-cols-2) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  
+  /* Increase spacing for touch targets */
+  .form-group__form-input {
+    gap: 1.5rem;
+  }
+}
+
+/* Tiny screens */
+@media (max-width: 480px) {
+  /* Force single column on very small screens regardless of class */
+  .form-group__form-input {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+/* Grupos repetibles */
+.repeatable-group-container {
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.repeatable-instance {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Estilos para el encabezado del grupo, especialmente para el caso sin título */
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.group-header--delete-only {
+  justify-content: flex-end;
+}
+
+.group-header h2 {
+  margin: 0;
+  flex: 1;
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: calc(100% - 100px);
+}
+
+.add-group-btn {
+  background-color: #f3f4f6 ;
+  border: 2px dashed #9ca3af ;
+  color: #111827 ;
+  padding: 0.75rem 1rem ;
+  border-radius: 4px ;
+  cursor: pointer ;
+  font-weight: bold ;
+  margin-top: 1rem ;
+  transition: all 0.2s ease ;
+  display: flex ;
+  align-items: center ;
+  justify-content: center ;
+  gap: 0.5rem ;
+  width: 100% ;
+}
+
+.add-group-btn:hover {
+  background-color: #e5e7eb ;
+  border-color: #6b7280 ;
+}
+
+.delete-instance-btn {
+  background-color: transparent ;
+  color: var(--color-system-error) ;
+  border: none ;
+  padding: 0.5rem 1rem ;
+  border-radius: 4px ;
+  cursor: pointer ;
+  font-size: 0.875rem ;
+  font-weight: bold ;
+  transition: background-color 0.2s ;
+  white-space: nowrap ;
+  display: inline-flex ;
+  align-items: center ;
+  gap: 0.5rem ;
+  z-index: 10 ;
+  width: 36px ;
+  text-align: center ;
+  justify-content: center ;
+  transition: all 0.2s ease ;
+}
+
+.delete-instance-btn:hover {
+  /* background-color: #dc2626 ; */
+  /* transform: scale(1.1) ; */
+  filter: brightness(1.2);
+}
+
+/* Sub grupos */
+.sub-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.sub-group {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed #e0e0e0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.sub-group:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.sub-group h3 {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+  hyphens: auto;
+}
+
+.sub-group p {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Reglas más específicas para asegurar que las columnas se aplican incluso dentro de subgrupos */
+.sub-group .form-group__form-input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Responsive rules for nested content */
+@media (max-width: 768px) {
+  .repeatable-instance {
+    padding: 1.25rem;
+  }
+  
+  .group-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .group-header h2 {
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .sub-group {
+    padding-bottom: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .repeatable-instance {
+    padding: 1rem;
   }
 }

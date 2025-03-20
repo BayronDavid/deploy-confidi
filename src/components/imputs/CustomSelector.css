@@ -1,7 +1,7 @@
 /* Contenedor principal */
 .custom-selector {
   display: inline-block;
-  width: 240px;
+  min-width: 240px;
   position: relative;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);

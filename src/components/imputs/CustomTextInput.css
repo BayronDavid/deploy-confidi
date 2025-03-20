@@ -1,7 +1,7 @@
 /* Contenedor principal */
 .custom-text-input {
   display: inline-block;
-  width: 240px;
+  min-width: 240px;
   position: relative;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
@@ -12,10 +12,11 @@
 .custom-text-input__wrapper {
   position: relative;
   border-radius: var(--border-radius-lg);
+  width: 100%;
 }
 
 .custom-text-input__input {
-  width: calc(100% - 2rem);
+  width: calc(100%);
   border: var(--border-width) solid var(--color-neutral-400);
   border-radius: var(--border-radius-lg);
   padding: 0.75rem 1rem 0 1rem;
@@ -24,7 +25,7 @@
   outline: none;
   background-color: var(--color-neutral-100);
   transition: border-color 0.2s ease, background-color 0.2s ease;
-  height: 26px;
+  height: 36px;
 }
 
 .custom-text-input__textarea {
