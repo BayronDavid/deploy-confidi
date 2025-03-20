@@ -266,6 +266,30 @@ const formConfig = {
                             required: false
                         }
                     ]
+                },
+
+            ]
+        },
+        {
+            id: "garanzie",
+            title: "Garanzie",
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    id: "fidejussione",
+                    type: "fidejussione",
+                    label: "Scegli la tipologia di fidejussione",
+                    required: true,
+                    options: [
+                        { label: "Fidejussione Rimborso IVA", value: "rimborsoIVA", importo: "0.00", durata: "36" },
+                        { label: "Fidejussione autotrasporti", value: "autotrasporti", importo: "0.00", durata: "12" },
+                        { label: "Fidejussione personalizzata", value: "personalizzata", importo: "0.00", durata: "24" },
+                        // Puedes personalizar las opciones o eliminar las que no necesitas
+                    ]
                 }
             ]
         }

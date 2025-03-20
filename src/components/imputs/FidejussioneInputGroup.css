@@ -1,0 +1,105 @@
+.fidejussione-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-family-base);
+}
+
+.fidejussione-input-group__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  width: 100%;
+  text-align: left;
+  color: var(--color-text-primary);
+}
+
+/* Contenedor de la lista de opciones */
+.fidejussione-input-group__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+/* Cada fila con 3 "columnas": 
+   1) Botón 
+   2) Input importo 
+   3) Input durata */
+.fidejussione-input-group__row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+/* Columna izquierda: el botón principal */
+.fidejussione-input-group__left {
+  flex: 1; /* Se expande para que el botón ocupe más espacio */
+  display: flex;
+}
+
+/* Pill para importo */
+.fidejussione-input-group__importo-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-neutral-300);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-width: 90px; /* Ajusta a tu gusto */
+  box-sizing: border-box;
+}
+
+/* Pill para durata */
+.fidejussione-input-group__durata-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-neutral-300);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  min-width: 110px; /* Ajusta a tu gusto */
+  box-sizing: border-box;
+}
+
+/* Estilos internos de los inputs en los pill */
+.fidejussione-input-group__importo-pill input,
+.fidejussione-input-group__durata-pill input {
+  border: none;
+  background-color: transparent;
+  width: 50px; /* Ajusta según necesites */
+  font-size: var(--font-size-base);
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+/* Quita el outline por defecto al hacer focus, puedes personalizar con box-shadow */
+.fidejussione-input-group__importo-pill input:focus,
+.fidejussione-input-group__durata-pill input:focus {
+  outline: none;
+}
+
+/* Validación visual si no se ha seleccionado nada y es requerido */
+.fidejussione-input-group--pending-action {
+  border-left: 3px solid var(--color-system-warning);
+  background-color: rgba(255, 248, 225, 0.1);
+}
+
+/* Mensaje de advertencia */
+.fidejussione-input-group__warning {
+  color: var(--color-system-warning-contrast);
+  background-color: #fff3cd; /* o var(--color-system-warning-bg) */
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: var(--border-radius-sm);
+}

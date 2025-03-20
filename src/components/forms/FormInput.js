@@ -7,6 +7,7 @@ import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
 import CustomSelector from "../imputs/CustomSelector";
 import CustomTextarea from "../imputs/CustomTextarea"; // added import
+import FidejussioneInputGroup from "../imputs/FidejussioneInputGroup"; // nuevo import
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -58,6 +59,9 @@ function FormInput({ config, value, onChange }) {
             } else if (type === "select") {
                 // Validación para selector único
                 isValid = value !== null && value !== undefined && value !== "";
+            } else if (type === "fidejussione") {
+                // Validación para "fidejussione"
+                isValid = value && value.selectedValue && value.importo && value.durata;
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");
@@ -164,6 +168,16 @@ function FormInput({ config, value, onChange }) {
                     value={value}
                     onPrimaryClick={(file) => onChange(file)}
                     onSkip={(skipped) => onChange(skipped ? "skipped" : null)}
+                />
+            );
+
+        case "fidejussione":
+            return renderInputWithWrapper(
+                <FidejussioneInputGroup
+                    label={label || "Scegli la tipologia di fidejussione"}
+                    formSubmitAttempted={config.formSubmitAttempted || false}
+                    onChange={(fidejussioneData) => onChange(fidejussioneData)}
+                    options={options} // Pasar las opciones configuradas si existen
                 />
             );
 
