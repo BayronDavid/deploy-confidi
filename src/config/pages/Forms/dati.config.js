@@ -135,7 +135,7 @@ const formConfig = {
             ]
         },
         {
-            id: "documents",
+            id: "datiIstituto",
             accordionTitle: "Dati istituto di credito e tipologia di finanziamento ",
             description: "La tipologia e la percentuale di garanzia saranno definite successivamente in accordo con la banca finanziatrice",
             isAccordion: true,
@@ -207,7 +207,13 @@ const formConfig = {
                         { value: "Consolidamento di passività a breve termine", label: "Consolidamento di passività a breve termine" }
                     ],
                     required: true
-                }
+                },
+                {
+                    id: "ulteriorInformazioni",
+                    type: "textarea",
+                    label: "Ulteriori informazioni descrittive per comprendere meglio l’investimento",
+                    required: false
+                },
             ],
         },
         {

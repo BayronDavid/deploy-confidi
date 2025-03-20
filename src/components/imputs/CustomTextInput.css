@@ -27,6 +27,20 @@
   height: 26px;
 }
 
+.custom-text-input__textarea {
+  width: calc(100% - 2rem);
+  border: var(--border-width) solid var(--color-neutral-400);
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem 1rem;
+  font-size: calc(var(--font-size-base) * 1.15);
+  color: var(--color-neutral-900);
+  outline: none;
+  background-color: var(--color-neutral-100);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  resize: vertical;
+  min-height: 100px; 
+}
+
 /* Label flotante */
 .custom-text-input__label {
   position: absolute;

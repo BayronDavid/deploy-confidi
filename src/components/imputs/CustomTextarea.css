@@ -1,0 +1,100 @@
+.custom-textarea {
+    display: inline-block;
+    width: 240px;
+    position: relative;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    color: var(--color-neutral-900);
+}
+
+.custom-textarea__wrapper {
+    position: relative;
+    border-radius: var(--border-radius-sm);
+}
+
+.custom-textarea__textarea {
+    width: calc(100% - 2rem);
+    border: var(--border-width) solid var(--color-neutral-400);
+    border-radius: var(--border-radius-sm);
+    padding: 1rem 1rem 0.5rem 1rem;
+    font-size: calc(var(--font-size-base) * 1.15);
+    color: var(--color-neutral-900);
+    outline: none;
+    background-color: var(--color-neutral-100);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Label flotante */
+.custom-textarea__label {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    transform: translateY(0);
+    pointer-events: none;
+    color: var(--color-text-placeholder);
+    transition: 0.3s ease all;
+    font-size: var(--font-size-base);
+    max-width: 80%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* Make tooltip icon clickable while keeping label non-clickable */
+.custom-textarea__label .custom-textarea__tooltip-icon {
+    pointer-events: auto;
+    z-index: 10;
+    margin-left: 8px;
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+    display: inline-block;
+}
+
+.custom-textarea__tooltip-icon:hover {
+    color: var(--color-accent-hover);
+}
+
+/* ---- Estados de interacción ---- */
+
+/* Hover */
+.custom-textarea:not(.custom-textarea--disabled):hover
+.custom-textarea__textarea {
+    background-color: var(--color-neutral-200);
+}
+
+/* Focus (Typing) */
+.custom-textarea--typing .custom-textarea__textarea {
+    border-color: var(--color-neutral-700);
+    background-color: var(--color-neutral-100);
+}
+
+/* Mover el label hacia arriba cuando el textarea está en foco o tiene valor */
+.custom-textarea--typing .custom-textarea__label,
+.custom-textarea--has-value .custom-textarea__label {
+    top: 0.5rem;
+    transform: translateY(0) scale(0.85);
+    font-size: calc(var(--font-size-base) * 0.85);
+    color: var(--color-neutral-900);
+}
+
+/* Disabled */
+.custom-textarea--disabled .custom-textarea__textarea {
+    cursor: not-allowed;
+    color: var(--color-neutral-600);
+}
+
+.custom-textarea--disabled .custom-textarea__label {
+    color: var(--color-neutral-400);
+}
+
+/* When textarea is filled but not focused */
+.custom-textarea--has-value:not(.custom-textarea--typing):not(
+    .custom-textarea--disabled
+):hover .custom-textarea__textarea {
+    border-color: var(--color-neutral-600);
+    background-color: var(--color-neutral-200);
+}

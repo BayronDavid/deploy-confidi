@@ -6,6 +6,7 @@ import DocumentRequest from "../imputs/DocumentRequest";
 import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
 import CustomSelector from "../imputs/CustomSelector";
+import CustomTextarea from "../imputs/CustomTextarea"; // added import
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -116,6 +117,20 @@ function FormInput({ config, value, onChange }) {
                     minLength={minLength}
                     maxLength={maxLength}
                     tooltip={tooltip}
+                />
+            );
+
+        case "textarea":
+            return renderInputWithWrapper(
+                <CustomTextarea
+                    label={label}
+                    placeholder={placeholder || "Label Input"}
+                    value={value || ""}
+                    onChange={(val) => onChange(val)}
+                    disabled={enabled === false}
+                    required={required}
+                    tooltip={tooltip}
+                    rows={config.rows || 3} // default rows
                 />
             );
 
