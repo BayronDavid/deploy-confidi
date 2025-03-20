@@ -5,7 +5,7 @@
   position: relative;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
-  color: var(--color-text-primary);
+  color: var(--color-neutral-900);
   /* margin-bottom: var(--spacing-lg); */
 }
 
@@ -20,7 +20,7 @@
   border-radius: var(--border-radius-lg);
   padding: 0.75rem 1rem 0 1rem;
   font-size: calc(var(--font-size-base) * 1.15);
-  color: var(--color-text-primary);
+  color: var(--color-neutral-900);
   outline: none;
   background-color: var(--color-neutral-100);
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -37,6 +37,10 @@
   color: var(--color-text-placeholder);
   transition: 0.3s ease all;
   font-size: var(--font-size-base);
+  max-width: 80%;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 /* Make tooltip icon clickable while keeping label non-clickable */
@@ -48,7 +52,8 @@
 /* ---- Estados de interacción ---- */
 
 /* Hover */
-.custom-text-input:not(.custom-text-input--disabled):hover .custom-text-input__input {
+.custom-text-input:not(.custom-text-input--disabled):hover
+  .custom-text-input__input {
   background-color: var(--color-neutral-100);
 }
 
@@ -64,15 +69,16 @@
   top: var(--spacing-sm);
   transform: translateY(0);
   font-size: calc(var(--font-size-base) * 0.85);
-  color: var(--color-text-primary);
+  color: var(--color-neutral-900);
 }
 
 .custom-text-input--typing .custom-text-input__label {
-  color: var(--color-primary);
+  color: var(--color-neutral-900);
 }
 
 .custom-text-input--typing.custom-text-input--error .custom-text-input__label,
-.custom-text-input--has-value.custom-text-input--error .custom-text-input__label {
+.custom-text-input--has-value.custom-text-input--error
+  .custom-text-input__label {
   color: var(--color-system-error);
 }
 
@@ -104,17 +110,24 @@
 }
 
 /* When input is filled */
-.custom-text-input--has-value:not(.custom-text-input--typing):not(.custom-text-input--error)
+.custom-text-input--has-value:not(.custom-text-input--typing):not(
+    .custom-text-input--error
+  ):not(.custom-text-input--validation-error)
   .custom-text-input__input {
   border-color: var(--color-neutral-700);
 }
 
-.custom-text-input--has-value:not(.custom-text-input--typing) .custom-text-input__label {
+.custom-text-input--has-value:not(.custom-text-input--typing):not(
+    .custom-text-input--validation-error
+  )
+  .custom-text-input__label {
   color: var(--color-text-secondary);
 }
 
 /* When input is filled but not focused */
-.custom-text-input--has-value:not(.custom-text-input--typing):not(.custom-text-input--disabled):hover
+.custom-text-input--has-value:not(.custom-text-input--typing):not(
+    .custom-text-input--disabled
+  ):not(.custom-text-input--validation-error):hover
   .custom-text-input__input {
   border-color: var(--color-neutral-600);
   background-color: var(--color-neutral-200);
@@ -164,9 +177,29 @@
 .custom-text-input--validation-error .custom-text-input__input {
   /* border-color: var(--color-system-warning-contrast, #ffc107); */
   border-left-width: 2px; /* Makes the left border more prominent */
-  color: var(--color-system-warning-contrast, #856404);
+  background-color: var(--color-system-warning-bg, #856404);
+  border-color: var(--color-system-warning, #856404) !important;
 }
 
-.custom-text-input--validation-error .custom-text-input__input {
-  color: #dc3545;
+/* Add specific rule for inputs with validation errors that have values */
+.custom-text-input--has-value.custom-text-input--validation-error .custom-text-input__input {
+  border-color: var(--color-system-warning, #856404) !important;
+  background-color: var(--color-system-warning-bg, #856404);
+}
+
+/* Ensure validation errors take precedence over other states when hovering */
+.custom-text-input--has-value.custom-text-input--validation-error:hover .custom-text-input__input {
+  border-color: var(--color-system-warning, #856404) !important;
+  background-color: var(--color-system-warning-bg, #856404);
+}
+
+/* Ensure validation errors take precedence even when typing */
+.custom-text-input--typing.custom-text-input--validation-error .custom-text-input__input {
+  border-color: var(--color-system-warning, #856404) !important;
+  background-color: var(--color-system-warning-bg, #856404);
+}
+
+.custom-text-input--typing.custom-text-input--validation-error .custom-text-input__input,
+.custom-text-input--has-value.custom-text-input--validation-error:not(.custom-text-input--typing) .custom-text-input__input {
+  border-color: var(--color-system-warning, #856404) !important;
 }

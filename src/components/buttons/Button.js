@@ -13,12 +13,12 @@ function Button({
     variant = 'primary', // "primary", "secondary", "light", "dark"
     size,               // "big", "small", "mobile"
     pulse = false,
-    fancy = false,     
+    fancy = false,
     subtle = false,     // <--- Add subtle hover effect prop
     tooltipTitle,
     children,
     width,
-    active = false,    
+    active = false,
     ...rest
 }) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
@@ -28,6 +28,7 @@ function Button({
     // Construye las clases BEM según las props
     const classNames = [
         'button',
+        "no-select",
         `button--${variant}`,
         size && `button--${size}`,
         pulse && 'button--pulse',
