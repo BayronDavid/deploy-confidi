@@ -174,10 +174,16 @@ function FormInput({ config, value, onChange }) {
         case "fidejussione":
             return renderInputWithWrapper(
                 <FidejussioneInputGroup
-                    label={label || "Scegli la tipologia di fidejussione"}
-                    formSubmitAttempted={config.formSubmitAttempted || false}
-                    onChange={(fidejussioneData) => onChange(fidejussioneData)}
-                    options={options} // Pasar las opciones configuradas si existen
+                    label={label || ""}
+                    options={options || []}
+                    selectedValues={Array.isArray(value) ? value : []}
+                    onChange={onChange}
+                    allowMultiple={config.allowMultiple || false}
+                    isOptional={!required}
+                    columns={config.columns || []}
+                    warningMessage={config.warningMessage}
+                    warningIcon={config.warningIcon}
+                    className={config.className}
                 />
             );
 

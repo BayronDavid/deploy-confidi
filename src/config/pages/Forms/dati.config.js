@@ -271,8 +271,12 @@ const formConfig = {
             ]
         },
         {
-            id: "garanzie",
-            title: "Garanzie",
+            id: "fidejussione_accordion",
+            // title: "Garanzie",
+            accordionTitle: "Tipologia fidejussione",
+            description:
+                "In caso di rinnovo di Fidejussione quella precedente dovrà essere restituita al momento di rilascio della nuova.  ",
+            isAccordion: true,
             layout: {
                 columns: 1,
                 gap: "normal",
@@ -282,13 +286,40 @@ const formConfig = {
                 {
                     id: "fidejussione",
                     type: "fidejussione",
-                    label: "Scegli la tipologia di fidejussione",
                     required: true,
+                    allowMultiple: false,
+                    warningMessage: "È necessario selezionare un'opzione",
+                    columns: [
+                        {
+                            id: "option",
+                            title: "Tipologia di Garanzia",
+                            type: "button",
+                            fieldName: "label",
+                            width: "100%"
+                        },
+                        {
+                            id: "importo",
+                            title: "Importo (€)",
+                            type: "number",
+                            fieldName: "importo",
+                            prefix: "€",
+                            inputProps: { 
+                                step: "0.01", 
+                                min: "0" 
+                            }
+                        },
+                        {
+                            id: "durata",
+                            title: "Durata (Mesi)",
+                            type: "text",
+                            fieldName: "durata",
+                            // suffix: "Mesi"
+                        }
+                    ],
                     options: [
                         { label: "Fidejussione Rimborso IVA", value: "rimborsoIVA", importo: "0.00", durata: "36" },
                         { label: "Fidejussione autotrasporti", value: "autotrasporti", importo: "0.00", durata: "12" },
                         { label: "Fidejussione personalizzata", value: "personalizzata", importo: "0.00", durata: "24" },
-                        // Puedes personalizar las opciones o eliminar las que no necesitas
                     ]
                 }
             ]

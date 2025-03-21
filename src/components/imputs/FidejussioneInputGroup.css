@@ -16,58 +16,105 @@
   color: var(--color-text-primary);
 }
 
-/* Contenedor de la lista de opciones */
+/* ---------- Encabezado de columnas ---------- */
+.fidejussione-input-group__column-titles {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+}
+
+.fidejussione-input-group__column-title {
+  /* text-transform: uppercase; */
+  letter-spacing: 0.5px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-neutral-900);
+}
+
+/* Anchos de cada columna para alinear con las filas */
+.fidejussione-input-group__option-title {
+  flex: 0 0 40%;  /* Igual que la columna del botón */
+  text-align: left;
+}
+
+.fidejussione-input-group__importo-title,
+.fidejussione-input-group__durata-title {
+  flex: 1;        /* Igual que las columnas de importo y durata */
+}
+
+/* ---------- Lista de opciones ---------- */
 .fidejussione-input-group__list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
   width: 100%;
 }
 
-/* Cada fila con 3 "columnas": 
-   1) Botón 
-   2) Input importo 
-   3) Input durata */
+/* Cada fila con 3 columnas */
 .fidejussione-input-group__row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
   width: 100%;
+  margin-bottom: var(--spacing-sm);
 }
 
-/* Columna izquierda: el botón principal */
-.fidejussione-input-group__left {
-  flex: 1; /* Se expande para que el botón ocupe más espacio */
+/* Columna "Tipologia" */
+.fidejussione-input-group__option-col {
+  flex: 0 0 40%;
+}
+
+/* Columna "Importo" */
+.fidejussione-input-group__importo-col {
+  flex: 1;
   display: flex;
+  justify-content: center;
 }
 
-/* Pill para importo */
+/* Columna "Durata" */
+.fidejussione-input-group__durata-col {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- Pill para Importo ---------- */
 .fidejussione-input-group__importo-pill {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+
   border: 1px solid var(--color-neutral-300);
   background-color: var(--color-neutral-100);
   border-radius: var(--border-radius-sm);
+
   padding: var(--spacing-sm) var(--spacing-md);
-  min-width: 90px; /* Ajusta a tu gusto */
+  min-width: 90px;
   box-sizing: border-box;
 }
 
-/* Pill para durata */
+/* ---------- Pill para Durata ---------- */
 .fidejussione-input-group__durata-pill {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+
   border: 1px solid var(--color-neutral-300);
   background-color: var(--color-neutral-100);
   border-radius: var(--border-radius-sm);
+
   padding: var(--spacing-sm) var(--spacing-md);
-  min-width: 110px; /* Ajusta a tu gusto */
+  min-width: 110px;
   box-sizing: border-box;
 }
 
-/* Estilos internos de los inputs en los pill */
+/* Inputs internos en los pill */
 .fidejussione-input-group__importo-pill input,
 .fidejussione-input-group__durata-pill input {
   border: none;
@@ -78,19 +125,19 @@
   color: var(--color-text-primary);
 }
 
-/* Quita el outline por defecto al hacer focus, puedes personalizar con box-shadow */
+/* Quita el outline al hacer focus (personaliza si deseas) */
 .fidejussione-input-group__importo-pill input:focus,
 .fidejussione-input-group__durata-pill input:focus {
   outline: none;
 }
 
-/* Validación visual si no se ha seleccionado nada y es requerido */
+/* ---------- Estado “pendiente de acción” si es requerido y no se seleccionó nada ---------- */
 .fidejussione-input-group--pending-action {
   border-left: 3px solid var(--color-system-warning);
   background-color: rgba(255, 248, 225, 0.1);
 }
 
-/* Mensaje de advertencia */
+/* ---------- Mensaje de advertencia ---------- */
 .fidejussione-input-group__warning {
   color: var(--color-system-warning-contrast);
   background-color: var(--color-system-warning-bg);

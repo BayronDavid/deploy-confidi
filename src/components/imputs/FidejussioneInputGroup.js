@@ -1,153 +1,170 @@
 import React, { useState, useEffect } from "react";
 import "./FidejussioneInputGroup.css";
-import Button from "../buttons/Button"; // Ajusta la ruta según tu estructura
+import Button from "../buttons/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { useFormsContext } from "@/context/FormsContext";
-import HtmlRenderer from '@/utils/HtmlRenderer';
+import HtmlRenderer from "@/utils/HtmlRenderer";
 
 /**
  * FidejussioneInputGroup:
- *   - Muestra un label principal.
- *   - Renderiza una lista de opciones (cada una con su botón, importo y durata).
- *   - Permite seleccionar una o varias, según `allowMultiple`.
- *   - Muestra advertencia si el campo es obligatorio y no se ha seleccionado nada tras submit.
- *
- * Props:
- *  - label: Texto descriptivo para el grupo.
- *  - options: Array de objetos con la forma:
- *       { label: string, value: string, importo: string, durata: string }
- *  - selectedValues: Array con los `value` seleccionados actualmente.
- *  - onChange: Callback que recibe:
- *       - en modo radio (allowMultiple=false), un array con el value seleccionado.
- *       - en modo checkbox (allowMultiple=true), un array con todos los values seleccionados.
- *       - adicionalmente, si deseas capturar cambios de importo/durata, 
- *         puedes mantener un estado externo sincronizado con `options`.
- *  - allowMultiple: boolean, true = modo "checkbox", false = modo "radio".
- *  - isOptional: boolean, indica si la selección es opcional (afecta la validación visual).
- *  - buttonWidth: Ancho para todos los botones (por defecto “100%”).
+ *   - Fully configurable component for showing a table of options with custom columns
+ *   - All values and text are configurable through props
  */
 export default function FidejussioneInputGroup({
-    label = "Scegli la tipologia di fidejussione",
+    label = "",
     options = [],
     selectedValues = [],
     onChange,
     allowMultiple = false,
     isOptional = false,
-    buttonWidth = "100%",
+    columns = [],
+    warningMessage = "",
+    warningIcon = null,
+    className = ""
 }) {
-    // Accedemos al contexto para saber si hubo intento de submit
+    // Access context to know if there was a submit attempt
     const { formSubmitAttempted } = useFormsContext();
 
-    // Verificamos si el usuario ha seleccionado al menos una opción
+    // Verify if the user has selected at least one option
     const [hasAction, setHasAction] = useState(false);
+    // Track all option values for onChange
+    const [optionsData, setOptionsData] = useState([]);
 
     useEffect(() => {
         setHasAction(selectedValues && selectedValues.length > 0);
-    }, [selectedValues]);
+        
+        // Initialize options data
+        if (options.length > 0 && optionsData.length === 0) {
+            setOptionsData([...options]);
+        }
+    }, [selectedValues, options]);
 
-    // Al hacer clic en una opción (botón)
+    // Handle option selection (button click)
     const handleOptionClick = (value) => {
         if (!onChange) return;
 
         if (allowMultiple) {
-            // "Checkbox": agrega o quita el valor del array
+            // "Checkbox" mode: add or remove the value from the array
             const isSelected = selectedValues.includes(value);
             const newSelected = isSelected
                 ? selectedValues.filter((v) => v !== value)
                 : [...selectedValues, value];
             onChange(newSelected);
         } else {
-            // "Radio": solo un valor
+            // "Radio" mode: only one value
             onChange([value]);
         }
     };
 
-    // Al cambiar el valor de "Importo" en una opción
-    const handleImportoChange = (optionValue, newImporto) => {
-        // Aquí NO mutamos "options" directamente (depende de tu lógica).
-        // Normalmente se maneja en el estado padre, o en un callback adicional.
-        // Por ejemplo, si el padre controla las "options" con importo/durata, 
-        // podrías llamarle con un onChangeOptions(...) 
-        // o tener un callback distinto. Aquí solo se muestra la idea:
-        console.log(`Importo cambiado para ${optionValue}:`, newImporto);
+    // Handle input field changes for any column
+    const handleFieldChange = (optionIndex, columnId, newValue) => {
+        const updatedOptions = [...optionsData];
+        const column = columns.find(col => col.id === columnId);
+        
+        if (column && column.fieldName) {
+            updatedOptions[optionIndex][column.fieldName] = newValue;
+            setOptionsData(updatedOptions);
+            
+            // Call the onChange handler with updated data
+            if (onChange) {
+                onChange(selectedValues, updatedOptions);
+            }
+        }
     };
 
-    // Al cambiar el valor de "Durata" en una opción
-    const handleDurataChange = (optionValue, newDurata) => {
-        console.log(`Durata cambiada para ${optionValue}:`, newDurata);
-    };
-
-    // Determinamos si debemos mostrar la advertencia (campo requerido)
+    // Determine if we should show the warning (required field)
     const showWarning = !hasAction && formSubmitAttempted && !isOptional;
 
+    // Render a column cell based on its type
+    const renderColumnCell = (option, optionIndex, column) => {
+        const { id, type, fieldName, prefix, suffix, width, inputProps = {} } = column;
+        const value = option[fieldName];
+
+        switch (type) {
+            case "button":
+                const isSelected = selectedValues.includes(option.value);
+                const buttonVariant = isSelected ? "primary" : "secondary";
+                
+                return (
+                    <div className={`fidejussione-input-group__${id}-col`}>
+                        <Button
+                            label={value}
+                            variant={buttonVariant}
+                            onClick={() => handleOptionClick(option.value)}
+                            active={isSelected}
+                            width={width || "100%"}
+                        />
+                    </div>
+                );
+                
+            case "number":
+            case "text":
+                return (
+                    <div className={`fidejussione-input-group__${id}-col`}>
+                        <div className={`fidejussione-input-group__${id}-pill`}>
+                            {prefix && <span>{prefix}</span>}
+                            <input
+                                type={type}
+                                value={value}
+                                onChange={(e) => handleFieldChange(optionIndex, id, e.target.value)}
+                                {...inputProps}
+                            />
+                            {suffix && <span>{suffix}</span>}
+                        </div>
+                    </div>
+                );
+                
+            default:
+                return (
+                    <div className={`fidejussione-input-group__${id}-col`}>
+                        {value}
+                    </div>
+                );
+        }
+    };
+
     return (
-        <div
-            className={`fidejussione-input-group ${showWarning ? "fidejussione-input-group--pending-action" : ""
-                }`}
-        >
-            {/* Etiqueta principal */}
+        <div className={`fidejussione-input-group ${showWarning ? "fidejussione-input-group--pending-action" : ""} ${className}`}>
+            {/* Main label */}
             {label && (
                 <div className="fidejussione-input-group__label">
                     {HtmlRenderer(label)}
                 </div>
             )}
 
-            {/* Lista de opciones */}
-            <div className="fidejussione-input-group__list">
-                {options.map((option) => {
-                    const { label, value, importo, durata } = option;
-                    const isSelected = selectedValues.includes(value);
-
-                    // El botón cambia de variante según si está seleccionado o no
-                    const buttonVariant = isSelected ? "primary" : "secondary";
-
-                    return (
-                        <div key={value} className="fidejussione-input-group__row">
-                            {/* Botón principal (columna izquierda) */}
-                            <div className="fidejussione-input-group__left">
-                                <Button
-                                    label={label}
-                                    variant={buttonVariant}
-                                    onClick={() => handleOptionClick(value)}
-                                    active={isSelected}
-                                    width={buttonWidth}
-                                >
-                                    {/* Puedes inyectar aquí children si deseas */}
-                                </Button>
-                            </div>
-
-                            {/* Columna "Importo" */}
-                            <div className="fidejussione-input-group__importo-pill">
-                                <span>€</span>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    value={importo}
-                                    onChange={(e) => handleImportoChange(value, e.target.value)}
-                                />
-                            </div>
-
-                            {/* Columna "Durata" */}
-                            <div className="fidejussione-input-group__durata-pill">
-                                <input
-                                    type="text"
-                                    value={durata}
-                                    onChange={(e) => handleDurataChange(value, e.target.value)}
-                                />
-                                <span>Mesi</span>
-                            </div>
+            {/* Column headers */}
+            {columns.length > 0 && (
+                <div className="fidejussione-input-group__column-titles">
+                    {columns.map(column => (
+                        <div 
+                            key={column.id} 
+                            className={`fidejussione-input-group__column-title fidejussione-input-group__${column.id}-title`}
+                        >
+                            {HtmlRenderer(column.title || "")}
                         </div>
-                    );
-                })}
+                    ))}
+                </div>
+            )}
+
+            {/* Options list */}
+            <div className="fidejussione-input-group__list">
+                {options.map((option, optionIndex) => (
+                    <div key={option.value} className="fidejussione-input-group__row">
+                        {columns.map(column => (
+                            <React.Fragment key={column.id}>
+                                {renderColumnCell(option, optionIndex, column)}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                ))}
             </div>
 
-            {/* Advertencia si no se ha seleccionado nada y es requerido */}
+            {/* Warning if nothing is selected and it's required */}
             {showWarning && (
                 <div className="fidejussione-input-group__warning">
-                    <FontAwesomeIcon icon={faExclamationCircle} />
-                    <span>È necessario selezionare un'opzione</span>
+                    {warningIcon ? <FontAwesomeIcon icon={warningIcon} /> : <FontAwesomeIcon icon={faExclamationCircle} />}
+                    <span>{warningMessage || "È necessario selezionare un'opzione"}</span>
                 </div>
             )}
         </div>
