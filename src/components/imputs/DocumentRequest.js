@@ -144,7 +144,7 @@ function DocumentRequest({
     return (
         <div className={`document-request ${isOptional && !hasAction && formSubmitAttempted ? 'document-request--pending-action' : ''}`}>
             <h3 className="document-request__title">
-                {title}
+                {HtmlRenderer(title)}
                 {tooltip && (
                     <span className="document-request__tooltip-icon" onClick={handleTooltipToggle}>
                         <FontAwesomeIcon icon={faQuestionCircle} />
@@ -152,7 +152,7 @@ function DocumentRequest({
                 )}
             </h3>
             <div className="document-request__row">
-                <p className="document-request__description">{description}</p>
+                <p className="document-request__description">{HtmlRenderer(description)}</p>
                 <div className="document-request__actions">
                     <div className="document-request__actions-uploaded-files">
                         {selectedFiles.length > 0 && (
@@ -221,9 +221,8 @@ function DocumentRequest({
                     onClose={() => setIsTooltipOpen(false)}
                     title={title}
                 >
-                    <div className="document-request__tooltip-content">
-                        {HtmlRenderer(tooltip)}
-                    </div>
+                    {HtmlRenderer(tooltip)}
+                    
                     {tc && (
 
                         <div className="document-request__modal_download_tc">

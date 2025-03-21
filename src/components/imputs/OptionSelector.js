@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import Modal from '../modal/Modal';
 import { useFormsContext } from '@/context/FormsContext';
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 /**
  * OptionSelector: Muestra un label y una lista de opciones.
@@ -69,7 +70,7 @@ function OptionSelector({
         <div className={`option-selector ${isOptional && !hasAction && formSubmitAttempted ? 'option-selector--pending-action' : ''}`}>
             {label && (
                 <div className="option-selector__label">
-                    {label}
+                    {HtmlRenderer(label)}
                     {tooltip && (
                         <span className="option-selector__tooltip-icon" onClick={handleTooltipToggle}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
@@ -110,9 +111,9 @@ function OptionSelector({
             <Modal 
                 isOpen={isTooltipOpen} 
                 onClose={() => setIsTooltipOpen(false)}
-                title={activeOptionTooltip ? activeOptionLabel : label}
+                title={HtmlRenderer(activeOptionTooltip ? activeOptionLabel : label)}
             >
-                <div>{activeOptionTooltip || tooltip}</div>
+                <div>{HtmlRenderer(activeOptionTooltip || tooltip)}</div>
             </Modal>
         </div>
     );

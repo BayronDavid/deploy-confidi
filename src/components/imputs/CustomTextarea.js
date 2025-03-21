@@ -3,6 +3,7 @@ import "./CustomTextarea.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../modal/Modal";
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 function CustomTextarea({
     label,
@@ -67,7 +68,7 @@ function CustomTextarea({
                 />
                 
                 <label className="custom-textarea__label">
-                    {label}
+                    {HtmlRenderer(label)}
                     {tooltip && (
                         <span className="custom-textarea__tooltip-icon" onClick={handleTooltipToggle}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
@@ -80,9 +81,9 @@ function CustomTextarea({
                 <Modal
                     isOpen={isTooltipOpen}
                     onClose={() => setIsTooltipOpen(false)}
-                    title={label}
+                    title={HtmlRenderer(label)}
                 >
-                    <div>{tooltip}</div>
+                    <div>{HtmlRenderer(tooltip)}</div>
                 </Modal>
             )}
         </div>

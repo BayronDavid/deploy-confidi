@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../modal/Modal";
 import { useFormsContext } from "@/context/FormsContext";
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 // Funciones de validación (pueden extraerse en un módulo "validators.js" si se prefiere)
 const validateRequired = (value) => {
@@ -161,7 +162,7 @@ function CustomTextInput({
                 // Nota: no se usan atributos nativi di validazione
                 />
                 <label className="custom-text-input__label">
-                    {label}
+                    {HtmlRenderer(label)}
                     {tooltip && (
                         <span className="custom-text-input__tooltip-icon" onClick={handleTooltipToggle}>
                             <FontAwesomeIcon icon={faQuestionCircle} />
@@ -184,9 +185,9 @@ function CustomTextInput({
                 <Modal
                     isOpen={isTooltipOpen}
                     onClose={() => setIsTooltipOpen(false)}
-                    title={label}
+                    title={HtmlRenderer(label)}
                 >
-                    <div>{tooltip}</div>
+                    <div>{HtmlRenderer(tooltip)}</div>
                 </Modal>
             )}
         </div>

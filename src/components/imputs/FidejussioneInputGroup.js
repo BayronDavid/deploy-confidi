@@ -4,6 +4,7 @@ import Button from "../buttons/Button"; // Ajusta la ruta según tu estructura
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { useFormsContext } from "@/context/FormsContext";
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 /**
  * FidejussioneInputGroup:
@@ -88,7 +89,7 @@ export default function FidejussioneInputGroup({
             {/* Etiqueta principal */}
             {label && (
                 <div className="fidejussione-input-group__label">
-                    {label}
+                    {HtmlRenderer(label)}
                 </div>
             )}
 

@@ -10,6 +10,7 @@ import {
 import Modal from "../modal/Modal";
 import { useFormsContext } from "@/context/FormsContext";
 import Image from "next/image";
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 // Funciones de validación
 const validateRequired = (value, isMultiple) => {
@@ -194,7 +195,7 @@ function CustomSelector({
         </div>
         
         <label className="custom-selector__label">
-          {label}
+          {HtmlRenderer(label)}
           {tooltip && (
             <span className="custom-selector__tooltip-icon" onClick={handleTooltipToggle}>
               <FontAwesomeIcon icon={faQuestionCircle} />
@@ -252,9 +253,9 @@ function CustomSelector({
         <Modal
           isOpen={isTooltipOpen}
           onClose={() => setIsTooltipOpen(false)}
-          title={label}
+          title={HtmlRenderer(label)}
         >
-          <div>{tooltip}</div>
+          <div>{HtmlRenderer(tooltip)}</div>
         </Modal>
       )}
     </div>
