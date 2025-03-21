@@ -1,4 +1,4 @@
-.fidejussione-input-group {
+.option-grid {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -8,7 +8,7 @@
   font-family: var(--font-family-base);
 }
 
-.fidejussione-input-group__label {
+.option-grid__label {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-bold);
   width: 100%;
@@ -17,7 +17,7 @@
 }
 
 /* ---------- Encabezado de columnas ---------- */
-.fidejussione-input-group__column-titles {
+.option-grid__column-titles {
   display: flex;
   align-items: center;
   width: 100%;
@@ -31,131 +31,91 @@
   font-size: var(--font-size-sm);
 }
 
-.fidejussione-input-group__column-title {
-  /* text-transform: uppercase; */
+.option-grid__column-title {
   letter-spacing: 0.5px;
   text-align: center;
   font-weight: bold;
   color: var(--color-neutral-900);
 }
 
-/* Anchos de cada columna para alinear con las filas */
-.fidejussione-input-group__option-title {
-  flex: 0 0 40%;  /* Igual que la columna del botón */
+/* Columna genérica - el ancho lo establecerá el componente */
+.option-grid__column {
+  display: flex;
+  justify-content: center;
+}
+
+/* Alineación específica para la primera columna */
+.option-grid__column:first-child {
   text-align: left;
 }
 
-.fidejussione-input-group__importo-title,
-.fidejussione-input-group__durata-title {
-  flex: 1;        /* Igual que las columnas de importo y durata */
-}
-
 /* ---------- Lista de opciones ---------- */
-.fidejussione-input-group__list {
+.option-grid__list {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-/* Cada fila con 3 columnas */
-.fidejussione-input-group__row {
+/* Cada fila con columnas */
+.option-grid__row {
   display: flex;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 1rem);
   margin-bottom: var(--spacing-sm);
   transition: background-color 0.2s ease;
   padding: 8px 4px;
+  gap: 0.5rem;
 }
 
-.fidejussione-input-group__row--active {
+.option-grid__row--active {
   background-color: rgba(0, 0, 0, 0.03);
   border-radius: 4px;
 }
 
-.fidejussione-input-group__row input:disabled {
+.option-grid__row input:disabled {
   background-color: #f5f5f5;
-  /* cursor: not-allowed; */
   opacity: 0.7;
 }
 
-.fidejussione-input-group__row .disabled {
+.option-grid__row .disabled {
   opacity: 0.7;
 }
 
-/* Columna "Tipologia" */
-.fidejussione-input-group__option-col {
-  flex: 0 0 40%;
-}
-
-/* Columna "Importo" */
-.fidejussione-input-group__importo-col {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-/* Columna "Durata" */
-.fidejussione-input-group__durata-col {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-/* ---------- Pill para Importo ---------- */
-.fidejussione-input-group__importo-pill {
+/* ---------- Estilos genéricos para pill de entrada ---------- */
+.option-grid__input-pill {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-
   border: 1px solid var(--color-neutral-300);
   background-color: var(--color-neutral-100);
   border-radius: var(--border-radius-sm);
-
   padding: var(--spacing-sm) var(--spacing-md);
-  min-width: 90px;
   box-sizing: border-box;
-}
-
-/* ---------- Pill para Durata ---------- */
-.fidejussione-input-group__durata-pill {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-
-  border: 1px solid var(--color-neutral-300);
-  background-color: var(--color-neutral-100);
-  border-radius: var(--border-radius-sm);
-
-  padding: var(--spacing-sm) var(--spacing-md);
-  min-width: 110px;
-  box-sizing: border-box;
+  width: 100%;
 }
 
 /* Inputs internos en los pill */
-.fidejussione-input-group__importo-pill input,
-.fidejussione-input-group__durata-pill input {
+.option-grid__input-pill input {
   border: none;
   background-color: transparent;
-  width: 50px; /* Ajusta según necesites */
+  width: 100%;
   font-size: var(--font-size-base);
-  text-align: center;
   color: var(--color-text-primary);
 }
 
-/* Quita el outline al hacer focus (personaliza si deseas) */
-.fidejussione-input-group__importo-pill input:focus,
-.fidejussione-input-group__durata-pill input:focus {
+/* Quita el outline al hacer focus */
+.option-grid__input-pill input:focus {
   outline: none;
 }
 
-/* ---------- Estado “pendiente de acción” si es requerido y no se seleccionó nada ---------- */
-.fidejussione-input-group--pending-action {
+/* ---------- Estado "pendiente de acción" si es requerido y no se seleccionó nada ---------- */
+.option-grid--pending-action {
   border-left: 3px solid var(--color-system-warning);
   background-color: rgba(255, 248, 225, 0.1);
 }
 
 /* ---------- Mensaje de advertencia ---------- */
-.fidejussione-input-group__warning {
+.option-grid__warning {
   color: var(--color-system-warning-contrast);
   background-color: var(--color-system-warning-bg);
   padding: 0.4rem 0.6rem;

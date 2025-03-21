@@ -60,8 +60,11 @@ function FormInput({ config, value, onChange }) {
                 // Validación para selector único
                 isValid = value !== null && value !== undefined && value !== "";
             } else if (type === "fidejussione") {
-                // Validación para "fidejussione"
-                isValid = value && value.selectedValue && value.importo && value.durata;
+                // Validación para "fidejussione" - revisada para verificar la estructura completa
+                isValid = value && 
+                          Array.isArray(value.selectedValues) && 
+                          value.selectedValues.length > 0 && 
+                          Array.isArray(value.optionsData);
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");
@@ -172,12 +175,36 @@ function FormInput({ config, value, onChange }) {
             );
 
         case "fidejussione":
+            // Extraemos los valores de la estructura almacenada si existe
+            let currentSelectedValues = [];
+            let currentOptionsData = [];
+            
+            if (value && typeof value === 'object') {
+                // Si ya tenemos un valor guardado con la estructura correcta
+                if (Array.isArray(value.selectedValues)) {
+                    currentSelectedValues = value.selectedValues;
+                }
+                if (Array.isArray(value.optionsData)) {
+                    currentOptionsData = value.optionsData;
+                }
+            } else if (Array.isArray(value)) {
+                // Retrocompatibilidad: si solo teníamos un array de ids seleccionados
+                currentSelectedValues = value;
+                currentOptionsData = options || [];
+            }
+            
             return renderInputWithWrapper(
                 <FidejussioneInputGroup
                     label={label || ""}
-                    options={options || []}
-                    selectedValues={Array.isArray(value) ? value : []}
-                    onChange={onChange}
+                    options={currentOptionsData.length > 0 ? currentOptionsData : (options || [])}
+                    selectedValues={currentSelectedValues}
+                    onChange={(selectedValues, updatedOptions) => {
+                        // Guardamos la estructura completa: selección + datos de todas las filas
+                        onChange({
+                            selectedValues: selectedValues,
+                            optionsData: updatedOptions
+                        });
+                    }}
                     allowMultiple={config.allowMultiple || false}
                     isOptional={!required}
                     columns={config.columns || []}

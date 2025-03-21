@@ -287,16 +287,17 @@ const formConfig = {
                     id: "fidejussione",
                     type: "fidejussione",
                     required: true,
-                    label: "Scegli la tipologia di fidejussione",
+                    // label: "Scegli la tipologia di fidejussione",
                     warningMessage: "È necessario selezionare un'opzione",
                     allowMultiple: false,
                     columns: [
                         {
                             id: "option",
-                            title: "Tipologia di fidejussione",
+                            title: "Scegli la tipologia di fidejussione",
                             type: "button",
                             fieldName: "label",
-                            width: "100%"
+                            width: "40%",
+                            inputWidth: "100%",
                         },
                         {
                             id: "importo",
@@ -305,62 +306,73 @@ const formConfig = {
                             fieldName: "importo",
                             prefix: "€",
                             requiresSelection: true,
+                            width: "20%",
+                            inputWidth: "100%",
                             inputProps: {
-                                step: "1",
+                                step: "0.1",
                                 min: "0"
                             }
                         },
                         {
                             id: "durata",
-                            title: "Durata",
-                            type: "text",
+                            title: "Durata (Mesi)",
+                            type: "number",
+                            suffix: "Mesi",
                             fieldName: "durata",
-                            requiresSelection: true
+                            requiresSelection: true,
+                            width: "40%",
+                            inputWidth: "100%",
+                            inputProps: {
+                                step: "1",
+                                min: "0",
+                                max: "36"
+                            },
                         }
                     ],
                     options: [
                         {
                             label: "Fidejussione Rimborso IVA",
                             value: "rimborsoIVA",
-                            importo: "0.00",
-                            durata: "36 Mesi",
+                            importo: 0.0,
+                            durata: 36,
                             // Forzamos a deshabilitar la columna 'durata' incluso si se selecciona
                             disabledColumns: ["durata"]
                         },
                         {
                             label: "Fidejussione autotrasporti",
                             value: "autotrasporti",
-                            importo: "0.00",
-                            durata: "12 Mesi",
+                            importo: 0.0,
+                            durata: 12,
                             disabledColumns: ["durata"]
                         },
                         {
                             label: "Fidejussione CSA 2011",
                             value: "csa2011",
-                            importo: "0.00",
-                            durata: "12 Mesi",
+                            importo: 0.0,
+                            durata: 12,
                             disabledColumns: ["durata"]
                         },
                         {
                             label: "Fidejussione COTRA",
                             value: "cotra",
-                            importo: "0.00",
-                            durata: "12 Mesi",
+                            importo: 0.0,
+                            durata: 12,
                             disabledColumns: ["durata"]
                         },
                         {
                             label: "Fidejussione CUT",
                             value: "cut",
-                            importo: "0.00",
-                            durata: "12 Mesi",
+                            importo: 0.0,
+                            durata: 12,
                             disabledColumns: ["durata"]
                         },
                         {
                             label: "Fidejussione Gestor",
                             value: "gestor",
-                            importo: "0.00",
+                            importo: 0.0,
                             // Esta es la última fila, donde sí se puede editar 'durata' si se selecciona
-                            durata: "Quantità di mesi (Max 36)",
+                            durata: "",
+                            placeholder: "Quantità di mesi (Max 36)",
                             disabledColumns: []
                         }
                     ]

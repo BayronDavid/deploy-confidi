@@ -11,6 +11,7 @@ import HtmlRenderer from "@/utils/HtmlRenderer";
  *   - Componente de tabla muy configurable.
  *   - Permite selección (simple o múltiple) y edición condicional de columnas.
  *   - Usa 'requiresSelection' en columnas y 'disabledColumns' en cada fila para controlar el disabled.
+ *   - Permite configurar ancho de columnas mediante la propiedad 'width' de cada columna.
  */
 export default function FidejussioneInputGroup({
     label = "",
@@ -35,8 +36,8 @@ export default function FidejussioneInputGroup({
     useEffect(() => {
         setHasAction(selectedValues && selectedValues.length > 0);
 
-        // Inicializamos datos internos solo la primera vez que recibimos 'options'
-        if (options.length > 0 && optionsData.length === 0) {
+        // Actualizamos los datos internos siempre que cambian las opciones externas
+        if (options.length > 0) {
             setOptionsData([...options]);
         }
     }, [selectedValues, options]);
@@ -45,15 +46,19 @@ export default function FidejussioneInputGroup({
     const handleOptionClick = (value) => {
         if (!onChange) return;
 
+        let newSelected;
+        
         if (allowMultiple) {
             const isSelected = selectedValues.includes(value);
-            const newSelected = isSelected
+            newSelected = isSelected
                 ? selectedValues.filter((v) => v !== value)
                 : [...selectedValues, value];
-            onChange(newSelected, optionsData);
         } else {
-            onChange([value], optionsData);
+            newSelected = [value];
         }
+        
+        // Importante: siempre pasamos todos los datos actualizados al padre
+        onChange(newSelected, optionsData);
     };
 
     // Maneja cambios en los campos de una fila
@@ -65,7 +70,7 @@ export default function FidejussioneInputGroup({
             updatedOptions[optionIndex][column.fieldName] = newValue;
             setOptionsData(updatedOptions);
 
-            // Notificamos al padre
+            // Notificamos al padre con todos los datos actualizados
             if (onChange) {
                 onChange(selectedValues, updatedOptions);
             }
@@ -93,6 +98,17 @@ export default function FidejussioneInputGroup({
         return false;
     };
 
+    // Obtiene el estilo de ancho para una columna
+    const getColumnWidth = (column) => {
+        // Si la columna define un ancho, lo usamos
+        if (column.width) {
+            return { flex: `0 0 ${column.width}` };
+        }
+        
+        // Si no, usamos un ancho por defecto
+        return { flex: '1' };
+    };
+
     // Renderiza una celda según su tipo
     const renderColumnCell = (option, optionIndex, column) => {
         const {
@@ -101,12 +117,13 @@ export default function FidejussioneInputGroup({
             fieldName,
             prefix,
             suffix,
-            width,
+            inputWidth,
             inputProps = {}
         } = column;
 
         const value = option[fieldName];
         const disabled = isColumnDisabled(option, column);
+        const columnStyle = getColumnWidth(column);
 
         switch (type) {
             case "button":
@@ -114,13 +131,13 @@ export default function FidejussioneInputGroup({
                 const isSelected = selectedValues.includes(option.value);
                 const buttonVariant = isSelected ? "primary" : "secondary";
                 return (
-                    <div className={`fidejussione-input-group__${id}-col`}>
+                    <div className="option-grid__column" style={columnStyle}>
                         <Button
                             label={value}
                             variant={buttonVariant}
                             onClick={() => handleOptionClick(option.value)}
                             active={isSelected}
-                            width={width || "100%"}
+                            width={inputWidth || "100%"}
                         />
                     </div>
                 );
@@ -128,12 +145,16 @@ export default function FidejussioneInputGroup({
             case "number":
             case "text":
                 return (
-                    <div className={`fidejussione-input-group__${id}-col`}>
-                        <div className={`fidejussione-input-group__${id}-pill ${disabled ? "disabled" : ""}`}>
+                    <div className="option-grid__column" style={columnStyle}>
+                        <div 
+                            className={`option-grid__input-pill ${disabled ? "disabled" : ""}`}
+                            style={inputWidth ? { width: inputWidth } : null}
+                        >
                             {prefix && <span>{prefix}</span>}
                             <input
                                 type={type}
                                 value={value}
+                                placeholder={option?.placeholder || ""}
                                 onChange={(e) => handleFieldChange(optionIndex, id, e.target.value)}
                                 disabled={disabled}
                                 {...inputProps}
@@ -146,7 +167,7 @@ export default function FidejussioneInputGroup({
             default:
                 // Si en algún momento tienes otro tipo de celda (por ejemplo, select)
                 return (
-                    <div className={`fidejussione-input-group__${id}-col`}>
+                    <div className="option-grid__column" style={columnStyle}>
                         {value}
                     </div>
                 );
@@ -155,23 +176,24 @@ export default function FidejussioneInputGroup({
 
     return (
         <div
-            className={`fidejussione-input-group ${showWarning ? "fidejussione-input-group--pending-action" : ""
+            className={`option-grid ${showWarning ? "option-grid--pending-action" : ""
                 } ${className}`}
         >
             {/* Título principal */}
             {label && (
-                <div className="fidejussione-input-group__label">
+                <div className="option-grid__label">
                     {HtmlRenderer(label)}
                 </div>
             )}
 
             {/* Cabeceras de columna */}
             {columns.length > 0 && (
-                <div className="fidejussione-input-group__column-titles">
+                <div className="option-grid__column-titles">
                     {columns.map((column) => (
                         <div
                             key={column.id}
-                            className={`fidejussione-input-group__column-title fidejussione-input-group__${column.id}-title`}
+                            className="option-grid__column-title"
+                            style={getColumnWidth(column)}
                         >
                             {HtmlRenderer(column.title || "")}
                         </div>
@@ -180,13 +202,13 @@ export default function FidejussioneInputGroup({
             )}
 
             {/* Lista de filas (options) */}
-            <div className="fidejussione-input-group__list">
+            <div className="option-grid__list">
                 {optionsData.map((option, optionIndex) => {
                     const isRowSelected = selectedValues.includes(option.value);
                     return (
                         <div
                             key={option.value}
-                            className={`fidejussione-input-group__row ${isRowSelected ? "fidejussione-input-group__row--active" : ""
+                            className={`option-grid__row ${isRowSelected ? "option-grid__row--active" : ""
                                 }`}
                         >
                             {columns.map((column) => (
@@ -201,7 +223,7 @@ export default function FidejussioneInputGroup({
 
             {/* Advertencia si no se seleccionó nada y es obligatorio */}
             {showWarning && (
-                <div className="fidejussione-input-group__warning">
+                <div className="option-grid__warning">
                     {warningIcon ? (
                         <FontAwesomeIcon icon={warningIcon} />
                     ) : (
