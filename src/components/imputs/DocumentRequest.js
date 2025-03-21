@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faTrash, faUpload, faXmark, faExclamationCircle, faQuestionCircle, faDownload, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useFormsContext } from '@/context/FormsContext';
 import Modal from '../modal/Modal';
+import HtmlRenderer from '@/utils/HtmlRenderer';
 
 function DocumentRequest({
     title,
@@ -220,7 +221,9 @@ function DocumentRequest({
                     onClose={() => setIsTooltipOpen(false)}
                     title={title}
                 >
-                    <div>{tooltip}</div>
+                    <div className="document-request__tooltip-content">
+                        {HtmlRenderer(tooltip)}
+                    </div>
                     {tc && (
 
                         <div className="document-request__modal_download_tc">

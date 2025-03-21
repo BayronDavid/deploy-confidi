@@ -14,7 +14,7 @@ function FormGroup({
   isRepeatable = false,
   instanceIndex = 0,
   canDelete = false,
-  ...restProps // Para recibir propiedades adicionales como data-group-id
+  ...restProps 
 }) {
   const { 
     updateFormData, 
@@ -27,7 +27,7 @@ function FormGroup({
   // Verificar si el grupo está habilitado, por defecto es true
   const isGroupEnabled = group.enabled !== false;
 
-  // Función mejorada para generar clases de layout basadas en la configuración
+  // generar clases de layout basadas en la configuración
   const getLayoutClasses = (layoutConfig = null) => {
     // Usar el layout proporcionado o el del grupo
     const layout = layoutConfig || group.layout;
@@ -188,11 +188,8 @@ function FormGroup({
     deleteGroupInstance(group.id, instanceIndex);
   };
 
-  // Componente de botón de eliminar extraído para mayor claridad
+  // botón de eliminar extraído para mayor claridad
   const DeleteButton = () => {
-    // Debug: Visualizamos los valores para verificar
-    console.log("Render delete button:", { isRepeatable, canDelete, instanceIndex });
-    
     if (!isRepeatable || !canDelete) {
       return null;
     }

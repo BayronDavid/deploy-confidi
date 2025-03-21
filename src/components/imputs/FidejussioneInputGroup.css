@@ -93,7 +93,7 @@
 /* Mensaje de advertencia */
 .fidejussione-input-group__warning {
   color: var(--color-system-warning-contrast);
-  background-color: #fff3cd; /* o var(--color-system-warning-bg) */
+  background-color: var(--color-system-warning-bg);
   padding: 0.4rem 0.6rem;
   display: flex;
   align-items: center;
