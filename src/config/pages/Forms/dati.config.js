@@ -454,6 +454,14 @@ const formConfig = {
                             ]
                         }
                     ]
+                },
+                {
+                    id: "noteAggiuntive",
+                    type: "textarea",
+                    label: "lteriori informazioni descrittive per comprendere meglio la finalità dell’investimento",
+                    placeholder: "Inserisci ulteriori informazioni o dettagli sul finanziamento richiesto",
+                    required: false,
+                    rows: 4
                 }
             ]
         }
