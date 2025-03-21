@@ -8,8 +8,9 @@ import HtmlRenderer from "@/utils/HtmlRenderer";
 
 /**
  * FidejussioneInputGroup:
- *   - Fully configurable component for showing a table of options with custom columns
- *   - All values and text are configurable through props
+ *   - Componente de tabla muy configurable.
+ *   - Permite selección (simple o múltiple) y edición condicional de columnas.
+ *   - Usa 'requiresSelection' en columnas y 'disabledColumns' en cada fila para controlar el disabled.
  */
 export default function FidejussioneInputGroup({
     label = "",
@@ -23,71 +24,95 @@ export default function FidejussioneInputGroup({
     warningIcon = null,
     className = ""
 }) {
-    // Access context to know if there was a submit attempt
     const { formSubmitAttempted } = useFormsContext();
 
-    // Verify if the user has selected at least one option
+    // Indica si hay al menos una opción seleccionada
     const [hasAction, setHasAction] = useState(false);
-    // Track all option values for onChange
+
+    // Datos locales de las opciones (por si se modifican campos dentro de cada fila)
     const [optionsData, setOptionsData] = useState([]);
 
     useEffect(() => {
         setHasAction(selectedValues && selectedValues.length > 0);
-        
-        // Initialize options data
+
+        // Inicializamos datos internos solo la primera vez que recibimos 'options'
         if (options.length > 0 && optionsData.length === 0) {
             setOptionsData([...options]);
         }
     }, [selectedValues, options]);
 
-    // Handle option selection (button click)
+    // Maneja la selección (modo "radio" o "checkbox")
     const handleOptionClick = (value) => {
         if (!onChange) return;
 
         if (allowMultiple) {
-            // "Checkbox" mode: add or remove the value from the array
             const isSelected = selectedValues.includes(value);
             const newSelected = isSelected
                 ? selectedValues.filter((v) => v !== value)
                 : [...selectedValues, value];
-            onChange(newSelected);
+            onChange(newSelected, optionsData);
         } else {
-            // "Radio" mode: only one value
-            onChange([value]);
+            onChange([value], optionsData);
         }
     };
 
-    // Handle input field changes for any column
+    // Maneja cambios en los campos de una fila
     const handleFieldChange = (optionIndex, columnId, newValue) => {
         const updatedOptions = [...optionsData];
-        const column = columns.find(col => col.id === columnId);
-        
+        const column = columns.find((col) => col.id === columnId);
+
         if (column && column.fieldName) {
             updatedOptions[optionIndex][column.fieldName] = newValue;
             setOptionsData(updatedOptions);
-            
-            // Call the onChange handler with updated data
+
+            // Notificamos al padre
             if (onChange) {
                 onChange(selectedValues, updatedOptions);
             }
         }
     };
 
-    // Determine if we should show the warning (required field)
+    // Determina si debemos mostrar advertencia (campo requerido y sin selección)
     const showWarning = !hasAction && formSubmitAttempted && !isOptional;
 
-    // Render a column cell based on its type
-    const renderColumnCell = (option, optionIndex, column) => {
-        const { id, type, fieldName, prefix, suffix, width, inputProps = {} } = column;
-        const value = option[fieldName];
-        // Check if this row/option is selected
+    // Lógica central para saber si una celda (input) está deshabilitada
+    const isColumnDisabled = (option, column) => {
         const isRowSelected = selectedValues.includes(option.value);
+
+        // 1) Si la fila indica que esta columna está forzada a disabled, se deshabilita
+        if (option.disabledColumns?.includes(column.id)) {
+            return true;
+        }
+
+        // 2) Si la columna requiere que la fila esté seleccionada, y la fila NO está seleccionada => disabled
+        if (column.requiresSelection && !isRowSelected) {
+            return true;
+        }
+
+        // 3) En caso contrario, está habilitado
+        return false;
+    };
+
+    // Renderiza una celda según su tipo
+    const renderColumnCell = (option, optionIndex, column) => {
+        const {
+            id,
+            type,
+            fieldName,
+            prefix,
+            suffix,
+            width,
+            inputProps = {}
+        } = column;
+
+        const value = option[fieldName];
+        const disabled = isColumnDisabled(option, column);
 
         switch (type) {
             case "button":
+                // Botón que selecciona/deselecciona la fila
                 const isSelected = selectedValues.includes(option.value);
                 const buttonVariant = isSelected ? "primary" : "secondary";
-                
                 return (
                     <div className={`fidejussione-input-group__${id}-col`}>
                         <Button
@@ -99,26 +124,27 @@ export default function FidejussioneInputGroup({
                         />
                     </div>
                 );
-                
+
             case "number":
             case "text":
                 return (
                     <div className={`fidejussione-input-group__${id}-col`}>
-                        <div className={`fidejussione-input-group__${id}-pill ${!isRowSelected ? 'disabled' : ''}`}>
+                        <div className={`fidejussione-input-group__${id}-pill ${disabled ? "disabled" : ""}`}>
                             {prefix && <span>{prefix}</span>}
                             <input
                                 type={type}
                                 value={value}
                                 onChange={(e) => handleFieldChange(optionIndex, id, e.target.value)}
-                                disabled={!isRowSelected}
+                                disabled={disabled}
                                 {...inputProps}
                             />
                             {suffix && <span>{suffix}</span>}
                         </div>
                     </div>
                 );
-                
+
             default:
+                // Si en algún momento tienes otro tipo de celda (por ejemplo, select)
                 return (
                     <div className={`fidejussione-input-group__${id}-col`}>
                         {value}
@@ -128,20 +154,23 @@ export default function FidejussioneInputGroup({
     };
 
     return (
-        <div className={`fidejussione-input-group ${showWarning ? "fidejussione-input-group--pending-action" : ""} ${className}`}>
-            {/* Main label */}
+        <div
+            className={`fidejussione-input-group ${showWarning ? "fidejussione-input-group--pending-action" : ""
+                } ${className}`}
+        >
+            {/* Título principal */}
             {label && (
                 <div className="fidejussione-input-group__label">
                     {HtmlRenderer(label)}
                 </div>
             )}
 
-            {/* Column headers */}
+            {/* Cabeceras de columna */}
             {columns.length > 0 && (
                 <div className="fidejussione-input-group__column-titles">
-                    {columns.map(column => (
-                        <div 
-                            key={column.id} 
+                    {columns.map((column) => (
+                        <div
+                            key={column.id}
                             className={`fidejussione-input-group__column-title fidejussione-input-group__${column.id}-title`}
                         >
                             {HtmlRenderer(column.title || "")}
@@ -150,14 +179,17 @@ export default function FidejussioneInputGroup({
                 </div>
             )}
 
-            {/* Options list */}
+            {/* Lista de filas (options) */}
             <div className="fidejussione-input-group__list">
-                {options.map((option, optionIndex) => {
+                {optionsData.map((option, optionIndex) => {
                     const isRowSelected = selectedValues.includes(option.value);
                     return (
-                        <div key={option.value} 
-                             className={`fidejussione-input-group__row ${isRowSelected ? 'fidejussione-input-group__row--active' : ''}`}>
-                            {columns.map(column => (
+                        <div
+                            key={option.value}
+                            className={`fidejussione-input-group__row ${isRowSelected ? "fidejussione-input-group__row--active" : ""
+                                }`}
+                        >
+                            {columns.map((column) => (
                                 <React.Fragment key={column.id}>
                                     {renderColumnCell(option, optionIndex, column)}
                                 </React.Fragment>
@@ -167,10 +199,14 @@ export default function FidejussioneInputGroup({
                 })}
             </div>
 
-            {/* Warning if nothing is selected and it's required */}
+            {/* Advertencia si no se seleccionó nada y es obligatorio */}
             {showWarning && (
                 <div className="fidejussione-input-group__warning">
-                    {warningIcon ? <FontAwesomeIcon icon={warningIcon} /> : <FontAwesomeIcon icon={faExclamationCircle} />}
+                    {warningIcon ? (
+                        <FontAwesomeIcon icon={warningIcon} />
+                    ) : (
+                        <FontAwesomeIcon icon={faExclamationCircle} />
+                    )}
                     <span>{warningMessage || "È necessario selezionare un'opzione"}</span>
                 </div>
             )}
