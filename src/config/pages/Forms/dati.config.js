@@ -378,6 +378,84 @@ const formConfig = {
                     ]
                 }
             ]
+        },
+        {
+            id: "Importo Mutuo e Durata Finalità",
+            accordionTitle: "Importo Mutuo e Durata Finalità",
+            // description: "Puoi configurare ulteriori garanzie secondarie se necessario.",
+            isAccordion: true,
+            defaultOpen: false,
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    id: "altre_garanzie",
+                    type: "fidejussione",
+                    required: true,
+                    warningMessage: "È necessario configurare almeno una garanzia",
+                    allowMultiple: false,
+                    columns: [
+                        {
+                            id: "destinazioneFinanziamento",
+                            title: "Destinazione Finanziamento",
+                            type: "selector",
+                            label: "Destinazione", // Añadir explícitamente para mayor seguridad
+                            fieldName: "destinazioneFinanziamento",
+                            width: "40%",
+                            multiple: true,
+                            required: true
+                        },
+                        {
+                            id: "inserisciLimportoRichiesto",
+                            title: "Inserisci l’importo richiesto (€)",
+                            placeholder: "Max 200.000",
+                            type: "number",
+                            fieldName: "inserisciLimportoRichiesto",
+                            prefix: "€",
+                            requiresSelection: true,
+                            width: "30%",
+                            inputWidth: "100%",
+                            inputProps: {
+                                step: "0.01",
+                                min: "0"
+                            }
+                        },
+                        {
+                            id: "durata",
+                            title: "Durata",
+                            type: "number",
+                            fieldName: "durata",
+                            placeholder: "Da 36 a 84",
+                            requiresSelection: true,
+                            width: "30%",
+                            suffix: "Mesi",
+                            inputWidth: "100%",
+                            inputProps: {
+                                step: "1",
+                                min: "36",
+                                max: "84"
+                            }
+                        }
+                    ],
+                    options: [
+                        {
+                            value: "row1",
+                            destinazioneFinanziamento: "",
+                            inserisciLimportoRichiesto: "",
+                            durata: "",
+                            selectorOptions: [
+                                { value: "Liquidità (pagamento scorte,fornitori, servizi e personale)", label: "Liquidità (pagamento scorte,fornitori, servizi e personale)" },
+                                { value: "Investimento", label: "Investimento" },
+                                { value: "Rinegoziazione debiti a medio/lungo termine", label: "Rinegoziazione debiti a medio/lungo termine" },
+                                { value: "Consolidamento di passività a breve termine", label: "Consolidamento di passività a breve termine" },
+                            ]
+                        }
+                    ]
+                }
+            ]
         }
     ],
 };

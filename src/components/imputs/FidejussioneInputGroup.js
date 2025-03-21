@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { useFormsContext } from "@/context/FormsContext";
 import HtmlRenderer from "@/utils/HtmlRenderer";
+import CustomSelector from "./CustomSelector"; // Importación de CustomSelector
 
 /**
  * FidejussioneInputGroup:
@@ -89,12 +90,16 @@ export default function FidejussioneInputGroup({
             return true;
         }
 
-        // 2) Si la columna requiere que la fila esté seleccionada, y la fila NO está seleccionada => disabled
-        if (column.requiresSelection && !isRowSelected) {
+        // 2) Verificamos si la fila tiene un selector (que actúa como selector principal)
+        const hasSelector = columns.some(col => col.type === "selector");
+        
+        // 3) Si la columna requiere que la fila esté seleccionada y la fila NO está seleccionada
+        // y además NO hay un selector en la fila => disabled
+        if (column.requiresSelection && !isRowSelected && !hasSelector) {
             return true;
         }
 
-        // 3) En caso contrario, está habilitado
+        // 4) En caso contrario, está habilitado
         return false;
     };
 
@@ -141,6 +146,25 @@ export default function FidejussioneInputGroup({
                         />
                     </div>
                 );
+                
+            case "selector":
+                // Selector personalizado que permite selección múltiple o única
+                return (
+                    <div className="option-grid__column" style={columnStyle}>
+                        <CustomSelector
+                            label={column.label || ""} 
+                            options={option.selectorOptions || []}
+                            value={value}
+                            onChange={(newValue) => handleFieldChange(optionIndex, id, newValue)}
+                            disabled={disabled}
+                            tooltip={column.tooltip}
+                            required={column.required !== false}
+                            multiple={column.multiple === true}
+                            placeholder={column.placeholder || "Seleziona..."}
+                            maxSelections={column.maxSelections}
+                        />
+                    </div>
+                );
 
             case "number":
             case "text":
@@ -154,7 +178,7 @@ export default function FidejussioneInputGroup({
                             <input
                                 type={type}
                                 value={value}
-                                placeholder={option?.placeholder || ""}
+                                placeholder={column.placeholder || option?.placeholder || ""}
                                 onChange={(e) => handleFieldChange(optionIndex, id, e.target.value)}
                                 disabled={disabled}
                                 {...inputProps}
