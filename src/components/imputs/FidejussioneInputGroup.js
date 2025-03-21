@@ -80,6 +80,8 @@ export default function FidejussioneInputGroup({
     const renderColumnCell = (option, optionIndex, column) => {
         const { id, type, fieldName, prefix, suffix, width, inputProps = {} } = column;
         const value = option[fieldName];
+        // Check if this row/option is selected
+        const isRowSelected = selectedValues.includes(option.value);
 
         switch (type) {
             case "button":
@@ -102,12 +104,13 @@ export default function FidejussioneInputGroup({
             case "text":
                 return (
                     <div className={`fidejussione-input-group__${id}-col`}>
-                        <div className={`fidejussione-input-group__${id}-pill`}>
+                        <div className={`fidejussione-input-group__${id}-pill ${!isRowSelected ? 'disabled' : ''}`}>
                             {prefix && <span>{prefix}</span>}
                             <input
                                 type={type}
                                 value={value}
                                 onChange={(e) => handleFieldChange(optionIndex, id, e.target.value)}
+                                disabled={!isRowSelected}
                                 {...inputProps}
                             />
                             {suffix && <span>{suffix}</span>}
@@ -149,15 +152,19 @@ export default function FidejussioneInputGroup({
 
             {/* Options list */}
             <div className="fidejussione-input-group__list">
-                {options.map((option, optionIndex) => (
-                    <div key={option.value} className="fidejussione-input-group__row">
-                        {columns.map(column => (
-                            <React.Fragment key={column.id}>
-                                {renderColumnCell(option, optionIndex, column)}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                ))}
+                {options.map((option, optionIndex) => {
+                    const isRowSelected = selectedValues.includes(option.value);
+                    return (
+                        <div key={option.value} 
+                             className={`fidejussione-input-group__row ${isRowSelected ? 'fidejussione-input-group__row--active' : ''}`}>
+                            {columns.map(column => (
+                                <React.Fragment key={column.id}>
+                                    {renderColumnCell(option, optionIndex, column)}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    );
+                })}
             </div>
 
             {/* Warning if nothing is selected and it's required */}

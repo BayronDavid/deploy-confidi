@@ -284,44 +284,47 @@ const formConfig = {
             },
             inputs: [
                 {
-                    id: "fidejussione",
-                    type: "fidejussione",
-                    required: true,
-                    allowMultiple: false,
-                    warningMessage: "È necessario selezionare un'opzione",
-                    columns: [
+                    "id": "fidejussione",
+                    "type": "fidejussione",
+                    "required": true,
+                    "allowMultiple": false,
+                    "selectionMode": "selector",
+                    "warningMessage": "È necessario selezionare un'opzione",
+                    "columns": [
                         {
-                            id: "option",
-                            title: "Tipologia di Garanzia",
-                            type: "button",
-                            fieldName: "label",
-                            width: "100%"
+                            "id": "option",
+                            "title": "Tipologia di Garanzia",
+                            "type": "button",
+                            "fieldName": "label",
+                            "width": "100%"
                         },
                         {
-                            id: "importo",
-                            title: "Importo (€)",
-                            type: "number",
-                            fieldName: "importo",
-                            prefix: "€",
-                            inputProps: { 
-                                step: "0.01", 
-                                min: "0" 
-                            }
+                            "id": "importo",
+                            "title": "Importo (€)",
+                            "type": "number",
+                            "fieldName": "importo",
+                            "prefix": "€",
+                            "inputProps": {
+                                "step": "0.01",
+                                "min": "0"
+                            },
+                            "editableFor": "personalizzata"
                         },
                         {
-                            id: "durata",
-                            title: "Durata (Mesi)",
-                            type: "text",
-                            fieldName: "durata",
-                            // suffix: "Mesi"
+                            "id": "durata",
+                            "title": "Durata (Mesi)",
+                            "type": "text",
+                            "fieldName": "durata",
+                            "editableFor": "personalizzata"
                         }
                     ],
-                    options: [
-                        { label: "Fidejussione Rimborso IVA", value: "rimborsoIVA", importo: "0.00", durata: "36" },
-                        { label: "Fidejussione autotrasporti", value: "autotrasporti", importo: "0.00", durata: "12" },
-                        { label: "Fidejussione personalizzata", value: "personalizzata", importo: "0.00", durata: "24" },
+                    "options": [
+                        { "label": "Fidejussione Rimborso IVA", "value": "rimborsoIVA", "importo": "0.00", "durata": "36" },
+                        { "label": "Fidejussione autotrasporti", "value": "autotrasporti", "importo": "0.00", "durata": "12" },
+                        { "label": "Fidejussione personalizzata", "value": "personalizzata", "importo": "0.00", "durata": "24" }
                     ]
                 }
+
             ]
         }
     ],

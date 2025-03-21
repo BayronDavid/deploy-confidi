@@ -184,6 +184,7 @@ function FormInput({ config, value, onChange }) {
                     warningMessage={config.warningMessage}
                     warningIcon={config.warningIcon}
                     className={config.className}
+                    selectionMode={config.selectionMode || "buttons"}
                 />
             );
 
