@@ -61,10 +61,10 @@ function FormInput({ config, value, onChange }) {
                 isValid = value !== null && value !== undefined && value !== "";
             } else if (type === "fidejussione") {
                 // Validación para "fidejussione" - revisada para verificar la estructura completa
-                isValid = value && 
-                          Array.isArray(value.selectedValues) && 
-                          value.selectedValues.length > 0 && 
-                          Array.isArray(value.optionsData);
+                isValid = value &&
+                    Array.isArray(value.selectedValues) &&
+                    value.selectedValues.length > 0 &&
+                    Array.isArray(value.optionsData);
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");
@@ -178,7 +178,7 @@ function FormInput({ config, value, onChange }) {
             // Extraemos los valores de la estructura almacenada si existe
             let currentSelectedValues = [];
             let currentOptionsData = [];
-            
+
             if (value && typeof value === 'object') {
                 // Si ya tenemos un valor guardado con la estructura correcta
                 if (Array.isArray(value.selectedValues)) {
@@ -192,7 +192,7 @@ function FormInput({ config, value, onChange }) {
                 currentSelectedValues = value;
                 currentOptionsData = options || [];
             }
-            
+
             return renderInputWithWrapper(
                 <FidejussioneInputGroup
                     label={label || ""}
@@ -212,6 +212,7 @@ function FormInput({ config, value, onChange }) {
                     warningIcon={config.warningIcon}
                     className={config.className}
                     selectionMode={config.selectionMode || "buttons"}
+                    allowAddRows={config.allowAddRows || false}
                 />
             );
 

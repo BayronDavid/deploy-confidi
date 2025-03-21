@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./FidejussioneInputGroup.css";
 import Button from "../buttons/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle, faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useFormsContext } from "@/context/FormsContext";
 import HtmlRenderer from "@/utils/HtmlRenderer";
 import CustomSelector from "./CustomSelector"; // Importación de CustomSelector
@@ -13,6 +13,7 @@ import CustomSelector from "./CustomSelector"; // Importación de CustomSelector
  *   - Permite selección (simple o múltiple) y edición condicional de columnas.
  *   - Usa 'requiresSelection' en columnas y 'disabledColumns' en cada fila para controlar el disabled.
  *   - Permite configurar ancho de columnas mediante la propiedad 'width' de cada columna.
+ *   - Soporta creación dinámica de filas adicionales con 'allowAddRows'.
  */
 export default function FidejussioneInputGroup({
     label = "",
@@ -24,7 +25,8 @@ export default function FidejussioneInputGroup({
     columns = [],
     warningMessage = "",
     warningIcon = null,
-    className = ""
+    className = "",
+    allowAddRows = false
 }) {
     const { formSubmitAttempted } = useFormsContext();
 
@@ -48,7 +50,7 @@ export default function FidejussioneInputGroup({
         if (!onChange) return;
 
         let newSelected;
-        
+
         if (allowMultiple) {
             const isSelected = selectedValues.includes(value);
             newSelected = isSelected
@@ -57,7 +59,7 @@ export default function FidejussioneInputGroup({
         } else {
             newSelected = [value];
         }
-        
+
         // Importante: siempre pasamos todos los datos actualizados al padre
         onChange(newSelected, optionsData);
     };
@@ -78,6 +80,58 @@ export default function FidejussioneInputGroup({
         }
     };
 
+    // Nueva función para añadir una fila
+    const handleAddRow = () => {
+        if (optionsData.length === 0) return;
+
+        // Crea una nueva fila basada en la primera fila
+        const baseRow = optionsData[0];
+        const newRow = { ...baseRow };
+
+        // Genera un ID único para la nueva fila
+        newRow.value = `row_${Date.now()}`;
+
+        // Limpia los valores de los campos (excepto los selectores que mantienen sus opciones)
+        columns.forEach(column => {
+            if (column.fieldName && column.type !== 'selector') {
+                newRow[column.fieldName] = '';
+            }
+        });
+
+        // Mantiene las opciones del selector si existen
+        if (baseRow.selectorOptions) {
+            newRow.selectorOptions = [...baseRow.selectorOptions];
+        }
+
+        const updatedOptions = [...optionsData, newRow];
+        setOptionsData(updatedOptions);
+
+        // Notifica al padre
+        if (onChange) {
+            onChange(selectedValues, updatedOptions);
+        }
+    };
+
+    // Nueva función para eliminar una fila
+    const handleRemoveRow = (index) => {
+        if (optionsData.length <= 1 || index === 0) return; // No eliminar la primera fila
+
+        const updatedOptions = [...optionsData];
+        updatedOptions.splice(index, 1);
+
+        // Actualiza los valores seleccionados si es necesario
+        const updatedSelectedValues = selectedValues.filter(
+            value => updatedOptions.some(option => option.value === value)
+        );
+
+        setOptionsData(updatedOptions);
+
+        // Notifica al padre
+        if (onChange) {
+            onChange(updatedSelectedValues, updatedOptions);
+        }
+    };
+
     // Determina si debemos mostrar advertencia (campo requerido y sin selección)
     const showWarning = !hasAction && formSubmitAttempted && !isOptional;
 
@@ -92,7 +146,7 @@ export default function FidejussioneInputGroup({
 
         // 2) Verificamos si la fila tiene un selector (que actúa como selector principal)
         const hasSelector = columns.some(col => col.type === "selector");
-        
+
         // 3) Si la columna requiere que la fila esté seleccionada y la fila NO está seleccionada
         // y además NO hay un selector en la fila => disabled
         if (column.requiresSelection && !isRowSelected && !hasSelector) {
@@ -109,7 +163,7 @@ export default function FidejussioneInputGroup({
         if (column.width) {
             return { flex: `0 0 ${column.width}` };
         }
-        
+
         // Si no, usamos un ancho por defecto
         return { flex: '1' };
     };
@@ -146,13 +200,13 @@ export default function FidejussioneInputGroup({
                         />
                     </div>
                 );
-                
+
             case "selector":
                 // Selector personalizado que permite selección múltiple o única
                 return (
                     <div className="option-grid__column" style={columnStyle}>
                         <CustomSelector
-                            label={column.label || ""} 
+                            label={column.label || ""}
                             options={option.selectorOptions || []}
                             value={value}
                             onChange={(newValue) => handleFieldChange(optionIndex, id, newValue)}
@@ -170,7 +224,7 @@ export default function FidejussioneInputGroup({
             case "text":
                 return (
                     <div className="option-grid__column" style={columnStyle}>
-                        <div 
+                        <div
                             className={`option-grid__input-pill ${disabled ? "disabled" : ""}`}
                             style={inputWidth ? { width: inputWidth } : null}
                         >
@@ -222,6 +276,7 @@ export default function FidejussioneInputGroup({
                             {HtmlRenderer(column.title || "")}
                         </div>
                     ))}
+                    {allowAddRows && <div className="option-grid__column-title" style={{ flex: '0 0 60px' }}></div>}
                 </div>
             )}
 
@@ -240,10 +295,39 @@ export default function FidejussioneInputGroup({
                                     {renderColumnCell(option, optionIndex, column)}
                                 </React.Fragment>
                             ))}
+
+                            {/* Botón para eliminar fila (excepto la primera) */}
+                            {allowAddRows && (
+                                <div className="option-grid__column" style={{ flex: '0 0 60px' }}>
+                                    {optionIndex > 0 && (
+                                        <button
+                                            className="option-grid__remove-btn"
+                                            onClick={() => handleRemoveRow(optionIndex)}
+                                            title="Eliminar fila"
+                                        >
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </button>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     );
                 })}
             </div>
+
+            {/* Botón para agregar filas */}
+            {allowAddRows && (
+                <div className="option-grid__add-row">
+                    <Button
+                        label="Aggiungi Riga"
+                        variant="primary"
+                        onClick={handleAddRow}
+                        icon={faPlus}
+                        size="medium"
+                        className="add-row-button"
+                    />
+                </div>
+            )}
 
             {/* Advertencia si no se seleccionó nada y es obligatorio */}
             {showWarning && (

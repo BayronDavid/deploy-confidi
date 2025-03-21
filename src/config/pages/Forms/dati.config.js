@@ -464,6 +464,76 @@ const formConfig = {
                     rows: 4
                 }
             ]
+        },
+        {
+            id: "Compagine Sociale",
+            accordionTitle: "Compagine Sociale",
+            // description: "Compilare i campi richiesti e aggiungere righe se necessario.",
+            isAccordion: true,
+            // defaultOpen: true, 
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    id: "campi_testo_multipli",
+                    type: "fidejussione",
+                    required: false, // Cambiado a false para evitar validaciones iniciales
+                    warningMessage: "È necessario compilare almeno una riga",
+                    allowMultiple: true, // Cambiado a true para permitir múltiples selecciones
+                    allowAddRows: true, // Habilitada la adición de filas
+                    columns: [
+                        {
+                            id: "CognomeNomeoRagioneSociale",
+                            title: "Cognome Nome o Ragione Sociale",
+                            type: "text",
+                            fieldName: "CognomeNomeoRagioneSociale",
+                            width: "25%",
+                            placeholder: ""
+                        },
+                        {
+                            id: "CodiceFiscale",
+                            title: "Codice Fiscale",
+                            type: "text",
+                            fieldName: "CodiceFiscale",
+                            width: "25%",
+                            placeholder: ""
+                        },
+                        {
+                            id: "Quota",
+                            title: "Quota %",
+                            type: "number",
+                            fieldName: "Quota",
+                            width: "25%",
+                            placeholder: "",
+                            inputProps: {
+                                step: "0.1",
+                                min: "0",
+                                max: "100"
+                            }
+                        },
+                        {
+                            id: "Carica",
+                            title: "Carica",
+                            type: "text",
+                            fieldName: "Carica",
+                            width: "25%",
+                            placeholder: ""
+                        }
+                    ],
+                    options: [
+                        {
+                            value: "row1",
+                            CognomeNomeoRagioneSociale: "",
+                            CodiceFiscale: "",
+                            Quota: "",
+                            Carica: ""
+                        }
+                    ]
+                }
+            ]
         }
     ],
 };

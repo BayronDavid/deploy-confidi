@@ -129,3 +129,35 @@
   box-sizing: border-box;
   border-radius: var(--border-radius-sm);
 }
+
+/* ---------- Botones para agregar y eliminar filas ---------- */
+.option-grid__add-row {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.option-grid__remove-btn {
+  background-color: var(--color-system-danger, #f44336);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.option-grid__remove-btn:hover {
+  background-color: var(--color-system-danger-dark, #d32f2f);
+}
+
+.add-row-button {
+  min-width: 150px !important;
+}
