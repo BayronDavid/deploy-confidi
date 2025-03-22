@@ -6,8 +6,8 @@ import DocumentRequest from "../imputs/DocumentRequest";
 import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
 import CustomSelector from "../imputs/CustomSelector";
-import CustomTextarea from "../imputs/CustomTextarea"; // added import
-import FidejussioneInputGroup from "../imputs/FidejussioneInputGroup"; // nuevo import
+import CustomTextarea from "../imputs/CustomTextarea"; 
+import DynamicInputGrid from "../imputs/DynamicInputGrid"; 
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -194,7 +194,7 @@ function FormInput({ config, value, onChange }) {
             }
 
             return renderInputWithWrapper(
-                <FidejussioneInputGroup
+                <DynamicInputGrid
                     label={label || ""}
                     options={currentOptionsData.length > 0 ? currentOptionsData : (options || [])}
                     selectedValues={currentSelectedValues}
