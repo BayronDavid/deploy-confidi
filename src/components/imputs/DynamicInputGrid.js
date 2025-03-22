@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import "./DynamicInputGrid.css";
 import Button from "../buttons/Button";
@@ -7,10 +8,11 @@ import { useFormsContext } from "@/context/FormsContext";
 import HtmlRenderer from "@/utils/HtmlRenderer";
 import CustomSelector from "./CustomSelector";
 
-/* Subcomponentes de celda */
+/* ====================== */
+/*   SUBCOMPONENTES DE CELDA   */
+/* ====================== */
 
 // Celda que muestra un botón para seleccionar/deseleccionar la fila
-
 const OptionButtonCell = ({
     option,
     optionIndex,
@@ -24,6 +26,7 @@ const OptionButtonCell = ({
     const isSelected = selectedValues.includes(option.value);
     const buttonVariant = isSelected ? "primary" : "secondary";
     const style = getColumnWidth(column);
+
     return (
         <div className="option-grid__column" style={style}>
             <Button
@@ -47,6 +50,7 @@ const OptionSelectorCell = ({
     disabled,
 }) => {
     const style = getColumnWidth(column);
+
     return (
         <div className="option-grid__column" style={style}>
             <CustomSelector
@@ -76,6 +80,7 @@ const OptionInputCell = ({
 }) => {
     const style = getColumnWidth(column);
     const value = option[column.fieldName];
+
     return (
         <div className="option-grid__column" style={style}>
             <div
@@ -97,6 +102,89 @@ const OptionInputCell = ({
     );
 };
 
+/* ====================== */
+/*  NUEVO: CELDA MULTI-INPUT  */
+/* ====================== */
+
+const OptionMultiInputCell = ({
+    option,
+    optionIndex,
+    column,
+    handleFieldChange,
+    getColumnWidth,
+    disabled,
+}) => {
+    const style = getColumnWidth(column);
+
+    // Suponemos que los valores de los subcampos se almacenan en option[column.fieldName] como un objeto
+    // Ejemplo:
+    // option[column.fieldName] = {
+    //   subField1: "valor1",
+    //   subField2: "valor2",
+    //   ...
+    // }
+    const multiInputData = option[column.fieldName] || {};
+
+    // Maneja los cambios en cada subcampo
+    const handleSubfieldChange = (subField, newValue) => {
+        // Clonamos el objeto de subcampos
+        const updated = { ...multiInputData, [subField.fieldName]: newValue };
+        // Llamamos al handleFieldChange para que se actualice la fila completa
+        handleFieldChange(optionIndex, column.id, updated);
+    };
+
+    return (
+        <div className="option-grid__column" style={style}>
+            <div className="multi-input-wrapper">
+                {column.multiFields?.map((subField) => {
+                    const subValue = multiInputData[subField.fieldName] || "";
+                    return (
+                        <div
+                            key={subField.fieldName}
+                            className={`option-grid__input-pill ${disabled ? "disabled" : ""}`}
+                            style={subField.inputWidth ? { width: subField.inputWidth } : null}
+                        >
+                            {subField.prefix && <span>{subField.prefix}</span>}
+                            <input
+                                type={subField.type}
+                                value={subValue}
+                                placeholder={subField.placeholder || ""}
+                                onChange={(e) => handleSubfieldChange(subField, e.target.value)}
+                                disabled={disabled}
+                                {...(subField.inputProps || {})}
+                            />
+                            {subField.suffix && <span>{subField.suffix}</span>}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
+/* ====================== */
+/*  NUEVO: CELDA COMPUTADA  */
+/* ====================== */
+
+const OptionComputedCell = ({
+    option,
+    column,
+    getColumnWidth,
+}) => {
+    const style = getColumnWidth(column);
+    // El valor ya está calculado en handleFieldChange
+    const value = option[column.fieldName];
+
+    return (
+        <div className="option-grid__column" style={style}>
+            {/* Mostramos el valor en un pill "deshabilitado" para que sea visualmente claro que no se edita */}
+            <div className="option-grid__input-pill disabled" style={{ width: "100%" }}>
+                {value}
+            </div>
+        </div>
+    );
+};
+
 // Celda por defecto para otros casos
 const DefaultCell = ({ option, column, getColumnWidth }) => {
     const style = getColumnWidth(column);
@@ -108,7 +196,9 @@ const DefaultCell = ({ option, column, getColumnWidth }) => {
     );
 };
 
-// Componente que selecciona qué celda renderizar
+/* ====================== */
+/*  SWITCH DE RENDERIZADO DE CELDAS  */
+/* ====================== */
 const GridCell = ({
     option,
     optionIndex,
@@ -120,6 +210,7 @@ const GridCell = ({
     getColumnWidth,
 }) => {
     const disabled = isColumnDisabled(option, column);
+
     switch (column.type) {
         case "button":
             return (
@@ -144,6 +235,25 @@ const GridCell = ({
                     disabled={disabled}
                 />
             );
+        case "multiInput":
+            return (
+                <OptionMultiInputCell
+                    option={option}
+                    optionIndex={optionIndex}
+                    column={column}
+                    handleFieldChange={handleFieldChange}
+                    getColumnWidth={getColumnWidth}
+                    disabled={disabled}
+                />
+            );
+        case "computed":
+            return (
+                <OptionComputedCell
+                    option={option}
+                    column={column}
+                    getColumnWidth={getColumnWidth}
+                />
+            );
         case "number":
         case "text":
             return (
@@ -157,11 +267,19 @@ const GridCell = ({
                 />
             );
         default:
-            return <DefaultCell option={option} column={column} getColumnWidth={getColumnWidth} />;
+            return (
+                <DefaultCell
+                    option={option}
+                    column={column}
+                    getColumnWidth={getColumnWidth}
+                />
+            );
     }
 };
 
-// Componente para cada fila de la grilla
+/* ====================== */
+/*  COMPONENTE DE FILA   */
+/* ====================== */
 const GridRow = ({
     option,
     optionIndex,
@@ -175,6 +293,7 @@ const GridRow = ({
     handleRemoveRow,
 }) => {
     const isRowSelected = selectedValues.includes(option.value);
+
     return (
         <div
             key={option.value}
@@ -211,8 +330,9 @@ const GridRow = ({
     );
 };
 
-/* Componente principal refactorizado */
-
+/* ====================== */
+/* COMPONENTE PRINCIPAL  */
+/* ====================== */
 const DynamicInputGrid = ({
     label = "",
     options = [],
@@ -259,8 +379,18 @@ const DynamicInputGrid = ({
     const handleFieldChange = (optionIndex, columnId, newValue) => {
         const updatedOptions = [...optionsData];
         const column = columns.find((col) => col.id === columnId);
+
         if (column && column.fieldName) {
+            // Asignamos el valor
             updatedOptions[optionIndex][column.fieldName] = newValue;
+
+            // Recalcular valores "computed" en esta misma fila
+            columns.forEach((col) => {
+                if (col.type === "computed" && typeof col.compute === "function") {
+                    updatedOptions[optionIndex][col.fieldName] = col.compute(updatedOptions[optionIndex]);
+                }
+            });
+
             setOptionsData(updatedOptions);
             if (onChange) {
                 onChange(selectedValues, updatedOptions);
@@ -274,14 +404,29 @@ const DynamicInputGrid = ({
         const baseRow = optionsData[0];
         const newRow = { ...baseRow };
         newRow.value = `row_${Date.now()}`;
+
         columns.forEach((column) => {
             if (column.fieldName && column.type !== "selector") {
-                newRow[column.fieldName] = "";
+                // Para multiInput, reiniciamos el objeto
+                if (column.type === "multiInput") {
+                    const emptyObject = {};
+                    column.multiFields?.forEach((sub) => {
+                        emptyObject[sub.fieldName] = "";
+                    });
+                    newRow[column.fieldName] = emptyObject;
+                }
+                // Para los demás, simplemente vaciamos la cadena
+                else {
+                    newRow[column.fieldName] = "";
+                }
             }
         });
+
+        // Si existía la propiedad selectorOptions, la copiamos
         if (baseRow.selectorOptions) {
             newRow.selectorOptions = [...baseRow.selectorOptions];
         }
+
         const updatedOptions = [...optionsData, newRow];
         setOptionsData(updatedOptions);
         if (onChange) {
@@ -294,9 +439,12 @@ const DynamicInputGrid = ({
         if (optionsData.length <= 1 || index === 0) return;
         const updatedOptions = [...optionsData];
         updatedOptions.splice(index, 1);
+
+        // Actualizar los valores seleccionados si la fila removida estaba seleccionada
         const updatedSelectedValues = selectedValues.filter((value) =>
             updatedOptions.some((option) => option.value === value)
         );
+
         setOptionsData(updatedOptions);
         if (onChange) {
             onChange(updatedSelectedValues, updatedOptions);

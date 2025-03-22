@@ -59,8 +59,8 @@ function FormInput({ config, value, onChange }) {
             } else if (type === "select") {
                 // Validación para selector único
                 isValid = value !== null && value !== undefined && value !== "";
-            } else if (type === "fidejussione") {
-                // Validación para "fidejussione" - revisada para verificar la estructura completa
+            } else if (type === "DynamicInputGrid") {
+                // Validación para "DynamicInputGrid" - revisada para verificar la estructura completa
                 isValid = value &&
                     Array.isArray(value.selectedValues) &&
                     value.selectedValues.length > 0 &&
@@ -174,7 +174,7 @@ function FormInput({ config, value, onChange }) {
                 />
             );
 
-        case "fidejussione":
+        case "DynamicInputGrid":
             // Extraemos los valores de la estructura almacenada si existe
             let currentSelectedValues = [];
             let currentOptionsData = [];

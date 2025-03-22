@@ -6,6 +6,7 @@
   width: 100%;
   box-sizing: border-box;
   font-family: var(--font-family-base);
+  overflow-x: auto;
 }
 
 .option-grid__label {
@@ -187,4 +188,10 @@
 .add-row-button:hover {
   background-color: #e5e7eb;
   border-color: #6b7280;
+}
+
+.multi-input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }

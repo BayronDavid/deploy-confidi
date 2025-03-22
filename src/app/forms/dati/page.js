@@ -1,3 +1,5 @@
+"use client";
+
 import FormContainer from '@/components/forms/FormContainer'
 import formConfig from '@/config/pages/Forms/dati.config'
 import React from 'react'
