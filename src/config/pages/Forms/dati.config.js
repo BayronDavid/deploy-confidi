@@ -468,9 +468,9 @@ const formConfig = {
         {
             id: "Compagine Sociale",
             accordionTitle: "Compagine Sociale",
-            // description: "Compilare i campi richiesti e aggiungere righe se necessario.",
+            description: "La compagine sociale si riferisce all'insieme dei soci o azionisti di una società e alla ripartizione delle loro quote di partecipazione. In altre parole, rappresenta la struttura proprietaria dell'azienda, indicando chi ne detiene le quote o azioni e in quale misura.",
             isAccordion: true,
-            // defaultOpen: true, 
+            defaultOpen: true, // Abrir por defecto para que sea visible
             layout: {
                 columns: 1,
                 gap: "normal",
@@ -480,17 +480,17 @@ const formConfig = {
                 {
                     id: "campi_testo_multipli",
                     type: "fidejussione",
-                    required: false, // Cambiado a false para evitar validaciones iniciales
+                    required: false,
                     warningMessage: "È necessario compilare almeno una riga",
-                    allowMultiple: true, // Cambiado a true para permitir múltiples selecciones
-                    allowAddRows: true, // Habilitada la adición de filas
+                    allowMultiple: true,
+                    allowAddRows: true, // Asegurarse que esté habilitado
                     columns: [
                         {
                             id: "CognomeNomeoRagioneSociale",
                             title: "Cognome Nome o Ragione Sociale",
                             type: "text",
                             fieldName: "CognomeNomeoRagioneSociale",
-                            width: "25%",
+                            width: "22%",
                             placeholder: ""
                         },
                         {
@@ -498,7 +498,7 @@ const formConfig = {
                             title: "Codice Fiscale",
                             type: "text",
                             fieldName: "CodiceFiscale",
-                            width: "25%",
+                            width: "22%",
                             placeholder: ""
                         },
                         {
@@ -506,7 +506,7 @@ const formConfig = {
                             title: "Quota %",
                             type: "number",
                             fieldName: "Quota",
-                            width: "25%",
+                            width: "22%",
                             placeholder: "",
                             inputProps: {
                                 step: "0.1",
@@ -519,7 +519,7 @@ const formConfig = {
                             title: "Carica",
                             type: "text",
                             fieldName: "Carica",
-                            width: "25%",
+                            width: "22%",
                             placeholder: ""
                         }
                     ],

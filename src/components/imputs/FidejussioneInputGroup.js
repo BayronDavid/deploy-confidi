@@ -287,8 +287,7 @@ export default function FidejussioneInputGroup({
                     return (
                         <div
                             key={option.value}
-                            className={`option-grid__row ${isRowSelected ? "option-grid__row--active" : ""
-                                }`}
+                            className={`option-grid__row ${isRowSelected ? "option-grid__row--active" : ""}`}
                         >
                             {columns.map((column) => (
                                 <React.Fragment key={column.id}>
@@ -298,12 +297,13 @@ export default function FidejussioneInputGroup({
 
                             {/* Botón para eliminar fila (excepto la primera) */}
                             {allowAddRows && (
-                                <div className="option-grid__column" style={{ flex: '0 0 60px' }}>
+                                <div className="option-grid__column option-grid__delete-column" style={{ flex: '0 0 60px' }}>
                                     {optionIndex > 0 && (
                                         <button
                                             className="option-grid__remove-btn"
                                             onClick={() => handleRemoveRow(optionIndex)}
                                             title="Eliminar fila"
+                                            type="button"
                                         >
                                             <FontAwesomeIcon icon={faTrash} />
                                         </button>

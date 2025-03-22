@@ -140,10 +140,8 @@
 }
 
 .option-grid__remove-btn {
-  background-color: var(--color-system-danger, #f44336);
-  color: white;
+  color: var(--color-system-error);
   border: none;
-  border-radius: 50%;
   width: 28px;
   height: 28px;
   display: flex;
@@ -151,13 +149,42 @@
   justify-content: center;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  background-color: transparent;
 }
 
 .option-grid__remove-btn:hover {
-  background-color: var(--color-system-danger-dark, #d32f2f);
+  transform: scale(1.05);
+}
+
+/* Columna para el botón de eliminar */
+.option-grid__delete-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
 }
 
 .add-row-button {
-  min-width: 150px !important;
+  background-color: #f3f4f6;
+  border: 2px dashed #9ca3af;
+  color: #111827;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: bold;
+  /* margin-top: 1rem; */
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.add-row-button:hover {
+  background-color: #e5e7eb;
+  border-color: #6b7280;
 }
