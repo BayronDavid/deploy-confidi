@@ -539,7 +539,7 @@ const formConfig = {
             id: "ImpresaRichiedente",
             accordionTitle: "Impresa Richiedente",
             isAccordion: true,
-            defaultOpen: true,
+            defaultOpen: false,
             layout: {
                 columns: 1,
                 gap: "normal",
@@ -729,7 +729,7 @@ const formConfig = {
             accordionTitle: "Calcolo Dimensione Aziendale",
             description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
-            defaultOpen: false,
+            defaultOpen: true,
             layout: {
                 columns: 1,
                 gap: "normal",
