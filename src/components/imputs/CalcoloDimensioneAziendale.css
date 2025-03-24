@@ -1,0 +1,178 @@
+.calcolo-dimensione-aziendale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+}
+
+.cda-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+/* Bloque de cada empresa */
+.cda-azienda-block {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  background-color: var(--color-neutral-50);
+}
+
+.cda-azienda-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.cda-azienda-header h3 {
+  font-size: var(--font-size-md);
+  margin: 0;
+}
+
+.cda-remove-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: transparent;
+  border: none;
+  color: var(--color-system-error);
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.cda-remove-btn:hover {
+  transform: scale(1.03);
+}
+
+.cda-azienda-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* Filas genéricas */
+.cda-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Etiquetas */
+.cda-label {
+  width: 200px;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-900);
+}
+
+/* Pill genérico para inputs (similar a .option-grid__input-pill) */
+.cda-input-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-neutral-300);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-sizing: border-box;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+
+.cda-input-pill input {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  height: 100%;
+}
+
+.cda-input-pill input:focus {
+  outline: none;
+}
+
+/* Para campos de porcentaje */
+.cda-percent {
+  max-width: 120px;
+}
+
+/* Sección doble de año (anno1 y anno2) */
+.cda-double-year-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.cda-double-year-row .cda-label {
+  width: auto;
+}
+
+.cda-double-inputs {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-left: 200px; /* para alinear con label */
+}
+
+/* Botón para añadir empresas */
+.cda-add-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.cda-add-row-button {
+  background-color: #f3f4f6;
+  border: 2px dashed #9ca3af;
+  color: #111827;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.cda-add-row-button:hover {
+  background-color: #e5e7eb;
+  border-color: #6b7280;
+}
+
+/* Totales */
+.cda-totali {
+  border-top: 1px solid var(--color-neutral-200);
+  padding-top: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.cda-totali-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.cda-totali-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-neutral-50);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+}
+
+.cda-totali-item label {
+  font-weight: var(--font-weight-semibold);
+}

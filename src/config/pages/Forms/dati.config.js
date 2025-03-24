@@ -723,8 +723,27 @@ const formConfig = {
                     ]
                 }
             ]
+        },
+        {
+            id: "calcoloDimensione",
+            accordionTitle: "Calcolo Dimensione Aziendale",
+            description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
+            isAccordion: true,
+            defaultOpen: false,
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    id: "dimensioneAziendale",
+                    type: "calcoloDimensioneAziendale",
+                    required: true,
+                    tooltip: "Compilare i dati per calcolare la dimensione aziendale"
+                }
+            ]
         }
-
     ],
 };
 

@@ -8,6 +8,7 @@ import CustomTextInput from "../imputs/CustomTextInput";
 import CustomSelector from "../imputs/CustomSelector";
 import CustomTextarea from "../imputs/CustomTextarea"; 
 import DynamicInputGrid from "../imputs/DynamicInputGrid"; 
+import CalcoloDimensioneAziendale from "../imputs/CalcoloDimensioneAziendale";
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -65,6 +66,11 @@ function FormInput({ config, value, onChange }) {
                     Array.isArray(value.selectedValues) &&
                     value.selectedValues.length > 0 &&
                     Array.isArray(value.optionsData);
+            } else if (type === "calcoloDimensioneAziendale") {
+                // Validación para "calcoloDimensioneAziendale"
+                isValid = value && 
+                    value.impresaRichiedente && 
+                    value.impresaRichiedente.denominazione !== "";
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");
@@ -213,6 +219,16 @@ function FormInput({ config, value, onChange }) {
                     className={config.className}
                     selectionMode={config.selectionMode || "buttons"}
                     allowAddRows={config.allowAddRows || false}
+                />
+            );
+
+        case "calcoloDimensioneAziendale":
+            return renderInputWithWrapper(
+                <CalcoloDimensioneAziendale 
+                    value={value}
+                    onChange={onChange}
+                    isOptional={config.isOptional}
+                    required={required !== false}
                 />
             );
 
