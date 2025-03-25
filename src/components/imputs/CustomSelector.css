@@ -9,14 +9,28 @@
   cursor: pointer;
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--color-neutral-700);
+  width: auto; /* Allow inline width to take precedence */
+  box-sizing: border-box;
   max-width: 100%;
+  /* height: 36px; */
+}
+
+.custom-selector--open .custom-selector__wrapper{
+  border-bottom: none;
+  background-color: transparent !important;
+}
+
+/* When used in grid layouts like CalcoloDimensioneAziendale */
+.option-grid__column .custom-selector {
+  min-width: auto; /* Override min-width when in a grid column */
+  width: 100%; /* Fill the entire container by default */
 }
 
 .custom-selector__wrapper {
   position: relative;
-  /* border-bottom: var(--border-width) solid var(--color-neutral-400); */
-  background-color: var(--color-neutral-100);
-  height: 46px;
+  border-bottom: var(--border-width) solid var(--color-neutral-400);
+  /* background-color: var(--color-neutral-100); */
+  height: 36px;
   padding: 0 1rem;
   display: flex;
   align-items: center;
@@ -50,6 +64,7 @@
 }
 
 .custom-selector--open .custom-selector__icon {
+  /* background-color: red; */
   transform: rotate(180deg);
 }
 
@@ -92,7 +107,7 @@
 /* Focus (Typing) */
 .custom-selector--typing .custom-selector__wrapper {
   border-color: var(--color-neutral-700);
-  background-color: var(--color-neutral-100);
+  /* background-color: var(--color-neutral-100); */
 }
 
 /* Mover el label hacia arriba cuando el selector está en foco o tiene valor */
@@ -107,14 +122,49 @@
 /* Dropdown styles */
 .custom-selector__dropdown {
   position: relative;
-  /* margin-top: 4px; */
   width: calc(100% - 0.1rem);
-  background-color: white;
+  max-height: 200px; /* Add max-height to create scroll */
   overflow-y: auto;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border-radius: 0px 0px var(--border-radius-sm) var(--border-radius-sm);
   border-top: var(--border-width) solid var(--color-neutral-400);
+}
+
+/* Floating dropdown styles - completely revise positioning */
+.custom-selector__dropdown--floating {
+  position: absolute;
+  left: -1px;
+  max-height: 250px; /* Slightly larger for floating dropdown */
+  z-index: 1000; /* Higher z-index to appear above everything */
+  border: 1px solid var(--color-neutral-400);
+  border-radius: var(--border-radius-sm);
+  /* Fix for calculations that might be causing overlapping */
+  width: 100%;
+  margin-top: 1px;
+}
+
+/* When in a modal or other special container that needs higher z-index */
+.modal .custom-selector__dropdown--floating {
+  z-index: 2000;
+}
+
+/* For components with floating options, ensure appropriate positioning context */
+.custom-selector--floating-options {
+  position: relative;
+  z-index: 500; /* Higher than regular content but lower than modals */
+}
+
+/* Fix for any containers that might be constraining the dropdown */
+.option-grid__column .custom-selector--floating-options {
+  overflow: visible;
+}
+
+/* Ensure parent containers don't clip the floating dropdown */
+.option-grid, 
+.option-grid__column,
+.option-grid__row {
+  overflow: visible !important;
 }
 
 .custom-selector__option {
@@ -158,7 +208,6 @@
   align-items: center;
   justify-content: center;
   color: var(--color-accent);
-  background-color: white;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -228,4 +277,26 @@
 
 .custom-selector__tooltip-icon:hover {
   color: var(--color-accent-hover);
+}
+
+
+/* floating */
+
+.custom-selector--floating-options.custom-selector--open{
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0 !important;
+  border-bottom: none !important;
+  /* background-color: red !important; */
+}
+
+.custom-selector--floating-options.custom-selector--open .custom-selector__wrapper{
+  /* padding: 0; */
+} 
+
+
+.custom-selector--floating-options.custom-selector--open .custom-selector__dropdown{
+  background-color: var(--color-neutral-100);
+  border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+  border: 1px solid var(--color-neutral-700) !important;
+  border-top:  1px solid var(--color-neutral-400) !important;;
+  margin: 0;
 }

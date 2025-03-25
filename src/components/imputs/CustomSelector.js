@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./CustomSelector.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faQuestionCircle, 
-  faExclamationCircle, 
+import {
+  faQuestionCircle,
+  faExclamationCircle,
   faCheck
 } from "@fortawesome/free-solid-svg-icons";
 import Modal from "../modal/Modal";
@@ -31,33 +31,36 @@ function CustomSelector({
   multiple = false,
   placeholder = "Seleziona...",
   maxSelections,
+  width,
+  floatingOptions = false,
 }) {
   const [focused, setFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
   const { formSubmitAttempted } = useFormsContext();
-  
+
   const selectorRef = useRef(null);
   const dropdownRef = useRef(null);
+  const wrapperRef = useRef(null);
 
   // Determinar si el selector tiene valor
-  const hasValue = multiple 
-    ? Array.isArray(value) && value.length > 0 
+  const hasValue = multiple
+    ? Array.isArray(value) && value.length > 0
     : value !== null && value !== undefined && value !== "";
 
   // Función para validar el campo
   const validateField = () => {
     const errors = [];
-    
+
     if (required && !validateRequired(value, multiple)) {
       errors.push("Questo campo è obbligatorio");
     }
-    
+
     if (multiple && maxSelections && Array.isArray(value) && value.length > maxSelections) {
       errors.push(`È possibile selezionare al massimo ${maxSelections} opzioni`);
     }
-    
+
     return errors;
   };
 
@@ -74,7 +77,7 @@ function CustomSelector({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        selectorRef.current && 
+        selectorRef.current &&
         !selectorRef.current.contains(event.target) &&
         isOpen
       ) {
@@ -118,7 +121,7 @@ function CustomSelector({
       e.stopPropagation();
       const currentValues = Array.isArray(value) ? [...value] : [];
       const valueIndex = currentValues.indexOf(optionValue);
-      
+
       if (valueIndex >= 0) {
         // Eliminar valor si ya está seleccionado
         currentValues.splice(valueIndex, 1);
@@ -128,7 +131,7 @@ function CustomSelector({
           currentValues.push(optionValue);
         }
       }
-      
+
       if (onChange) {
         onChange(currentValues);
       }
@@ -154,7 +157,7 @@ function CustomSelector({
       const selectedLabels = options
         .filter(option => Array.isArray(value) && value.includes(option.value))
         .map(option => option.label);
-      
+
       if (selectedLabels.length <= 2) {
         return selectedLabels.join(", ");
       }
@@ -174,18 +177,20 @@ function CustomSelector({
         ${hasValue ? "custom-selector--has-value" : ""}
         ${showError ? "custom-selector--validation-error" : ""}
         ${isOpen ? "custom-selector--open" : ""}
-        ${multiple ? "custom-selector--multiple" : ""}`}
+        ${multiple ? "custom-selector--multiple" : ""}
+        ${floatingOptions ? "custom-selector--floating-options" : ""}`}
       tabIndex={disabled ? -1 : 0}
       onFocus={handleFocus}
       onClick={handleClick}
+      style={width ? { width, maxWidth: width } : undefined}
     >
-      <div className="custom-selector__wrapper">
+      <div className="custom-selector__wrapper no-select" ref={wrapperRef}>
         <div className="custom-selector__value">
           {getDisplayValue()}
         </div>
-        
+
         <div className="custom-selector__icon">
-          <img 
+          <img
             src="/ui/chevron-down.svg"
             alt={isOpen ? "Chiudi" : "Apri"}
             width={14}
@@ -193,7 +198,7 @@ function CustomSelector({
             className="custom-selector__chevron"
           />
         </div>
-        
+
         <label className="custom-selector__label">
           {HtmlRenderer(label)}
           {tooltip && (
@@ -203,17 +208,24 @@ function CustomSelector({
           )}
         </label>
       </div>
-      
+
       {isOpen && (
-        <div ref={dropdownRef} className="custom-selector__dropdown">
+        <div
+          ref={dropdownRef}
+          className={`custom-selector__dropdown ${floatingOptions ? 'custom-selector__dropdown--floating' : ''}`}
+          style={floatingOptions ? {
+            width: wrapperRef.current?.offsetWidth + 2 + 'px', // Match exact width of wrapper
+            top: wrapperRef.current?.offsetHeight + 'px'    // Position right below the wrapper
+          } : undefined}
+        >
           {options.length === 0 ? (
             <div className="custom-selector__no-options">Nessuna opzione disponibile</div>
           ) : (
             options.map((option) => {
-              const isSelected = multiple 
+              const isSelected = multiple
                 ? Array.isArray(value) && value.includes(option.value)
                 : value === option.value;
-                
+
               return (
                 <div
                   key={option.value || `option-${option.label}`}

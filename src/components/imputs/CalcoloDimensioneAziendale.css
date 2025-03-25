@@ -216,3 +216,74 @@
   width: 100%;
   text-align: right;
 }
+
+/* Estilo para la empresa opcional con margen inferior */
+.cda-impresa-optional {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Header de empresa opcional */
+.cda-impresa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
+}
+
+/* Selector de tipo de relación */
+.cda-tipo-relazione {
+  margin-bottom: var(--spacing-md);
+}
+
+/* Adaptamos el margin-bottom a 0 para los selectores dentro */
+.cda-tipo-relazione .custom-selector {
+  margin-bottom: 0;
+}
+
+/* Contenedor para denominazione con selector */
+.cda-denominazione-container {
+  display: none;
+}
+
+/* Reducir el margen del selector dentro del contenedor */
+.cda-denominazione-container .cda-tipo-relazione {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Ajustes para el custom selector dentro de la columna */
+.cda-denominazione-container .custom-selector {
+  margin-bottom: 0;
+  font-size: var(--font-size-sm);
+}
+
+/* Hacer más compacto el selector dentro de la columna */
+.cda-denominazione-container .custom-selector__wrapper {
+  padding: 4px 8px;
+  min-height: 28px;
+}
+
+.cda-denominazione-container .custom-selector__label {
+  font-size: 0.75rem;
+}
+
+/* Ajuste para el selector en la columna de denominación */
+.option-grid__column .custom-selector {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+.cda-impresa-header_option-grid__remove-btn{
+  color: var(--color-system-error);
+  border: none;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  position: relative;
+  z-index: 2;
+  background-color: transparent;
+}
+
+.cda-impresa-header_option-grid__remove-btn:hover {
+  transform: scale(1.05);
+}

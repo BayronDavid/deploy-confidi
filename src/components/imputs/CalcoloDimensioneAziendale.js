@@ -5,6 +5,7 @@ import "./CalcoloDimensioneAziendale.css"; // Importamos los estilos específico
 import HtmlRenderer from "@/utils/HtmlRenderer"; // Ajusta la ruta según tu proyecto
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import CustomSelector from "./CustomSelector"; // Importamos el CustomSelector
 
 /**
  * Este componente muestra:
@@ -40,14 +41,25 @@ export default function CalcoloDimensioneAziendale({
     // Callback para notificar cambios (puede ser opcional)
     onChange
 }) {
+    // Opciones para el tipo de relación entre empresas
+    const tipoRelazioneOptions = [
+        { value: "associata", label: "Associata" },
+        { value: "collegata", label: "Collegata" },
+        { value: "associata_di_collegata", label: "Associata di Collegata" },
+        { value: "collegata_di_associata", label: "Collegata di Associata" },
+        { value: "collegata_di_collegata", label: "Collegata di Collegata" },
+        { value: "collegata_persona_fisica", label: "Collegata Persona Fisica" },
+    ];
+
     // ----- ESTADO -----
     const [richiedente, setRichiedente] = useState(initialRichiedente);
 
     // Cada empresa opcional tiene la misma estructura que la principal
-    // más un `id` único para poder identificarla y eliminarla
+    // más un `id` único para poder identificarla y eliminarla, y un tipo de relación
     const [imprese, setImprese] = useState(
         initialImprese.map((item, idx) => ({
             id: `opt-${Date.now()}-${idx}`,
+            tipoRelazione: item.tipoRelazione || "",
             ...item
         }))
     );
@@ -62,6 +74,7 @@ export default function CalcoloDimensioneAziendale({
     const handleAddImpresa = () => {
         const newImpresa = {
             id: `opt-${Date.now()}`,
+            tipoRelazione: "",
             denominazioneCf: "",
             anno1: "",
             anno2: "",
@@ -110,14 +123,14 @@ export default function CalcoloDimensioneAziendale({
             attivoAnno1: 0,
             attivoAnno2: 0
         };
-        
+
         // Sumar los valores de la empresa principal (richiedente)
         // Convertimos a número y sumamos solo si hay un valor válido
         if (richiedente.fatturatoAnno1) totals.fatturatoAnno1 += Number(richiedente.fatturatoAnno1);
         if (richiedente.fatturatoAnno2) totals.fatturatoAnno2 += Number(richiedente.fatturatoAnno2);
         if (richiedente.attivoAnno1) totals.attivoAnno1 += Number(richiedente.attivoAnno1);
         if (richiedente.attivoAnno2) totals.attivoAnno2 += Number(richiedente.attivoAnno2);
-        
+
         // Sumar los valores de todas las empresas opcionales
         imprese.forEach(imp => {
             if (imp.fatturatoAnno1) totals.fatturatoAnno1 += Number(imp.fatturatoAnno1);
@@ -125,14 +138,14 @@ export default function CalcoloDimensioneAziendale({
             if (imp.attivoAnno1) totals.attivoAnno1 += Number(imp.attivoAnno1);
             if (imp.attivoAnno2) totals.attivoAnno2 += Number(imp.attivoAnno2);
         });
-        
+
         return totals;
     };
 
     // Renderizar sección de totales
     const renderTotals = () => {
         const totals = calculateTotals();
-        
+
         return (
             <div className="cda-totali">
                 <h3 className="cda-title">Totali</h3>
@@ -149,7 +162,7 @@ export default function CalcoloDimensioneAziendale({
                             Attivo
                         </div>
                     </div>
-                    
+
                     <div className="option-grid__list">
                         {/* Fila Año 1 */}
                         <div className="option-grid__row">
@@ -169,7 +182,7 @@ export default function CalcoloDimensioneAziendale({
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Fila Año 2 */}
                         <div className="option-grid__row">
                             <div className="option-grid__column anno">
@@ -201,7 +214,7 @@ export default function CalcoloDimensioneAziendale({
     const renderColumnTitles = () => {
         return (
             <div className="option-grid__column-titles">
-                <div className="option-grid__column-title" style={{ flex: "0 0 20%" }}>
+                <div className="option-grid__column-title" style={{ flex: "0 0 220px" }}>
                     Denominazione e C.F. Impresa
                 </div>
                 <div className="option-grid__column-title" style={{ flex: "0 0 15%" }}>
@@ -231,7 +244,7 @@ export default function CalcoloDimensioneAziendale({
                 {/* Fila Año 1 */}
                 <div className="option-grid__row">
                     {/* Denominazione (fila 1) */}
-                    <div className="option-grid__column" style={{ flex: "0 0 20%" }}>
+                    <div className="option-grid__column" style={{ flex: "0 0 220px" }}>
                         <div className="option-grid__input-pill">
                             <input
                                 type="text"
@@ -302,7 +315,7 @@ export default function CalcoloDimensioneAziendale({
                 {/* Fila Año 2 */}
                 <div className="option-grid__row">
                     {/* Denominazione (fila 2) => vacío */}
-                    <div className="option-grid__column" style={{ flex: "0 0 20%" }} />
+                    <div className="option-grid__column" style={{ flex: "0 0 220px" }} />
 
                     {/* Anno di Riferimento (fila 2) */}
                     <div className="option-grid__column" style={{ flex: "0 0 15%" }}>
@@ -376,22 +389,16 @@ export default function CalcoloDimensioneAziendale({
         };
 
         return (
-            <div key={imp.id} style={{ marginBottom: "1rem" }}>
+            <div key={imp.id} className="cda-impresa-optional">
                 {/* Encabezado o título para la empresa opcional */}
-                <div
-                    style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: "0.5rem"
-                    }}
-                >
+                <div className="cda-impresa-header">
                     <strong>Impresa {numero}</strong>
                     <button
                         type="button"
-                        className="option-grid__remove-btn"
+                        className="cda-impresa-header_option-grid__remove-btn"
                         onClick={() => handleRemoveImpresa(imp.id)}
                     >
-                        Elimina impresa <FontAwesomeIcon icon={faTrash} />
+                        <FontAwesomeIcon icon={faTrash} />
                     </button>
                 </div>
 
@@ -403,18 +410,18 @@ export default function CalcoloDimensioneAziendale({
                     <div className="option-grid__list">
                         {/* Fila Año 1 */}
                         <div className="option-grid__row">
-                            {/* Denominazione (fila 1) */}
-                            <div className="option-grid__column" style={{ flex: "0 0 20%" }}>
-                                <div className="option-grid__input-pill">
-                                    <input
-                                        type="text"
-                                        placeholder="Denominazione e C.F."
-                                        value={imp.denominazioneCf}
-                                        onChange={(e) =>
-                                            handleFieldChange("denominazioneCf", e.target.value)
-                                        }
-                                    />
-                                </div>
+                            {/* Selector de relación en lugar del input de texto (fila 1) */}
+                            <div className="option-grid__column" style={{ flex: "0 0 220px", position: "relative", overflow: "visible" }}>
+                                <CustomSelector
+                                    label="Seleziona"
+                                    options={tipoRelazioneOptions}
+                                    value={imp.tipoRelazione}
+                                    onChange={(value) => handleFieldChange("tipoRelazione", value)}
+                                    // placeholder="Seleziona tipo di relazione"
+                                    required={true}
+                                    width="220px"
+                                    floatingOptions={true}
+                                />
                             </div>
 
                             {/* Anno di Riferimento (fila 1) */}
@@ -491,7 +498,7 @@ export default function CalcoloDimensioneAziendale({
                             {/* Denominazione (fila 2) => vacío */}
                             <div
                                 className="option-grid__column"
-                                style={{ flex: "0 0 20%" }}
+                                style={{ flex: "0 0 220px" }}
                             />
 
                             {/* Anno di Riferimento (fila 2) */}
@@ -572,9 +579,9 @@ export default function CalcoloDimensioneAziendale({
     return (
         <div className="calcolo-dimensione-aziendale">
             {/* Título global */}
-            <div className="cda-title">
+            {/* <div className="cda-title">
                 {HtmlRenderer("Calcolo dimensione Aziendale")}
-            </div>
+            </div> */}
 
             {/* Bloque para Impresa Richiedente */}
             <div className="option-grid" style={{ overflowX: "auto" }}>
