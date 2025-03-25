@@ -2,7 +2,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: #fff; /* Cambiado de #000 a #fff para fondo blanco */
+  background: #444444; /* Cambiado a gris oscuro para coincidir con el fondo de la escena */
   overflow: hidden; /* Evitar scroll innecesario */
   display: flex;
   justify-content: center;

@@ -6,16 +6,16 @@ import { OrbitControls, Stage, PerspectiveCamera, useGLTF, useAnimations } from 
 import * as THREE from 'three';
 import './ModelViewer.css';
 
-function Model({ modelPath, onLoaded, animationIndex, playing, animationSpeed, lightIntensity, lightColor, envIntensity }) {
+function Model({ modelPath, onLoaded, animationIndex, playing, animationSpeed, lightIntensity, lightColor, envIntensity, backgroundColor }) {
   const { scene, animations } = useGLTF(modelPath);
   const { animationNames, mixer, actions, names } = useAnimations(animations, scene);
   const currentAction = useRef(null);
   const { gl } = useThree();
   
-  // Set background color to white
+  // Set background color to the specified color
   useEffect(() => {
-    gl.setClearColor('#ffffff');
-  }, [gl]);
+    gl.setClearColor(backgroundColor);
+  }, [gl, backgroundColor]);
 
   // Handle animation changes
   useEffect(() => {
@@ -93,6 +93,7 @@ const ModelViewer = ({ modelPath, modelName }) => {
   const [ambientIntensity, setAmbientIntensity] = useState(0.5);
   const [envIntensity, setEnvIntensity] = useState(0.6);
   const [lightColor, setLightColor] = useState("#ffffff");
+  const [backgroundColor, setBackgroundColor] = useState("#444444"); // Default dark gray background
   
   // Camera states
   const [autoRotate, setAutoRotate] = useState(true);
@@ -195,11 +196,20 @@ const ModelViewer = ({ modelPath, modelName }) => {
             </div>
             
             <div className="control-row">
-              <label>Color:</label>
+              <label>Color de luz:</label>
               <input 
                 type="color" 
                 value={lightColor}
                 onChange={(e) => setLightColor(e.target.value)}
+              />
+            </div>
+            
+            <div className="control-row">
+              <label>Color de fondo:</label>
+              <input 
+                type="color" 
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
               />
             </div>
           </div>
@@ -255,6 +265,7 @@ const ModelViewer = ({ modelPath, modelName }) => {
               animationSpeed={animationSpeed}
               envIntensity={envIntensity}
               lightColor={lightColor}
+              backgroundColor={backgroundColor}
             />
           </Stage>
           <OrbitControls 
