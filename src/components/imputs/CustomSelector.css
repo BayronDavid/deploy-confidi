@@ -160,12 +160,6 @@
   overflow: visible;
 }
 
-/* Ensure parent containers don't clip the floating dropdown */
-.option-grid, 
-.option-grid__column,
-.option-grid__row {
-  overflow: visible !important;
-}
 
 .custom-selector__option {
   display: flex;

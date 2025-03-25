@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import "./Header.css";
 import { useScrollContext } from "@/context/ScrollContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faHome, faInfoCircle, faEnvelope, faClipboardList } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faHome, faInfoCircle, faEnvelope, faClipboardList, faCube } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import MenuPopup from "./MenuPopup";
@@ -76,7 +76,8 @@ const Header = () => {
   const menuItems = [
     { title: "About", icon: faInfoCircle, path: "/about" },
     { title: "Contact", icon: faEnvelope, path: "/contact" },
-    { title: "Forms", icon: faClipboardList, path: "/forms" }
+    { title: "Forms", icon: faClipboardList, path: "/forms" },
+    { title: "3D", icon: faCube, path: "/test" }
   ];
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faHome, faLanguage } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faHome, faLanguage, faCube } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import LanguageSelector from "@/components/ui/LanguageSelector";
 import "./MenuPopup.css";
