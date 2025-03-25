@@ -5,6 +5,7 @@
   width: 100%;
   font-family: var(--font-family-base);
   box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .cda-title {
@@ -286,4 +287,208 @@
 
 .cda-impresa-header_option-grid__remove-btn:hover {
   transform: scale(1.05);
+}
+
+.option-grid__column-titles .option-grid__list{
+  width: auto;
+}
+
+/* Column width classes for consistent alignment - IMPROVED */
+.cda-column-width-denominazione {
+  flex-basis: 120px !important;
+  min-width: 120px;
+  max-width: 120px;
+  width: 120px;
+}
+
+.cda-column-width-anno {
+  flex-basis: 120px !important;
+  min-width: 120px;
+  max-width: 120px;
+  width: 120px;
+}
+
+.cda-column-width-fatturato,
+.cda-column-width-attivo,
+.cda-column-width-occupati {
+  flex-basis: 100px !important;
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
+}
+
+.cda-column-width-relazione {
+  flex-basis: 180px !important;
+  min-width: 180px;
+  max-width: 180px;
+  width: 180px;
+}
+
+.cda-column-width-percentuale {
+  flex-basis: 100px !important;
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
+}
+
+.cda-column-width-calc {
+  flex-basis: 120px !important;
+  min-width: 120px;
+  max-width: 120px;
+  width: 120px;
+}
+
+/* Container for the entire grid with fixed layout */
+.cda-grid-container {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+
+/* Use table layout for perfect column alignment */
+.cda-grid-table {
+  display: table;
+  width: max-content;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+
+.cda-grid-header {
+  display: table-header-group;
+  background-color: var(--color-neutral-100);
+}
+
+.cda-grid-body {
+  display: table-row-group;
+}
+
+.cda-grid-row {
+  display: table-row;
+}
+
+.cda-grid-cell {
+  display: table-cell;
+  padding: 4px;
+  vertical-align: middle;
+}
+
+/* Column titles should be sticky */
+.option-grid__column-titles {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--color-neutral-100);
+  min-width: max-content;
+  padding: 8px 4px;
+  display: flex;
+  gap: 4px;
+}
+
+/* Fix some issues with the nested grid */
+.option-grid__list {
+  min-width: max-content;
+  display: flex;
+  flex-direction: column;
+}
+
+.option-grid__row {
+  display: flex;
+  min-width: max-content;
+  gap: 4px;
+}
+
+/* Ensure titles and columns have same width and alignment */
+.option-grid__column-title,
+.option-grid__column {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
+/* Reset previous custom styles for totals that might interfere */
+.cda-totali .option-grid__column-title.anno,
+.cda-totali .option-grid__column-title.valore,
+.cda-totali .option-grid__column.anno,
+.cda-totali .option-grid__column.valore {
+  flex: unset;
+}
+
+/* Reset other flex styles that might interfere */
+.option-grid__column-titles .option-grid__list {
+  width: auto;
+}
+
+/* Always ensure column titles and columns have same width */
+.option-grid__column-title.cda-column-width-denominazione,
+.option-grid__column.cda-column-width-denominazione {
+  width: 120px;
+}
+
+.option-grid__column-title.cda-column-width-anno,
+.option-grid__column.cda-column-width-anno {
+  width: 120px;
+}
+
+.option-grid__column-title.cda-column-width-fatturato,
+.option-grid__column.cda-column-width-fatturato,
+.option-grid__column-title.cda-column-width-attivo,
+.option-grid__column.cda-column-width-attivo,
+.option-grid__column-title.cda-column-width-occupati,
+.option-grid__column.cda-column-width-occupati {
+  width: 100px;
+}
+
+.option-grid__column-title.cda-column-width-relazione,
+.option-grid__column.cda-column-width-relazione {
+  width: 180px;
+}
+
+.option-grid__column-title.cda-column-width-percentuale,
+.option-grid__column.cda-column-width-percentuale {
+  width: 100px;
+}
+
+.option-grid__column-title.cda-column-width-calc,
+.option-grid__column.cda-column-width-calc {
+  width: 120px;
+}
+
+/* Container for the entire grid to enable proper scrolling */
+.cda-grid-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.option-grid__column-titles {
+  display: flex;
+  min-width: max-content;
+}
+
+.option-grid__list {
+  min-width: max-content;
+}
+
+.option-grid__row {
+  display: flex;
+  min-width: max-content;
+}
+
+/* Fix for totals alignment */
+.cda-totali .option-grid {
+  min-width: max-content;
+}
+
+/* Ensure titles and columns have same width and alignment */
+.option-grid__column-title,
+.option-grid__column {
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+/* Remove previous inline styles that might conflict */
+.cda-totali .option-grid__column-title.anno,
+.cda-totali .option-grid__column-title.valore,
+.cda-totali .option-grid__column.anno,
+.cda-totali .option-grid__column.valore {
+  flex: unset;
 }
