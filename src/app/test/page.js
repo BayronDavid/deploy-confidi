@@ -1,12 +1,12 @@
 "use client";
 
 import React from 'react';
-import ModelGrid from '@/components/ModelGrid';
+import ModelGrid from '@/components/test_3D/ModelGrid';
 import { useRouter } from 'next/navigation';
 import './style.css';
 
 const SAMPLE_MODELS = [
-    { id: 'catedral', name: 'Catedral', path: '/3D/catedral/GEO_Museo.gltf', thumbnail: '/3D/catedral/thumbnail.png' },
+    { id: 'catedral', name: 'Catedral', path: '/3D/catedral2/Test_TExturas.gltf', thumbnail: '/3D/catedral2/thumbnail.png' },
     { id: 'fuente', name: 'Fuente', path: '/3D/fuente/textutas/text.gltf', thumbnail: '/3D/fuente/textutas/thumbnail.jpg', hasErrors: true },
     { id: 'fuenteanim', name: 'Fuente animada', path: '/3D/fuente/anim/PoseMetalgear.gltf', thumbnail: '/3D/fuente/anim/thumbnail.png', hasErrors: true },
 ];
