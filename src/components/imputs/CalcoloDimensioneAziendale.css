@@ -299,6 +299,7 @@
   min-width: 120px;
   max-width: 120px;
   width: 120px;
+
 }
 
 .cda-column-width-anno {
@@ -306,6 +307,7 @@
   min-width: 120px;
   max-width: 120px;
   width: 120px;
+
 }
 
 .cda-column-width-fatturato,
@@ -491,4 +493,32 @@
 .cda-totali .option-grid__column.anno,
 .cda-totali .option-grid__column.valore {
   flex: unset;
+}
+
+/* Styles for the totals rows integrated within the main table */
+.cda-totali-section {
+  margin-top: var(--spacing-md);
+  border-top: 1px solid var(--color-neutral-300);
+  padding-top: var(--spacing-md);
+}
+
+.cda-totali-row {
+  background-color: var(--color-neutral-50);
+}
+
+.cda-totale-label {
+  background-color: var(--color-neutral-100);
+  justify-content: flex-start;
+}
+
+.cda-totali-row .option-grid__input-pill span {
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+  display: block;
+  width: 100%;
+}
+
+/* Remove the separate totals section since it's now integrated */
+.cda-totali {
+  display: none;
 }

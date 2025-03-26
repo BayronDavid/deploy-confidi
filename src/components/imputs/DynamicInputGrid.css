@@ -43,6 +43,7 @@
 .option-grid__column {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 /* Alineación específica para la primera columna */

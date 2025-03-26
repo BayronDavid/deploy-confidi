@@ -11,7 +11,7 @@ export default function CalcoloDimensioneAziendale({
   // Datos iniciales para la empresa principal
   initialRichiedente = {
     denominazioneCf: "",
-    anno1: "2022", // Se mostrarán, pero no serán editables
+    anno1: "2022",
     anno2: "2023",
     fatturatoAnno1: "",
     fatturatoAnno2: "",
@@ -19,9 +19,10 @@ export default function CalcoloDimensioneAziendale({
     attivoAnno2: "",
     occupatiAnno1: "",
     occupatiAnno2: "",
-    tipoRelazione: "richiedente",
-    percentualeAssociazioneAnno1: "",
-    percentualeAssociazioneAnno2: "",
+    tipoRelazioneAnno1: "richiedente",
+    tipoRelazioneAnno2: "richiedente",
+    percentualeAssociazioneAnno1: "100",
+    percentualeAssociazioneAnno2: "100",
   },
   // Lista inicial de empresas opcionales
   initialImprese = [],
@@ -46,7 +47,8 @@ export default function CalcoloDimensioneAziendale({
   const [imprese, setImprese] = useState(
     initialImprese.map((item, idx) => ({
       id: `opt-${Date.now()}-${idx}`,
-      tipoRelazione: item.tipoRelazione || "associata",
+      tipoRelazioneAnno1: item.tipoRelazioneAnno1 || "associata",
+      tipoRelazioneAnno2: item.tipoRelazioneAnno2 || "associata",
       denominazioneCf: item.denominazioneCf || "",
       anno1: item.anno1 || "2022",
       anno2: item.anno2 || "2023",
@@ -79,7 +81,8 @@ export default function CalcoloDimensioneAziendale({
   const handleAddImpresa = () => {
     const newImpresa = {
       id: `opt-${Date.now()}`,
-      tipoRelazione: "associata",
+      tipoRelazioneAnno1: "associata",
+      tipoRelazioneAnno2: "associata",
       denominazioneCf: "",
       anno1: "2022",
       anno2: "2023",
@@ -112,9 +115,11 @@ export default function CalcoloDimensioneAziendale({
     }
   };
 
-  // Ejemplo de cálculo de totales (puedes adaptarlo a tu lógica)
+  // ===================== LÓGICA DE CÁLCULOS =====================
+  // Suma totales del grupo (empresa principal + opcionales)
+  // aplicando el porcentaje de asociación si existe.
   const calculateTotals = () => {
-    return {
+    let totals = {
       fatturatoAnno1: 0,
       fatturatoAnno2: 0,
       attivoAnno1: 0,
@@ -122,23 +127,168 @@ export default function CalcoloDimensioneAziendale({
       occupatiAnno1: 0,
       occupatiAnno2: 0,
     };
+
+    // Empresa principal (100% siempre)
+    if (richiedente.fatturatoAnno1) {
+      totals.fatturatoAnno1 += Number(richiedente.fatturatoAnno1);
+    }
+    if (richiedente.fatturatoAnno2) {
+      totals.fatturatoAnno2 += Number(richiedente.fatturatoAnno2);
+    }
+    if (richiedente.attivoAnno1) {
+      totals.attivoAnno1 += Number(richiedente.attivoAnno1);
+    }
+    if (richiedente.attivoAnno2) {
+      totals.attivoAnno2 += Number(richiedente.attivoAnno2);
+    }
+    if (richiedente.occupatiAnno1) {
+      totals.occupatiAnno1 += Number(richiedente.occupatiAnno1);
+    }
+    if (richiedente.occupatiAnno2) {
+      totals.occupatiAnno2 += Number(richiedente.occupatiAnno2);
+    }
+
+    // Empresas opcionales
+    imprese.forEach((imp) => {
+      const pA1 = imp.percentualeAssociazioneAnno1
+        ? Number(imp.percentualeAssociazioneAnno1)
+        : 0;
+      const pA2 = imp.percentualeAssociazioneAnno2
+        ? Number(imp.percentualeAssociazioneAnno2)
+        : 0;
+
+      // Fatturato
+      if (imp.fatturatoAnno1) {
+        totals.fatturatoAnno1 +=
+          (Number(imp.fatturatoAnno1) * pA1) / 100;
+      }
+      if (imp.fatturatoAnno2) {
+        totals.fatturatoAnno2 +=
+          (Number(imp.fatturatoAnno2) * pA2) / 100;
+      }
+
+      // Attivo
+      if (imp.attivoAnno1) {
+        totals.attivoAnno1 +=
+          (Number(imp.attivoAnno1) * pA1) / 100;
+      }
+      if (imp.attivoAnno2) {
+        totals.attivoAnno2 +=
+          (Number(imp.attivoAnno2) * pA2) / 100;
+      }
+
+      // Occupati
+      if (imp.occupatiAnno1) {
+        totals.occupatiAnno1 +=
+          (Number(imp.occupatiAnno1) * pA1) / 100;
+      }
+      if (imp.occupatiAnno2) {
+        totals.occupatiAnno2 +=
+          (Number(imp.occupatiAnno2) * pA2) / 100;
+      }
+    });
+
+    return totals;
   };
 
-  // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa,
-  // con las 10 columnas requeridas:
-  // 1) Denominazione e C.F. Impresa
-  // 2) Anno di Riferimento (solo lectura)
-  // 3) Fatturato
-  // 4) Attivo
-  // 5) Occupati (ULA)
-  // 6) Relazione & Collegamento
-  // 7) % di Associazione
-  // 8) Fatturato % (Imp./Gr.Rel.)
-  // 9) Attivo % (Imp./Gr.Rel.)
-  // 10) Occupati % (Imp./Gr.Rel.)
+  // Calcula el porcentaje de cada empresa respecto al total del grupo
+  // (Por cada año y por cada métrica: Fatturato, Attivo, Occupati).
+  const groupTotals = calculateTotals();
+
+  // Función para obtener el "valor parcial" de la empresa en base al % de asociación
+  // (si es la principal, es 100%).
+  const getEnterprisePartialValue = (company, field, year, isMain) => {
+    if (isMain) {
+      // 100% siempre
+      return Number(company[field]) || 0;
+    }
+    const p = year === 1
+      ? Number(company.percentualeAssociazioneAnno1) || 0
+      : Number(company.percentualeAssociazioneAnno2) || 0;
+    const val = Number(company[field]) || 0;
+    return (val * p) / 100;
+  };
+
+  // Para calcular el % final: (valor parcial / total) * 100
+  const getPercentageOfGroup = (partialValue, total) => {
+    if (!total || total === 0) return 0;
+    return (partialValue / total) * 100;
+  };
+
+  // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa
+  // con las 10 columnas requeridas, sustituyendo "Auto" por el cálculo real.
   const renderCompanyRows = (company, isMain = false) => {
-    // Para simplificar, los % (Imp./Gr.Rel.) se muestran como "Auto" o "Completo Automatico"
-    // Ajusta a tu lógica de cálculo si deseas algo real.
+    // =========== PREPARA valores PARCIALES para cada AÑO ===========
+    // Año 1
+    const partialFatturatoA1 = getEnterprisePartialValue(
+      company,
+      "fatturatoAnno1",
+      1,
+      isMain
+    );
+    const partialAttivoA1 = getEnterprisePartialValue(
+      company,
+      "attivoAnno1",
+      1,
+      isMain
+    );
+    const partialOccupatiA1 = getEnterprisePartialValue(
+      company,
+      "occupatiAnno1",
+      1,
+      isMain
+    );
+
+    // Año 2
+    const partialFatturatoA2 = getEnterprisePartialValue(
+      company,
+      "fatturatoAnno2",
+      2,
+      isMain
+    );
+    const partialAttivoA2 = getEnterprisePartialValue(
+      company,
+      "attivoAnno2",
+      2,
+      isMain
+    );
+    const partialOccupatiA2 = getEnterprisePartialValue(
+      company,
+      "occupatiAnno2",
+      2,
+      isMain
+    );
+
+    // =========== CALCULA porcentaje de cada uno en el grupo ===========
+    // Año 1
+    const fatturatoPercA1 = getPercentageOfGroup(
+      partialFatturatoA1,
+      groupTotals.fatturatoAnno1
+    );
+    const attivoPercA1 = getPercentageOfGroup(
+      partialAttivoA1,
+      groupTotals.attivoAnno1
+    );
+    const occupatiPercA1 = getPercentageOfGroup(
+      partialOccupatiA1,
+      groupTotals.occupatiAnno1
+    );
+
+    // Año 2
+    const fatturatoPercA2 = getPercentageOfGroup(
+      partialFatturatoA2,
+      groupTotals.fatturatoAnno2
+    );
+    const attivoPercA2 = getPercentageOfGroup(
+      partialAttivoA2,
+      groupTotals.attivoAnno2
+    );
+    const occupatiPercA2 = getPercentageOfGroup(
+      partialOccupatiA2,
+      groupTotals.occupatiAnno2
+    );
+
+    // Extraemos campos para facilitar lectura
     const {
       denominazioneCf,
       anno1,
@@ -149,7 +299,8 @@ export default function CalcoloDimensioneAziendale({
       attivoAnno2,
       occupatiAnno1,
       occupatiAnno2,
-      tipoRelazione,
+      tipoRelazioneAnno1,
+      tipoRelazioneAnno2,
       percentualeAssociazioneAnno1,
       percentualeAssociazioneAnno2,
     } = company;
@@ -160,6 +311,7 @@ export default function CalcoloDimensioneAziendale({
         {/* (1) Denominazione e C.F. Impresa */}
         <div className="option-grid__column cda-column-width-denominazione">
           <div className="option-grid__input-pill">
+            {/* Solo se muestra en la fila del año 1 */}
             <input
               type="text"
               placeholder="Denominazione"
@@ -228,9 +380,9 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (6) Relazione & Collegamento */}
+        {/* (6) Relazione & Collegamento - Anno 1 */}
         <div className="option-grid__column cda-column-width-relazione">
-          {tipoRelazione === "richiedente" ? (
+          {isMain ? (
             <CustomSelector
               label="Relazione"
               options={[{ value: "richiedente", label: "Richiedente" }]}
@@ -244,9 +396,9 @@ export default function CalcoloDimensioneAziendale({
               options={tipoRelazioneOptions.filter(
                 (opt) => opt.value !== "richiedente"
               )}
-              value={tipoRelazione}
+              value={tipoRelazioneAnno1}
               onChange={(val) =>
-                handleChangeImpresa(company.id, "tipoRelazione", val)
+                handleChangeImpresa(company.id, "tipoRelazioneAnno1", val)
               }
               width="100%"
               floatingOptions
@@ -260,38 +412,63 @@ export default function CalcoloDimensioneAziendale({
             <input
               type="number"
               placeholder="% A1"
-              value={percentualeAssociazioneAnno1}
+              value={isMain ? "100" : percentualeAssociazioneAnno1}
               onChange={(e) =>
                 isMain
-                  ? handleChangeRichiedente("percentualeAssociazioneAnno1", e.target.value)
+                  ? null // No permitir cambios para la empresa principal
                   : handleChangeImpresa(
                     company.id,
                     "percentualeAssociazioneAnno1",
                     e.target.value
                   )
               }
+              readOnly={isMain}
             />
           </div>
         </div>
 
-        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 1) => ejemplo "Auto" */}
+        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                fatturatoPercA1 > 0
+                  ? `${fatturatoPercA1.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
 
-        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 1) => ejemplo "Auto" */}
+        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                attivoPercA1 > 0
+                  ? `${attivoPercA1.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
 
-        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 1) => ejemplo "Auto" */}
+        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                occupatiPercA1 > 0
+                  ? `${occupatiPercA1.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
       </div>
@@ -358,8 +535,31 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (6) Relazione & Collegamento => vacío en la 2da fila */}
-        <div className="option-grid__column cda-column-width-relazione"></div>
+        {/* (6) Relazione & Collegamento - Anno 2 */}
+        <div className="option-grid__column cda-column-width-relazione">
+          {isMain ? (
+            <CustomSelector
+              label="Relazione"
+              options={[{ value: "richiedente", label: "Richiedente" }]}
+              value="richiedente"
+              disabled
+              width="100%"
+            />
+          ) : (
+            <CustomSelector
+              label="Relazione"
+              options={tipoRelazioneOptions.filter(
+                (opt) => opt.value !== "richiedente"
+              )}
+              value={tipoRelazioneAnno2}
+              onChange={(val) =>
+                handleChangeImpresa(company.id, "tipoRelazioneAnno2", val)
+              }
+              width="100%"
+              floatingOptions
+            />
+          )}
+        </div>
 
         {/* (7) % di Associazione (Año 2) */}
         <div className="option-grid__column cda-column-width-percentuale">
@@ -367,38 +567,63 @@ export default function CalcoloDimensioneAziendale({
             <input
               type="number"
               placeholder="% A2"
-              value={percentualeAssociazioneAnno2}
+              value={isMain ? "100" : percentualeAssociazioneAnno2}
               onChange={(e) =>
                 isMain
-                  ? handleChangeRichiedente("percentualeAssociazioneAnno2", e.target.value)
+                  ? null // No permitir cambios para la empresa principal
                   : handleChangeImpresa(
                     company.id,
                     "percentualeAssociazioneAnno2",
                     e.target.value
                   )
               }
+              readOnly={isMain}
             />
           </div>
         </div>
 
-        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 2) => ejemplo "Auto" */}
+        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                fatturatoPercA2 > 0
+                  ? `${fatturatoPercA2.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
 
-        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 2) => ejemplo "Auto" */}
+        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                attivoPercA2 > 0
+                  ? `${attivoPercA2.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
 
-        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 2) => ejemplo "Auto" */}
+        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
-            <input type="text" readOnly value="Auto" />
+            <input
+              type="text"
+              readOnly
+              value={
+                occupatiPercA2 > 0
+                  ? `${occupatiPercA2.toFixed(2)}%`
+                  : "0%"
+              }
+            />
           </div>
         </div>
       </div>
@@ -412,82 +637,6 @@ export default function CalcoloDimensioneAziendale({
     );
   };
 
-  // Render de la sección Totali - Moved back inside the component
-  const renderTotals = () => {
-    const totals = calculateTotals();
-    return (
-      <div className="cda-totali">
-        <h3 className="cda-title">Totali</h3>
-        <div className="cda-grid-container">
-          <div className="cda-grid-table">
-            <div className="option-grid__column-titles">
-              <div className="option-grid__column-title cda-column-width-anno">
-                Anno di Riferimento
-              </div>
-              <div className="option-grid__column-title cda-column-width-fatturato">
-                Fatturato
-              </div>
-              <div className="option-grid__column-title cda-column-width-attivo">
-                Attivo
-              </div>
-              <div className="option-grid__column-title cda-column-width-occupati">
-                Occupati
-              </div>
-            </div>
-            <div className="cda-grid-body">
-              <div className="option-grid__list">
-                <div className="option-grid__row">
-                  <div className="option-grid__column cda-column-width-anno">
-                    <div className="option-grid__input-pill">
-                      <span>Anno {richiedente.anno1}</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-fatturato">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.fatturatoAnno1.toLocaleString()} €</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-attivo">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.attivoAnno1.toLocaleString()} €</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-occupati">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.occupatiAnno1.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="option-grid__row">
-                  <div className="option-grid__column cda-column-width-anno">
-                    <div className="option-grid__input-pill">
-                      <span>Anno {richiedente.anno2}</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-fatturato">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.fatturatoAnno2.toLocaleString()} €</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-attivo">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.attivoAnno2.toLocaleString()} €</span>
-                    </div>
-                  </div>
-                  <div className="option-grid__column cda-column-width-occupati">
-                    <div className="option-grid__input-pill">
-                      <span>{totals.occupatiAnno2.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // Render principal
   return (
     <div className="calcolo-dimensione-aziendale">
@@ -495,9 +644,9 @@ export default function CalcoloDimensioneAziendale({
       <div className="option-grid__label">{HtmlRenderer(mainLabel)}</div>
 
       <div className="cda-grid-container">
-        {/* Table-like structure for perfect column alignment */}
+        {/* Estructura table-like */}
         <div className="cda-grid-table">
-          {/* Cabecera con 10 columnas */}
+          {/* Cabecera con 10 columnas fijas */}
           <div className="option-grid__column-titles">
             <div className="option-grid__column-title cda-column-width-denominazione">
               Denominazione e C.F. Impresa
@@ -531,7 +680,7 @@ export default function CalcoloDimensioneAziendale({
             </div>
           </div>
 
-          {/* Content rows */}
+          {/* Cuerpo de la tabla */}
           <div className="cda-grid-body">
             {/* Empresa principal */}
             <div className="option-grid__list">
@@ -554,6 +703,109 @@ export default function CalcoloDimensioneAziendale({
                 <div className="option-grid__list">{renderCompanyRows(imp)}</div>
               </div>
             ))}
+
+            {/* Totales finales (Año 1 y Año 2) */}
+            <div className="cda-impresa-optional cda-totali-section">
+              <div className="option-grid__list">
+                {/* Total row for Anno 1 */}
+                <div className="option-grid__row cda-totali-row">
+                  {/* Columnas 1-5 vacías */}
+                  <div className="option-grid__column cda-column-width-denominazione"></div>
+                  <div className="option-grid__column cda-column-width-anno"></div>
+                  <div className="option-grid__column cda-column-width-fatturato"></div>
+                  <div className="option-grid__column cda-column-width-attivo"></div>
+                  <div className="option-grid__column cda-column-width-occupati"></div>
+
+                  {/* (6) => Etiqueta Totale Anno1 */}
+                  <div className="option-grid__column cda-column-width-relazione">
+                    <strong>Totale Anno {richiedente.anno1}</strong>
+                  </div>
+
+                  {/* (7) => Fatturato total A1 */}
+                  <div className="option-grid__column cda-column-width-percentuale">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.fatturatoAnno1.toLocaleString()} €
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (8) => Attivo total A1 */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.attivoAnno1.toLocaleString()} €
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (9) => Occupati total A1 */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.occupatiAnno1.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (10) => Campo "fijo" o 100% */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>100%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Total row for Anno 2 */}
+                <div className="option-grid__row cda-totali-row">
+                  {/* Columnas 1-5 vacías */}
+                  <div className="option-grid__column cda-column-width-denominazione"></div>
+                  <div className="option-grid__column cda-column-width-anno"></div>
+                  <div className="option-grid__column cda-column-width-fatturato"></div>
+                  <div className="option-grid__column cda-column-width-attivo"></div>
+                  <div className="option-grid__column cda-column-width-occupati"></div>
+
+                  {/* (6) => Etiqueta Totale Anno2 */}
+                  <div className="option-grid__column cda-column-width-relazione">
+                    <strong>Totale Anno {richiedente.anno2}</strong>
+                  </div>
+
+                  {/* (7) => Fatturato total A2 */}
+                  <div className="option-grid__column cda-column-width-percentuale">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.fatturatoAnno2.toLocaleString()} €
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (8) => Attivo total A2 */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.attivoAnno2.toLocaleString()} €
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (9) => Occupati total A2 */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>
+                        {groupTotals.occupatiAnno2.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* (10) => Campo "fijo" o 100% */}
+                  <div className="option-grid__column cda-column-width-calc">
+                    <div className="option-grid__input-pill">
+                      <span>100%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -565,9 +817,6 @@ export default function CalcoloDimensioneAziendale({
           <span>{addButtonLabel}</span>
         </button>
       </div>
-
-      {/* Totales (opcional) */}
-      {renderTotals()}
     </div>
   );
 }
