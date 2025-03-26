@@ -83,7 +83,7 @@
 .custom-text-input--has-value .custom-text-input__label {
   top: var(--spacing-sm);
   transform: translateY(0);
-  font-size: calc(var(--font-size-base) * 0.85);
+  font-size: calc(var(--font-size-base) * 0.7);
   color: var(--color-neutral-900);
 }
 

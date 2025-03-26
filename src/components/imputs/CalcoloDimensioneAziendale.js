@@ -4,8 +4,9 @@ import "./DynamicInputGrid.css";
 import "./CalcoloDimensioneAziendale.css";
 import HtmlRenderer from "@/utils/HtmlRenderer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPlus, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import CustomSelector from "./CustomSelector";
+import { useFormsContext } from "@/context/FormsContext";
 
 export default function CalcoloDimensioneAziendale({
   // Datos iniciales para la empresa principal
@@ -275,6 +276,11 @@ export default function CalcoloDimensioneAziendale({
     notifyChange(updated, imprese);
   };
 
+  const { formSubmitAttempted } = useFormsContext();
+
+  // Helper para determinar si un campo está vacío (obligatorio)
+  const isFieldMissing = (val) => formSubmitAttempted && (!val || val.toString().trim() === "");
+
   // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa
   // con las 10 columnas requeridas, sustituyendo "Auto" por el cálculo real.
   const renderCompanyRows = (company, isMain = false) => {
@@ -370,8 +376,7 @@ export default function CalcoloDimensioneAziendale({
       <div className="option-grid__row">
         {/* (1) Denominazione e C.F. Impresa */}
         <div className="option-grid__column cda-column-width-denominazione">
-          <div className="option-grid__input-pill">
-            {/* Solo se muestra en la fila del año 1 */}
+          <div className={`option-grid__input-pill ${isFieldMissing(denominazioneCf) ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="text"
               placeholder="Denominazione"
@@ -406,7 +411,7 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (3) Fatturato (Año 1) */}
         <div className="option-grid__column cda-column-width-fatturato">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${isFieldMissing(fatturatoAnno1) ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               placeholder="Fatt. A1"
@@ -422,7 +427,7 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (4) Attivo (Año 1) */}
         <div className="option-grid__column cda-column-width-attivo">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${isFieldMissing(attivoAnno1) ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               placeholder="Att. A1"
@@ -438,7 +443,7 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (5) Occupati (Año 1) */}
         <div className="option-grid__column cda-column-width-occupati">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${isFieldMissing(occupatiAnno1) ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               placeholder="Occ. A1"
@@ -714,9 +719,20 @@ export default function CalcoloDimensioneAziendale({
     );
   };
 
+  // Nueva función para verificar campos obligatorios (Año 1) en una empresa
+  const isMissingMandatory = (company) => 
+    !company.denominazioneCf ||
+    !company.fatturatoAnno1 ||
+    !company.attivoAnno1 ||
+    !company.occupatiAnno1;
+
+  // Se marca error si la empresa principal o alguna opcional no tiene completos sus campos del Año 1
+  const missingRequired = isMissingMandatory(richiedente) || imprese.some(imp => isMissingMandatory(imp));
+  const showWarning = formSubmitAttempted && missingRequired;
+
   // Render principal
   return (
-    <div className="calcolo-dimensione-aziendale">
+    <div className={`calcolo-dimensione-aziendale option-grid ${showWarning ? "option-grid--pending-action" : ""}`}>
       {/* Etiqueta principal */}
       <div className="option-grid__label">{HtmlRenderer(mainLabel)}</div>
 
@@ -887,6 +903,13 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
       </div>
+
+      { showWarning && (
+        <div className="option-grid__warning">
+          <FontAwesomeIcon icon={faExclamationCircle} />
+          <span>Completa i campi obbligatori per l'anno {richiedente.anno1}</span>
+        </div>
+      )}
 
       {/* Botón para agregar nueva empresa */}
       <div className="option-grid__add-row">
