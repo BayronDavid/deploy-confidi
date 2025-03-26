@@ -136,23 +136,32 @@
   position: absolute;
   left: -1px;
   max-height: 250px; /* Slightly larger for floating dropdown */
-  z-index: 1000; /* Higher z-index to appear above everything */
+  z-index: 1010; /* Mayor que el z-index del selector abierto */
   border: 1px solid var(--color-neutral-400);
   border-radius: var(--border-radius-sm);
   /* Fix for calculations that might be causing overlapping */
   width: 100%;
   margin-top: 1px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25); /* Sombra más pronunciada */
 }
 
 /* When in a modal or other special container that needs higher z-index */
 .modal .custom-selector__dropdown--floating {
-  z-index: 2000;
+  z-index: 2010; /* Mayor para modales */
 }
 
 /* For components with floating options, ensure appropriate positioning context */
 .custom-selector--floating-options {
   position: relative;
-  z-index: 500; /* Higher than regular content but lower than modals */
+  z-index: 500; /* Base z-index */
+  transition: z-index 0.01s; /* Pequeña transición para evitar saltos bruscos */
+}
+
+/* Cuando el selector con opciones flotantes está abierto, aumentar su z-index */
+.custom-selector--floating-options.custom-selector--open {
+  z-index: 1000; /* Un z-index más alto cuando está abierto */
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0 !important;
+  border-bottom: none !important;
 }
 
 /* Fix for any containers that might be constraining the dropdown */

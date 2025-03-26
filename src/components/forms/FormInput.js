@@ -67,10 +67,10 @@ function FormInput({ config, value, onChange }) {
                     value.selectedValues.length > 0 &&
                     Array.isArray(value.optionsData);
             } else if (type === "calcoloDimensioneAziendale") {
-                // Validación para "calcoloDimensioneAziendale"
+                // Validación ajustada para "calcoloDimensioneAziendale"
                 isValid = value && 
-                    value.impresaRichiedente && 
-                    value.impresaRichiedente.denominazione !== "";
+                    value.richiedente && 
+                    value.richiedente.denominazioneCf !== "";
             } else {
                 // Validación para texto, email, tel, number, etc.
                 isValid = Boolean(value && value !== "");

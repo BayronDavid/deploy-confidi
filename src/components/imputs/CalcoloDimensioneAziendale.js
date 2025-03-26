@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./DynamicInputGrid.css";
 import "./CalcoloDimensioneAziendale.css";
 import HtmlRenderer from "@/utils/HtmlRenderer";
@@ -29,6 +29,7 @@ export default function CalcoloDimensioneAziendale({
   mainLabel = "Impresa Richiedente",
   addButtonLabel = "Aggiungi Impresa Collegata o associata",
   onChange,
+  value, // Agregar el prop value que viene del sistema de formularios
 }) {
   // Opciones para la relación entre empresas
   const tipoRelazioneOptions = [
@@ -62,6 +63,40 @@ export default function CalcoloDimensioneAziendale({
       percentualeAssociazioneAnno2: item.percentualeAssociazioneAnno2 || "",
     }))
   );
+
+  // Efecto para inicializar datos desde el valor proporcionado por el sistema
+  useEffect(() => {
+    // Si hay un valor existente del formulario, lo usamos para inicializar
+    if (value && typeof value === 'object') {
+      // Si tiene la estructura correcta con richiedente e imprese
+      if (value.richiedente) {
+        setRichiedente(prevRichiedente => ({
+          ...prevRichiedente,
+          ...value.richiedente
+        }));
+      }
+      
+      // Si tiene datos de empresas
+      if (Array.isArray(value.imprese) && value.imprese.length > 0) {
+        setImprese(value.imprese.map((item, idx) => ({
+          id: item.id || `opt-${Date.now()}-${idx}`,
+          tipoRelazioneAnno1: item.tipoRelazioneAnno1 || "associata",
+          tipoRelazioneAnno2: item.tipoRelazioneAnno2 || "associata",
+          denominazioneCf: item.denominazioneCf || "",
+          anno1: item.anno1 || "2022",
+          anno2: item.anno2 || "2023",
+          fatturatoAnno1: item.fatturatoAnno1 || "",
+          fatturatoAnno2: item.fatturatoAnno2 || "",
+          attivoAnno1: item.attivoAnno1 || "",
+          attivoAnno2: item.attivoAnno2 || "",
+          occupatiAnno1: item.occupatiAnno1 || "",
+          occupatiAnno2: item.occupatiAnno2 || "",
+          percentualeAssociazioneAnno1: item.percentualeAssociazioneAnno1 || "",
+          percentualeAssociazioneAnno2: item.percentualeAssociazioneAnno2 || "",
+        })));
+      }
+    }
+  }, []);  // Solo ejecutar al montar el componente para inicializar
 
   // HANDLERS
   const handleChangeRichiedente = (field, value) => {
@@ -108,10 +143,16 @@ export default function CalcoloDimensioneAziendale({
 
   const notifyChange = (mainData, impreseData) => {
     if (onChange) {
-      onChange({
+      // Aseguramos compatibilidad con la estructura esperada por FormInput
+      const formattedData = {
         richiedente: mainData,
         imprese: impreseData,
-      });
+        // Añadir esta propiedad para compatibilidad con la validación en FormInput
+        impresaRichiedente: {
+          denominazione: mainData.denominazioneCf || ""
+        }
+      };
+      onChange(formattedData);
     }
   };
 

@@ -39,6 +39,7 @@ function CustomSelector({
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
   const { formSubmitAttempted } = useFormsContext();
+  const [zIndex, setZIndex] = useState(500);
 
   const selectorRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -102,6 +103,17 @@ function CustomSelector({
       }
     }
   }, [formSubmitAttempted, showError, focused]);
+
+  // Actualizar el z-index cuando se abre el selector
+  useEffect(() => {
+    if (isOpen && floatingOptions) {
+      // Establecer un z-index elevado cuando está abierto
+      setZIndex(1000);
+    } else {
+      // Restablecer al z-index base cuando está cerrado
+      setZIndex(500);
+    }
+  }, [isOpen, floatingOptions]);
 
   const handleFocus = () => {
     if (!disabled) {
@@ -182,7 +194,10 @@ function CustomSelector({
       tabIndex={disabled ? -1 : 0}
       onFocus={handleFocus}
       onClick={handleClick}
-      style={width ? { width, maxWidth: width } : undefined}
+      style={{
+        ...(width ? { width, maxWidth: width } : {}),
+        ...(floatingOptions ? { zIndex } : {})
+      }}
     >
       <div className="custom-selector__wrapper no-select" ref={wrapperRef}>
         <div className="custom-selector__value">
@@ -213,10 +228,13 @@ function CustomSelector({
         <div
           ref={dropdownRef}
           className={`custom-selector__dropdown ${floatingOptions ? 'custom-selector__dropdown--floating' : ''}`}
-          style={floatingOptions ? {
-            width: wrapperRef.current?.offsetWidth + 2 + 'px', // Match exact width of wrapper
-            top: wrapperRef.current?.offsetHeight + 'px'    // Position right below the wrapper
-          } : undefined}
+          style={{
+            ...(floatingOptions ? {
+              width: wrapperRef.current?.offsetWidth + 2 + 'px',
+              top: wrapperRef.current?.offsetHeight + 'px',
+              zIndex: zIndex + 10 // Aseguramos que el dropdown tenga un z-index aún mayor
+            } : {})
+          }}
         >
           {options.length === 0 ? (
             <div className="custom-selector__no-options">Nessuna opzione disponibile</div>
