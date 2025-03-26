@@ -468,46 +468,46 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
+        {/* (8) Fatturato * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                fatturatoPercA1 > 0
-                  ? `${fatturatoPercA1.toFixed(2)}%`
-                  : "0%"
+                partialFatturatoA1 > 0
+                  ? partialFatturatoA1.toFixed(2)
+                  : "0"
               }
             />
           </div>
         </div>
 
-        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
+        {/* (9) Attivo * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                attivoPercA1 > 0
-                  ? `${attivoPercA1.toFixed(2)}%`
-                  : "0%"
+                partialAttivoA1 > 0
+                  ? partialAttivoA1.toFixed(2)
+                  : "0"
               }
             />
           </div>
         </div>
 
-        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 1) => cálculo real */}
+        {/* (10) Occupati * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                occupatiPercA1 > 0
-                  ? `${occupatiPercA1.toFixed(2)}%`
-                  : "0%"
+                partialOccupatiA1 > 0
+                  ? partialOccupatiA1.toFixed(2)
+                  : "0"
               }
             />
           </div>
@@ -623,46 +623,46 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (8) Fatturato % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
+        {/* (8) Fatturato * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                fatturatoPercA2 > 0
-                  ? `${fatturatoPercA2.toFixed(2)}%`
-                  : "0%"
+                partialFatturatoA2 > 0
+                  ? partialFatturatoA2.toFixed(2)
+                  : "0"
               }
             />
           </div>
         </div>
 
-        {/* (9) Attivo % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
+        {/* (9) Attivo * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                attivoPercA2 > 0
-                  ? `${attivoPercA2.toFixed(2)}%`
-                  : "0%"
+                partialAttivoA2 > 0
+                  ? partialAttivoA2.toFixed(2)
+                  : "0"
               }
             />
           </div>
         </div>
 
-        {/* (10) Occupati % (Imp./Gr.Rel.) (Año 2) => cálculo real */}
+        {/* (10) Occupati * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
               type="text"
               readOnly
               value={
-                occupatiPercA2 > 0
-                  ? `${occupatiPercA2.toFixed(2)}%`
-                  : "0%"
+                partialOccupatiA2 > 0
+                  ? partialOccupatiA2.toFixed(2)
+                  : "0"
               }
             />
           </div>
@@ -711,13 +711,13 @@ export default function CalcoloDimensioneAziendale({
               % di Associazione
             </div>
             <div className="option-grid__column-title cda-column-width-calc">
-              Fatturato % (Imp./Gr.Rel.)
+              Fatturato * %
             </div>
             <div className="option-grid__column-title cda-column-width-calc">
-              Attivo % (Imp./Gr.Rel.)
+              Attivo * %
             </div>
             <div className="option-grid__column-title cda-column-width-calc">
-              Occupati % (Imp./Gr.Rel.)
+              Occupati * %
             </div>
           </div>
 
