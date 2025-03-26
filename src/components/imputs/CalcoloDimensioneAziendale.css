@@ -229,7 +229,13 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-sm);
-  width: 100%;
+  max-width: calc(var(--max-width) - 4.5rem);
+  position: sticky;
+  left: 0;
+}
+
+.cda-impresa-header strong{
+  color: var(--color-neutral-900); 
 }
 
 /* Selector de tipo de relación */
@@ -279,10 +285,16 @@
   border: none;
   height: 28px;
   cursor: pointer;
-  font-size: 14px;
+  /* font-size: 14px; */
   position: relative;
   z-index: 2;
   background-color: transparent;
+
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .cda-impresa-header_option-grid__remove-btn:hover {

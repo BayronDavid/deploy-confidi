@@ -24,7 +24,7 @@
   --color-system-warning: #FF9E0E;
   --color-system-warning-bg: #EFEBDC;
   --color-system-warning-contrast: #856404;
-  --color-system-error: #b2533e;
+  --color-system-error: var(--color-neutral-900);
   --color-system-success: #04ae15;
 
   /* ==============================

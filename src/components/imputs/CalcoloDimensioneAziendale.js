@@ -75,7 +75,7 @@ export default function CalcoloDimensioneAziendale({
           ...value.richiedente
         }));
       }
-      
+
       // Si tiene datos de empresas
       if (Array.isArray(value.imprese) && value.imprese.length > 0) {
         setImprese(value.imprese.map((item, idx) => ({
@@ -738,6 +738,7 @@ export default function CalcoloDimensioneAziendale({
                     className="cda-impresa-header_option-grid__remove-btn"
                     onClick={() => handleRemoveImpresa(imp.id)}
                   >
+                    Eliminare azienda
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </div>
