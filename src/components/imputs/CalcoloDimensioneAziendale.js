@@ -29,7 +29,7 @@ export default function CalcoloDimensioneAziendale({
   mainLabel = "Impresa Richiedente",
   addButtonLabel = "Aggiungi Impresa Collegata o associata",
   onChange,
-  value, // Agregar el prop value que viene del sistema de formularios
+  value, 
 }) {
   // Opciones para la relación entre empresas
   const tipoRelazioneOptions = [
@@ -256,6 +256,25 @@ export default function CalcoloDimensioneAziendale({
     return (partialValue / total) * 100;
   };
 
+  // cálculo de opciones de año basado en la fecha actual:
+  const today = new Date();
+  const referenceYear = (today.getMonth() === 0 && today.getDate() === 1)
+    ? today.getFullYear()
+    : today.getFullYear() - 1;
+  const annoOptions = [referenceYear.toString(), (referenceYear - 1).toString()];
+
+  // handler para actualizar anno1 y anno2 en la empresa richiedente:
+  const handleChangeAnno = (newAnno1) => {
+    const newAnno1Number = Number(newAnno1);
+    const updated = {
+      ...richiedente,
+      anno1: newAnno1.toString(),              // Año seleccionado para Anno1
+      anno2: (newAnno1Number - 1).toString()     // Año calculado para Anno2
+    };
+    setRichiedente(updated);
+    notifyChange(updated, imprese);
+  };
+
   // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa
   // con las 10 columnas requeridas, sustituyendo "Auto" por el cálculo real.
   const renderCompanyRows = (company, isMain = false) => {
@@ -366,11 +385,23 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (2) Anno di Riferimento => Anno1 (no editable) */}
+        {/* (2) Anno di Riferimento */}
         <div className="option-grid__column cda-column-width-anno">
-          <div className="option-grid__input-pill">
-            <span>Anno {anno1}</span>
-          </div>
+          {isMain ? (
+            <CustomSelector
+              label="Anno"
+              options={annoOptions.map(opt => ({ value: opt, label: `${opt}` }))}
+              value={richiedente.anno1}
+              onChange={handleChangeAnno}
+              width="100%"
+              floatingOptions= {true}
+            />
+          ) : (
+            <div className="option-grid__input-pill">
+              <span>{richiedente.anno1}</span>
+            </div>
+
+          )}
         </div>
 
         {/* (3) Fatturato (Año 1) */}
@@ -521,10 +552,15 @@ export default function CalcoloDimensioneAziendale({
         {/* (1) Denominazione e C.F. Impresa => vacío en la 2da fila */}
         <div className="option-grid__column cda-column-width-denominazione"></div>
 
-        {/* (2) Anno di Riferimento => Anno2 (no editable) */}
+        {/* (2) Anno di Riferimento - se muestra el año calculado */}
         <div className="option-grid__column cda-column-width-anno">
           <div className="option-grid__input-pill">
-            <span>Anno {anno2}</span>
+            {isMain ? (
+              <span>{richiedente.anno2}</span>
+            ) : (
+              // Empresas opcionales usan el año de richiedente (corresponde a anno2)
+              <span>{richiedente.anno2}</span>
+            )}
           </div>
         </div>
 
