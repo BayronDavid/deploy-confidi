@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import './style.css';
 
 const SAMPLE_MODELS = [
-    { id: 'catedral', name: 'Catedral', path: '/3D/catedral2/Test_TExturas.gltf', thumbnail: '/3D/catedral2/thumbnail.png' },
+    { id: 'catedral_', name: 'Catedral', path: '/3D/catedral2/Test_TExturas.gltf', thumbnail: '/3D/catedral2/thumbnail.png' },
     { id: 'fuente', name: 'Fuente', path: '/3D/fuente/textutas/text.gltf', thumbnail: '/3D/fuente/textutas/thumbnail.jpg', hasErrors: true },
     { id: 'fuenteanim', name: 'Fuente animada', path: '/3D/fuente/anim/PoseMetalgear.gltf', thumbnail: '/3D/fuente/anim/thumbnail.png', hasErrors: true },
 ];
