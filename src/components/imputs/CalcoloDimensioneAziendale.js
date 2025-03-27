@@ -8,6 +8,18 @@ import { faTrash, faPlus, faExclamationCircle } from "@fortawesome/free-solid-sv
 import CustomSelector from "./CustomSelector";
 import { useFormsContext } from "@/context/FormsContext";
 
+// Nueva función para validar % di Associazione según tipo di relazione
+const validatePercentualeAssociazione = (relation, value) => {
+  const num = Number(value);
+  if (isNaN(num)) return false;
+  // Si la relación contiene "collegata", se requiere >=50%
+  if (relation.includes("collegata")) {
+    return num >= 50;
+  }
+  // Para "associata" u otras sin "collegata", se requiere entre 25 y 50%
+  return num >= 25 && num < 50;
+};
+
 export default function CalcoloDimensioneAziendale({
   // Datos iniciales para la empresa principal
   initialRichiedente = {
@@ -371,6 +383,9 @@ export default function CalcoloDimensioneAziendale({
       percentualeAssociazioneAnno2,
     } = company;
 
+    // Calculamos validez del % di Associazione en Año 1 (solo para no main)
+    const percentValid = isMain ? true : validatePercentualeAssociazione(tipoRelazioneAnno1, percentualeAssociazioneAnno1);
+
     // Fila 1 (Año 1)
     const rowAnno1 = (
       <div className="option-grid__row">
@@ -485,7 +500,7 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (7) % di Associazione (Año 1) */}
         <div className="option-grid__column cda-column-width-percentuale">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${!percentValid ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               placeholder="% A1"
@@ -730,7 +745,20 @@ export default function CalcoloDimensioneAziendale({
   const missingRequired = isMissingMandatory(richiedente) || imprese.some(imp => isMissingMandatory(imp));
   const showWarning = formSubmitAttempted && missingRequired;
 
-  // Render principal
+// Nueva variable para acumular retroalimentación específica del % di Associazione
+  const percentFeedbackMessages = imprese.reduce((msgs, imp, idx) => {
+    // Solo se evalúa para las empresas opcionales (no se aplica al richiedente)
+    if (!validatePercentualeAssociazione(imp.tipoRelazioneAnno1, imp.percentualeAssociazioneAnno1)) {
+      const guideline = imp.tipoRelazioneAnno1.includes("collegata")
+        ? "minimo 50%"
+        : "compreso tra 25% e 50%";
+      msgs.push(
+        `Impresa ${idx + 1}: % di Associazione è ${imp.percentualeAssociazioneAnno1}% per Relazione "${imp.tipoRelazioneAnno1}". Il valore dovrebbe essere ${guideline}.`
+      );
+    }
+    return msgs;
+  }, []);
+
   return (
     <div className={`calcolo-dimensione-aziendale option-grid ${showWarning ? "option-grid--pending-action" : ""}`}>
       {/* Etiqueta principal */}
@@ -908,6 +936,17 @@ export default function CalcoloDimensioneAziendale({
         <div className="option-grid__warning">
           <FontAwesomeIcon icon={faExclamationCircle} />
           <span>Completa i campi obbligatori per l'anno {richiedente.anno1}</span>
+        </div>
+      )}
+
+      { percentFeedbackMessages.length > 0 && (
+        <div className="option-grid__warning">
+          <FontAwesomeIcon icon={faExclamationCircle} />
+          <div>
+            {percentFeedbackMessages.map((msg, idx) => (
+              <div key={idx}>{msg}</div>
+            ))}
+          </div>
         </div>
       )}
 
