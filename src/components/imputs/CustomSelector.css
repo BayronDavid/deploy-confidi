@@ -245,6 +245,11 @@
 }
 
 /* Error state */
+.custom-selector--validation-error {
+  border-color: var(--color-system-warning, #856404) !important;
+  background-color: var(--color-system-warning-bg, #856404);
+  border-left-width: 2px;
+}
 .custom-selector--validation-error .custom-selector__wrapper {
   border-color: var(--color-system-warning, #856404) !important;
   background-color: var(--color-system-warning-bg, #856404);

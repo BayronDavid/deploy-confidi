@@ -270,14 +270,14 @@ function CustomSelector({
       )}
 
       {/* Mostrar errores */}
-      {showError && (
+      {/* {showError && (
         <div className="custom-selector__warning">
           <FontAwesomeIcon icon={faExclamationCircle} />
           {errorMessages.map((msg, idx) => (
             <span key={`error-${idx}`}>{msg}</span>
           ))}
         </div>
-      )}
+      )} */}
 
       {tooltip && (
         <Modal
