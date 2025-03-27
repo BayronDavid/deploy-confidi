@@ -4,6 +4,7 @@ import "./Accordion.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import Button from "./buttons/Button";
+import HtmlRenderer from "@/utils/HtmlRenderer";
 
 /**
  * Componente genérico de Acordeón.
@@ -35,7 +36,7 @@ export default function Accordion({ title, children, defaultOpen = false }) {
                 aria-expanded={isOpen}
                 onKeyDown={handleKeyDown}
             >
-                <span>{title}</span>
+                <span>{HtmlRenderer(title)}</span>
                 <Button
                     onClick={(e) => {
                         e.stopPropagation(); // Prevent triggering the parent's onClick

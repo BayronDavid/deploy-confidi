@@ -11,6 +11,7 @@ import DynamicInputGrid from "../imputs/DynamicInputGrid";
 import CalcoloDimensioneAziendale from "../imputs/CalcoloDimensioneAziendale";
 import ElencoAffidamentiBancariLeasing from "../imputs/ElencoAffidamentiBancariLeasing";
 import ElencoProprietaImmobiliariFuoriTrento from "../imputs/ElencoProprietaImmobiliariFuoriTrento";
+import CustomChecklist from "../imputs/CustomChecklist";
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -93,8 +94,8 @@ function FormInput({ config, value, onChange }) {
     // Función para renderizar envoltorio (título/desc) si lo necesitas
     const renderInputWithWrapper = (inputElement) => (
         <>
-            {/* {title && <h3>{title}</h3>} */}
-            {/* {description && <p style={{ marginBottom: "0.5rem" }}>{description}</p>} */}
+            {title && <h3>{title}</h3>}
+            {description && <p style={{ marginBottom: "0.5rem" }}>{description}</p>}
             {inputElement}
         </>
     );
@@ -250,6 +251,17 @@ function FormInput({ config, value, onChange }) {
                     onChange={onChange}
                     isOptional={config.isOptional}
                     required={required !== false}
+                />
+            );
+        case "checklist":
+            return renderInputWithWrapper(
+                <CustomChecklist
+                    label={label}
+                    options={options || []}             // Array con { value, label, required? }
+                    value={Array.isArray(value) ? value : []}
+                    onChange={onChange}
+                    required={required}
+                    tooltip={tooltip}
                 />
             );
 

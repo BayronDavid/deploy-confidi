@@ -1,0 +1,112 @@
+.custom-checklist {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Nuevo estilo para el estado de error */
+.custom-checklist--validation-error {
+  border-left: 2px solid var(--color-system-warning, #856404);
+  background-color: var(--color-system-warning-bg, #856404);
+}
+
+.custom-checklist__label {
+  font-size: var(--font-family-base);
+  font-weight: 600;
+  color: var(--label-color);
+  margin-bottom: 0.75rem;
+}
+
+.custom-checklist__tooltip {
+  font-size: 0.875rem;
+  color: #777;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.custom-checklist__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.custom-checklist__item {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Estilo opcional para resaltar checkbox en error */
+.custom-checklist__item--error .custom-checklist__item-label input[type="checkbox"] {
+  border-color: var(--color-system-error, #b2533e);
+}
+
+.custom-checklist__item-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  line-height: 1.4;
+}
+
+.custom-checklist__item-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-neutral-900);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+
+.custom-checklist__item-label input[type="checkbox"]:checked {
+  background-color: var(--color-primary);
+  border-color: transparent;
+}
+
+.custom-checklist__item-label input[type="checkbox"]::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 14px;
+  border: solid var(--color-text-inverse);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.custom-checklist__item-label input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
+.custom-checklist__item-text {
+  margin-left: 0.5rem;
+  white-space: pre-line;
+}
+
+/* Nuevo estilo para el bloque de advertencia */
+.custom-checklist__warning {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-system-warning-contrast);
+  background-color: rgba(255, 248, 225, 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 2px;
+  margin-top: 0.5rem;
+}
+
+/* Nuevo estilo para el bloque de error de cada opción */
+.custom-checklist__opt-warning {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-system-error, #b2533e);
+  margin-top: 0.25rem;
+}

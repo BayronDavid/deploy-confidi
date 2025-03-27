@@ -5,6 +5,7 @@ import { useFormsContext } from "@/context/FormsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import "./FormGroup.css";
+import HtmlRenderer from "@/utils/HtmlRenderer";
 
 function FormGroup({ 
   group, 
@@ -26,6 +27,9 @@ function FormGroup({
   
   // Verificar si el grupo está habilitado, por defecto es true
   const isGroupEnabled = group.enabled !== false;
+
+  // Use the group config for repeatability if defined, otherwise use prop
+  const repeatableGroup = group.repeatable !== undefined ? group.repeatable : isRepeatable;
 
   // generar clases de layout basadas en la configuración
   const getLayoutClasses = (layoutConfig = null) => {
@@ -190,7 +194,7 @@ function FormGroup({
 
   // botón de eliminar extraído para mayor claridad
   const DeleteButton = () => {
-    if (!isRepeatable || !canDelete) {
+    if (!repeatableGroup || !canDelete) {
       return null;
     }
     
@@ -207,25 +211,25 @@ function FormGroup({
 
   return (
     <div 
-      className={`form-group-container ${isRepeatable ? 'repeatable-instance' : ''}`}
+      className={`form-group-container ${repeatableGroup ? 'repeatable-instance' : ''}`}
       {...restProps} // Propagar atributos adicionales como data-group-id
     >
-      {/* Mostrar título solo si no está en un acordeón o es repetible */}
-      {(group.title && (!isInAccordion || isRepeatable)) && (
+      {/* Always show title if exists */}
+      {group.title && (
         <div className="group-header">
           <h2>{group.title}</h2>
-          <DeleteButton />
+          {repeatableGroup && <DeleteButton />}
         </div>
       )}
       
       {/* Si solo hay botón de eliminar sin título */}
-      {!group.title && isRepeatable && canDelete && (
+      {!group.title && repeatableGroup && canDelete && (
         <div className="group-header group-header--delete-only">
           <DeleteButton />
         </div>
       )}
       
-      {group.description && <p>{group.description}</p>}
+      {group.description && <p>{HtmlRenderer(group.description)}</p>}
       
       {/* Renderizar subgrupos si existen */}
       {group.subGroups ? (
@@ -233,7 +237,7 @@ function FormGroup({
           {group.subGroups.map(subGroup => (
             <div key={subGroup.id} className="sub-group">
               {subGroup.title && <h3>{subGroup.title}</h3>}
-              {subGroup.description && <p>{subGroup.description}</p>}
+              {subGroup.description && <p>{HtmlRenderer(subGroup.description)}</p>}
               
               <div className={`form-group__form-input ${
                 // Usar el layout del subgrupo específicamente o un layout seguro por defecto

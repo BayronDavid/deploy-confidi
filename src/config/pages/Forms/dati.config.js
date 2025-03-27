@@ -537,6 +537,7 @@ const formConfig = {
                 }
             ]
         },
+        // Calcolo dimensione
         {
             id: "calcoloDimensione",
             accordionTitle: "Calcolo Dimensione Aziendale",
@@ -555,6 +556,64 @@ const formConfig = {
                     required: true,
                     tooltip: "Compilare i dati per calcolare la dimensione aziendale"
                 }
+            ]
+        },
+        // Tamaño de la empresa
+        {
+            id: "dimensioneAziendale",
+            accordionTitle: "Dimensione Aziendale",
+            description:
+                `   <p>Questa classificazione si basa sul Decreto Ministeriale del 18 aprile 2005:</p>
+                    <ul>
+                    <li><strong>Microimpresa</strong>: meno di 10 dipendenti e un fatturato o bilancio annuo non superiore a 2 milioni di euro.</li>
+                    <li><strong>Piccola impresa</strong>: tra 10 e 49 dipendenti, con un fatturato o bilancio annuo non superiore a 10 milioni di euro.</li>
+                    <li><strong>Media impresa</strong>: tra 50 e 249 dipendenti e un fatturato annuo fino a 50 milioni di euro o un bilancio annuo non superiore a 43 milioni di euro.</li>
+                    </ul>
+                    <p>Seleziona l'opzione corrispondente alla tua impresa in base a questi criteri.</p>
+                    In base alla definizione comunitaria disciplinata dal D.M. 18 Aprile 2005 l’impresa è:
+                    `,
+            isAccordion: true,
+            defaultOpen: false,
+            // Para poder duplicar este bloque 
+            // repeatable: true,
+            subGroups: [
+                {
+                    id: "finalitaFinanziamento",
+                    // title: "Finalità del Finanziamento",
+                    // 1 sola columna para el select y textarea
+                    layout: {
+                        columns: 1,
+                        gap: "normal",
+                        alignment: "start"
+                    },
+                    inputs: [
+                        {
+                            id: "intereses",
+                            type: "select",
+                            label: "Intereses",
+                            multiple: false,
+                            maxSelections: 4, // opcional
+                            options: [
+                                {
+                                    value:
+                                        "Microimpresa",
+                                    label:
+                                        "Microimpresa"
+                                },
+                                {
+                                    value: "Piccola Impresa",
+                                    label: "Piccola Impresa"
+                                },
+                                {
+                                    value: "Media Impresa",
+                                    label: "Media Impresa"
+                                }
+                            ],
+                            required: true
+                        },
+                    ]
+                },
+
             ]
         },
         {
@@ -582,7 +641,7 @@ const formConfig = {
             accordionTitle: "Elenco Proprietà immobiliari al di fuori della Provincia di Trento",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
-            defaultOpen: true,
+            defaultOpen: false,
             layout: {
                 columns: 1,
                 gap: "normal",
@@ -594,6 +653,112 @@ const formConfig = {
                     type: "elencoProprietaImmobiliariFuoriTrento",
                     required: true,
                     tooltip: "Compilare i dati per calcolare la dimensione aziendale"
+                }
+            ]
+        },
+        {
+            id: "t&c",
+            accordionTitle: "Il Richiedente dichiara di:",
+            // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
+            isAccordion: true,
+            defaultOpen: false,
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    "id": "checkDeclaraciones",
+                    "type": "checklist",
+                    // "label": "Dichiarazioni",
+                    "required": true,
+                    "tooltip": "Leggi attentamente e spunta tutte le caselle richieste.",
+                    "options": [
+                        {
+                            "value": "pendenzeInpsInailAde",
+                            "label": "Non avere pendenze o rateizzazioni nei confronti di INPS, INAIL, ADE, e in caso contrario di aver caricato nello Step 2 (relativo al caricamento dei documenti) la documentazione che attesta l'ammontare degli arretrati non rateizzati o la rateizzazione in corso indicando l'ammontare totale del debito (importo complessivo dovuto).",
+                            "required": true
+                        },
+                        {
+                            "value": "statutoConoscenza",
+                            "label": "Aver preso visione e conoscere integralmente lo Statuto, in particolare Titolo II: requisiti, ammissione, comunicazioni, impedimenti, recesso, esclusione, decadenza, morte ed estinzione. Titolo IV: partecipazioni sociali.",
+                            "required": true
+                        },
+                        {
+                            "value": "statutoApprovo",
+                            "label": "Approvare e rispettare integralmente lo Statuto e adempire agli obblighi da esso derivanti.",
+                            "required": true
+                        },
+                        {
+                            "value": "foglioInformativo",
+                            "label": "Aver preso visione del foglio informativo alla data odierna.",
+                            "required": true
+                        },
+                        {
+                            "value": "infoCompleteVeritiere",
+                            "label": "Garantire che tutte le informazioni e cifre fornite siano complete e veritiere.",
+                            "required": true
+                        },
+                        {
+                            "value": "contattoConfidiTrentino",
+                            "label": "Essere a conoscenza che Confidi Trentino Imprese SC contatterà la Richiedente per: la consegna della lettera di garanzia, la sottoscrizione del contratto di garanzia e di eventuali dichiarazioni per l'attivazione della controgaranzia del Fondo PMI, e qualsiasi altra formalità necessaria per l'emissione della garanzia.",
+                            "required": true
+                        },
+                        {
+                            "value": "surroga",
+                            "label": "Essere consapevole che, in caso di escussione della garanzia, Confidi Trentino Imprese SC avrà diritto di surrogarsi nei diritti dell'istituto garantito nei confronti del debitore principale per regresso. La consegna della lettera di garanzia, la sottoscrizione del contratto di garanzia e di eventuali dichiarazioni per l'attivazione della controgaranzia del Fondo PMI e qualsiasi altra formalità necessaria per l'emissione della garanzia.",
+                            "required": true
+                        },
+                        {
+                            "value": "autorizzazione",
+                            "label": "Autorizzare Confidi Trentino Imprese SC a ottenere tutte le informazioni e documenti necessari dagli istituti garantiti, anche per eventuali fasi successive.",
+                            "required": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "t&c2",
+            accordionTitle: "Il Richiedente si impegna a:",
+            // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
+            isAccordion: true,
+            defaultOpen: false,
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    "id": "checkImpegni",
+                    "type": "checklist",
+                    // "label": "Impegni del Richiedente",
+                    "required": true,
+                    "tooltip": "Leggi attentamente e spunta tutte le caselle richieste.",
+                    "options": [
+                        {
+                            "value": "comunicareTempestivamente",
+                            "label": "Comunicare tempestivamente ogni informazione o variazione rilevante per la partecipazione a Confidi Trentino Imprese SC o per la gestione delle garanzie.",
+                            "required": true
+                        },
+                        {
+                            "value": "fornireDocumentazione",
+                            "label": "Fornire la documentazione necessaria per la concessione, il mantenimento e la gestione delle garanzie e dei finanziamenti.",
+                            "required": true
+                        },
+                        {
+                            "value": "rispettareObblighi",
+                            "label": "Rispettare gli obblighi previsti per i servizi prestati dal Confidi.",
+                            "required": true
+                        },
+                        {
+                            "value": "rilasciareMandato",
+                            "label": "Rilasciare mandato irrevocabile a Confidi Trentino Imprese SC per liquidare la propria partecipazione sociale e utilizzare il credito risultante per compensare eventuali debiti nei confronti del Confidi.",
+                            "required": true
+                        }
+                    ]
                 }
             ]
         }

@@ -224,7 +224,7 @@
 
 .add-group-btn:hover {
   background-color: #e5e7eb ;
-  border-color: #6b7280 ;
+  border-color: var(--color-neutral-700) ;
 }
 
 .delete-instance-btn {
@@ -279,7 +279,7 @@
   margin-bottom: 1rem;
   font-size: 1.125rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-neutral-700);
   overflow-wrap: break-word;
   word-wrap: break-word;
   max-width: 100%;

@@ -7,6 +7,7 @@ import FormInput from "./FormInput";
 import Accordion from "../Accordion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import HtmlRenderer from "@/utils/HtmlRenderer";
 
 /**
  * Verifica si un valor es un archivo o lista de archivos válidos.
@@ -404,7 +405,7 @@ function FormContainer({ formConfig }) {
             className="form-container"
         >
             {formConfig.title && <h1>{formConfig.title}</h1>}
-            {formConfig.description && <p>{formConfig.description}</p>}
+            {formConfig.description && <p>{HtmlRenderer(formConfig.description)}</p>}
 
             {formConfig.groups.map((group) => {
                 if (group.enabled === false) return null;
@@ -445,6 +446,7 @@ function FormContainer({ formConfig }) {
                                 defaultOpen={group.defaultOpen}
                             >
                                 <div className="repeatable-group-container">
+                                    {group.description && <p>{HtmlRenderer(group.description)}</p>}
                                     {groupInstances.map((instance, index) => (
                                         <FormGroup 
                                             key={instance._id || index}
@@ -504,6 +506,7 @@ function FormContainer({ formConfig }) {
                             title={group.accordionTitle || group.title || "Sección"}
                             defaultOpen={group.defaultOpen}
                         >
+                            {group.description && <p>{HtmlRenderer(group.description)}</p>}
                             {group.subGroups ? (
                                 <div>
                                     {group.subGroups.map(subGroup => (
@@ -540,7 +543,7 @@ function FormContainer({ formConfig }) {
                     return (
                         <div key={group.id}>
                             {group.title && <h2>{group.title}</h2>}
-                            {group.description && <p>{group.description}</p>}
+                            {group.description && <p>{HtmlRenderer(group.description)}</p>}
                             
                             {group.subGroups.map(subGroup => (
                                 <FormGroup
