@@ -42,7 +42,7 @@ export default function CalcoloDimensioneAziendale({
   mainLabel = "Impresa Richiedente",
   addButtonLabel = "Aggiungi Impresa Collegata o associata",
   onChange,
-  value, 
+  value,
 }) {
   // Opciones para la relación entre empresas
   const tipoRelazioneOptions = [
@@ -414,7 +414,7 @@ export default function CalcoloDimensioneAziendale({
               value={richiedente.anno1}
               onChange={handleChangeAnno}
               width="100%"
-              floatingOptions= {true}
+              floatingOptions={true}
             />
           ) : (
             <div className="option-grid__input-pill">
@@ -735,7 +735,7 @@ export default function CalcoloDimensioneAziendale({
   };
 
   // Nueva función para verificar campos obligatorios (Año 1) en una empresa
-  const isMissingMandatory = (company) => 
+  const isMissingMandatory = (company) =>
     !company.denominazioneCf ||
     !company.fatturatoAnno1 ||
     !company.attivoAnno1 ||
@@ -745,7 +745,7 @@ export default function CalcoloDimensioneAziendale({
   const missingRequired = isMissingMandatory(richiedente) || imprese.some(imp => isMissingMandatory(imp));
   const showWarning = formSubmitAttempted && missingRequired;
 
-// Nueva variable para acumular retroalimentación específica del % di Associazione
+  // Nueva variable para acumular retroalimentación específica del % di Associazione
   const percentFeedbackMessages = imprese.reduce((msgs, imp, idx) => {
     // Solo se evalúa para las empresas opcionales (no se aplica al richiedente)
     if (!validatePercentualeAssociazione(imp.tipoRelazioneAnno1, imp.percentualeAssociazioneAnno1)) {
@@ -760,11 +760,11 @@ export default function CalcoloDimensioneAziendale({
   }, []);
 
   return (
-    <div className={`calcolo-dimensione-aziendale option-grid ${showWarning ? "option-grid--pending-action" : ""}`}>
+    <div className={`calcolo-dimensione-aziendale option-grid`}>
       {/* Etiqueta principal */}
       <div className="option-grid__label">{HtmlRenderer(mainLabel)}</div>
 
-      <div className="cda-grid-container">
+      <div className={`cda-grid-container ${showWarning ? " option-grid--pending-action" : ""}`}>
         {/* Estructura table-like */}
         <div className="cda-grid-table">
           {/* Cabecera con 10 columnas fijas */}
@@ -932,14 +932,14 @@ export default function CalcoloDimensioneAziendale({
         </div>
       </div>
 
-      { showWarning && (
+      {showWarning && (
         <div className="option-grid__warning">
           <FontAwesomeIcon icon={faExclamationCircle} />
           <span>Completa i campi obbligatori per l'anno {richiedente.anno1}</span>
         </div>
       )}
 
-      { percentFeedbackMessages.length > 0 && (
+      {percentFeedbackMessages.length > 0 && (
         <div className="option-grid__warning">
           <FontAwesomeIcon icon={faExclamationCircle} />
           <div>
