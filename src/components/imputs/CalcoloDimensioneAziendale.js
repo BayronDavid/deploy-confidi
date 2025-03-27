@@ -8,7 +8,7 @@ import { faTrash, faPlus, faExclamationCircle } from "@fortawesome/free-solid-sv
 import CustomSelector from "./CustomSelector";
 import { useFormsContext } from "@/context/FormsContext";
 
-// Nueva función para validar % di Associazione según tipo di relazione
+// validar % di Associazione según tipo di relazione
 const validatePercentualeAssociazione = (relation, value) => {
   const num = Number(value);
   if (isNaN(num)) return false;
@@ -76,6 +76,9 @@ export default function CalcoloDimensioneAziendale({
       percentualeAssociazioneAnno2: item.percentualeAssociazioneAnno2 || "",
     }))
   );
+
+  // Nuovo stato per tracciare errori di input
+  const [inputErrors, setInputErrors] = useState({});
 
   // Efecto para inicializar datos desde el valor proporcionado por el sistema
   useEffect(() => {
@@ -293,6 +296,19 @@ export default function CalcoloDimensioneAziendale({
   // Helper para determinar si un campo está vacío (obligatorio)
   const isFieldMissing = (val) => formSubmitAttempted && (!val || val.toString().trim() === "");
 
+  // Modifica di handleBlur per aggiornare lo stato in modo consistente (senza alerts)
+  const handleBlur = (e, min, max) => {
+    const { name, value } = e.target;
+    const num = Number(value);
+    let errorMsg = "";
+    if (num < min) {
+        errorMsg = `Il valore deve essere almeno ${min}`;
+    } else if (max !== undefined && num > max) {
+        errorMsg = `Il valore deve essere al massimo ${max}`;
+    }
+    setInputErrors(prevErrors => ({ ...prevErrors, [name]: errorMsg }));
+  };
+
   // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa
   // con las 10 columnas requeridas, sustituyendo "Auto" por el cálculo real.
   const renderCompanyRows = (company, isMain = false) => {
@@ -383,8 +399,11 @@ export default function CalcoloDimensioneAziendale({
       percentualeAssociazioneAnno2,
     } = company;
 
-    // Calculamos validez del % di Associazione en Año 1 (solo para no main)
+    // Validación para % in Año 1 y validación extra para Año 2 (aunque no sean obligatorios)
     const percentValid = isMain ? true : validatePercentualeAssociazione(tipoRelazioneAnno1, percentualeAssociazioneAnno1);
+    const percentValidA2 = isMain ? true : (percentualeAssociazioneAnno2 ? validatePercentualeAssociazione(tipoRelazioneAnno2, percentualeAssociazioneAnno2) : true);
+
+    const prefix = isMain ? "richiedente" : company.id; // per avere nomi univoci
 
     // Fila 1 (Año 1)
     const rowAnno1 = (
@@ -426,9 +445,10 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (3) Fatturato (Año 1) */}
         <div className="option-grid__column cda-column-width-fatturato">
-          <div className={`option-grid__input-pill ${isFieldMissing(fatturatoAnno1) ? "option-grid__input-pill--error" : ""}`}>
+          <div className={`option-grid__input-pill ${isFieldMissing(fatturatoAnno1) || inputErrors[`${prefix}_fatturatoAnno1`] ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_fatturatoAnno1`}
               placeholder="Fatt. A1"
               value={fatturatoAnno1}
               onChange={(e) =>
@@ -436,15 +456,20 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("fatturatoAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "fatturatoAnno1", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
+
           </div>
         </div>
 
         {/* (4) Attivo (Año 1) */}
         <div className="option-grid__column cda-column-width-attivo">
-          <div className={`option-grid__input-pill ${isFieldMissing(attivoAnno1) ? "option-grid__input-pill--error" : ""}`}>
+          <div className={`option-grid__input-pill ${isFieldMissing(attivoAnno1) || inputErrors[`${prefix}_attivoAnno1`] ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_attivoAnno1`}
               placeholder="Att. A1"
               value={attivoAnno1}
               onChange={(e) =>
@@ -452,7 +477,11 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("attivoAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "attivoAnno1", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
+
           </div>
         </div>
 
@@ -468,6 +497,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("occupatiAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "occupatiAnno1", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
           </div>
         </div>
@@ -503,6 +535,7 @@ export default function CalcoloDimensioneAziendale({
           <div className={`option-grid__input-pill ${!percentValid ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_percentualeAssociazioneAnno1`}
               placeholder="% A1"
               value={isMain ? "100" : percentualeAssociazioneAnno1}
               onChange={(e) =>
@@ -515,7 +548,12 @@ export default function CalcoloDimensioneAziendale({
                   )
               }
               readOnly={isMain}
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => isMain ? null : handleBlur(e, 0, 100)}
+              min="0"
+              max="100"
             />
+           
           </div>
         </div>
 
@@ -586,9 +624,10 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (3) Fatturato (Año 2) */}
         <div className="option-grid__column cda-column-width-fatturato">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${inputErrors[`${prefix}_fatturatoAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_fatturatoAnno2`}
               placeholder="Fatt. A2"
               value={fatturatoAnno2}
               onChange={(e) =>
@@ -596,15 +635,20 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("fatturatoAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "fatturatoAnno2", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
+
           </div>
         </div>
 
         {/* (4) Attivo (Año 2) */}
         <div className="option-grid__column cda-column-width-attivo">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${inputErrors[`${prefix}_attivoAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_attivoAnno2`}
               placeholder="Att. A2"
               value={attivoAnno2}
               onChange={(e) =>
@@ -612,13 +656,17 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("attivoAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "attivoAnno2", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
+
           </div>
         </div>
 
         {/* (5) Occupati (Año 2) */}
         <div className="option-grid__column cda-column-width-occupati">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${inputErrors[`${prefix}_occupatiAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               placeholder="Occ. A2"
@@ -628,6 +676,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("occupatiAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "occupatiAnno2", e.target.value)
               }
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => handleBlur(e, 0)}
+              min="0"
             />
           </div>
         </div>
@@ -660,9 +711,10 @@ export default function CalcoloDimensioneAziendale({
 
         {/* (7) % di Associazione (Año 2) */}
         <div className="option-grid__column cda-column-width-percentuale">
-          <div className="option-grid__input-pill">
+          <div className={`option-grid__input-pill ${!percentValidA2 ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
+              name={`${prefix}_percentualeAssociazioneAnno2`}
               placeholder="% A2"
               value={isMain ? "100" : percentualeAssociazioneAnno2}
               onChange={(e) =>
@@ -675,6 +727,10 @@ export default function CalcoloDimensioneAziendale({
                   )
               }
               readOnly={isMain}
+              onWheelCapture={(e) => e.preventDefault()}
+              onBlur={(e) => isMain ? null : handleBlur(e, 0, 100)}
+              min="0"
+              max="100"
             />
           </div>
         </div>
@@ -734,7 +790,7 @@ export default function CalcoloDimensioneAziendale({
     );
   };
 
-  // Nueva función para verificar campos obligatorios (Año 1) en una empresa
+  // verificar campos obligatorios (Año 1) en una empresa
   const isMissingMandatory = (company) =>
     !company.denominazioneCf ||
     !company.fatturatoAnno1 ||
@@ -745,20 +801,65 @@ export default function CalcoloDimensioneAziendale({
   const missingRequired = isMissingMandatory(richiedente) || imprese.some(imp => isMissingMandatory(imp));
   const showWarning = formSubmitAttempted && missingRequired;
 
-  // Nueva variable para acumular retroalimentación específica del % di Associazione
+  // acumular retroalimentación específica del % di Associazione
   const percentFeedbackMessages = imprese.reduce((msgs, imp, idx) => {
-    // Solo se evalúa para las empresas opcionales (no se aplica al richiedente)
     if (!validatePercentualeAssociazione(imp.tipoRelazioneAnno1, imp.percentualeAssociazioneAnno1)) {
       const guideline = imp.tipoRelazioneAnno1.includes("collegata")
         ? "minimo 50%"
         : "compreso tra 25% e 50%";
-      msgs.push(
-        `Impresa ${idx + 1}: % di Associazione è ${imp.percentualeAssociazioneAnno1}% per Relazione "${imp.tipoRelazioneAnno1}". Il valore dovrebbe essere ${guideline}.`
-      );
+      msgs.push(`Impresa ${idx + 1} (Anno 1): % di Associazione è ${imp.percentualeAssociazioneAnno1}% per Relazione "${imp.tipoRelazioneAnno1}". Il valore dovrebbe essere ${guideline}.`);
+    }
+    if (imp.percentualeAssociazioneAnno2 && !validatePercentualeAssociazione(imp.tipoRelazioneAnno2, imp.percentualeAssociazioneAnno2)) {
+      const guideline = imp.tipoRelazioneAnno2.includes("collegata")
+        ? "minimo 50%"
+        : "compreso tra 25% e 50%";
+      msgs.push(`Impresa ${idx + 1} (Anno 2): % di Associazione è ${imp.percentualeAssociazioneAnno2}% per Relazione "${imp.tipoRelazioneAnno2}". Il valore dovrebbe essere ${guideline}.`);
     }
     return msgs;
   }, []);
 
+  const numericErrors = [];
+  const richFields = [
+    { field: "fatturatoAnno1", label: "Fatturato Anno 1", min: 0 },
+    { field: "attivoAnno1", label: "Attivo Anno 1", min: 0 },
+    { field: "occupatiAnno1", label: "Occupati Anno 1", min: 0 },
+    { field: "fatturatoAnno2", label: "Fatturato Anno 2", min: 0 },
+    { field: "attivoAnno2", label: "Attivo Anno 2", min: 0 },
+    { field: "occupatiAnno2", label: "Occupati Anno 2", min: 0 }
+  ];
+  richFields.forEach(({ field, label, min }) => {
+    const val = Number(richiedente[field]);
+    if (!isNaN(val) && val < min) {
+      numericErrors.push(`Richiedente: ${label} deve essere almeno ${min}`);
+    }
+  });
+  
+  // Controllo per cada impresa
+  imprese.forEach((imp, idx) => {
+    const prefix = `Impresa ${idx + 1}`;
+    const impFields = [
+      { field: "fatturatoAnno1", label: "Fatturato Anno 1", min: 0 },
+      { field: "attivoAnno1", label: "Attivo Anno 1", min: 0 },
+      { field: "occupatiAnno1", label: "Occupati Anno 1", min: 0 },
+      { field: "fatturatoAnno2", label: "Fatturato Anno 2", min: 0 },
+      { field: "attivoAnno2", label: "Attivo Anno 2", min: 0 },
+      { field: "occupatiAnno2", label: "Occupati Anno 2", min: 0 },
+      { field: "percentualeAssociazioneAnno1", label: "% Associazione Anno 1", min: 0, max: 100 },
+      { field: "percentualeAssociazioneAnno2", label: "% Associazione Anno 2", min: 0, max: 100 }
+    ];
+    impFields.forEach(({ field, label, min, max }) => {
+      const val = Number(imp[field]);
+      if (!isNaN(val)) {
+        if (val < min) {
+          numericErrors.push(`${prefix}: ${label} deve essere almeno ${min}`);
+        }
+        if (max !== undefined && val > max) {
+          numericErrors.push(`${prefix}: ${label} deve essere al massimo ${max}`);
+        }
+      }
+    });
+  });
+  
   return (
     <div className={`calcolo-dimensione-aziendale option-grid`}>
       {/* Etiqueta principal */}
@@ -941,10 +1042,24 @@ export default function CalcoloDimensioneAziendale({
 
       {percentFeedbackMessages.length > 0 && (
         <div className="option-grid__warning">
-          <FontAwesomeIcon icon={faExclamationCircle} />
-          <div>
+          <div className="percentFeedbackMessages">
             {percentFeedbackMessages.map((msg, idx) => (
-              <div key={idx}>{msg}</div>
+              <p key={idx}>
+                <FontAwesomeIcon icon={faExclamationCircle} />
+                {msg}</p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {numericErrors.length > 0 && (
+        <div className="option-grid__warning">
+          <div className="percentFeedbackMessages">
+            {numericErrors.map((msg, idx) => (
+              <p key={idx}>
+                <FontAwesomeIcon icon={faExclamationCircle} />
+                {msg}
+              </p>
             ))}
           </div>
         </div>

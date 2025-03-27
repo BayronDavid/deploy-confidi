@@ -406,7 +406,9 @@ const formConfig = {
                             fieldName: "destinazioneFinanziamento",
                             width: "40%",
                             multiple: true,
-                            required: true
+                            required: true,
+                            width: "245px",
+                            // floatingOptions: true,
                         },
                         {
                             id: "inserisciLimportoRichiesto",

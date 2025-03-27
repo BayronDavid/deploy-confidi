@@ -51,6 +51,9 @@ const OptionSelectorCell = ({
 }) => {
     const style = getColumnWidth(column);
 
+    console.log({ column });
+    
+
     return (
         <div className="option-grid__column" style={style}>
             <CustomSelector
@@ -64,6 +67,8 @@ const OptionSelectorCell = ({
                 multiple={column.multiple === true}
                 placeholder={column.placeholder || "Seleziona..."}
                 maxSelections={column.maxSelections}
+                width={column.width || null}
+                floatingOptions = {column.floatingOptions || false}
             />
         </div>
     );
