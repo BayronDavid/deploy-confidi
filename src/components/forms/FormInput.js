@@ -10,6 +10,7 @@ import CustomTextarea from "../imputs/CustomTextarea";
 import DynamicInputGrid from "../imputs/DynamicInputGrid"; 
 import CalcoloDimensioneAziendale from "../imputs/CalcoloDimensioneAziendale";
 import ElencoAffidamentiBancariLeasing from "../imputs/ElencoAffidamentiBancariLeasing";
+import ElencoProprietaImmobiliariFuoriTrento from "../imputs/ElencoProprietaImmobiliariFuoriTrento";
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -236,6 +237,15 @@ function FormInput({ config, value, onChange }) {
         case "elencoAffidamentiBancariLeasing":
             return renderInputWithWrapper(
                 <ElencoAffidamentiBancariLeasing
+                    value={value}
+                    onChange={onChange}
+                    isOptional={config.isOptional}
+                    required={required !== false}
+                />
+            );
+        case "elencoProprietaImmobiliariFuoriTrento":
+            return renderInputWithWrapper(
+                <ElencoProprietaImmobiliariFuoriTrento
                     value={value}
                     onChange={onChange}
                     isOptional={config.isOptional}

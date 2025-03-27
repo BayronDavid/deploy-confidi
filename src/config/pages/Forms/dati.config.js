@@ -562,7 +562,7 @@ const formConfig = {
             accordionTitle: "Elenco Affidamenti Bancari & Leasing",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
-            defaultOpen: true,
+            defaultOpen: false,
             layout: {
                 columns: 1,
                 gap: "normal",
@@ -572,6 +572,26 @@ const formConfig = {
                 {
                     id: "ElencoAffidamentiBancariLeasing",
                     type: "elencoAffidamentiBancariLeasing",
+                    required: true,
+                    tooltip: "Compilare i dati per calcolare la dimensione aziendale"
+                }
+            ]
+        },
+        {
+            id: "elencoProprietaImmobiliariFuoriTrento",
+            accordionTitle: "Elenco Proprietà immobiliari al di fuori della Provincia di Trento",
+            // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
+            isAccordion: true,
+            defaultOpen: true,
+            layout: {
+                columns: 1,
+                gap: "normal",
+                alignment: "start"
+            },
+            inputs: [
+                {
+                    id: "elencoProprietaImmobiliariFuoriTrento",
+                    type: "elencoProprietaImmobiliariFuoriTrento",
                     required: true,
                     tooltip: "Compilare i dati per calcolare la dimensione aziendale"
                 }
