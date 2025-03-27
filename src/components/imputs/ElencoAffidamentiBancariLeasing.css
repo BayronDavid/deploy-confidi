@@ -1,0 +1,182 @@
+/* Contenedor principal, similar a "CalcoloDimensioneAziendale" */
+.calcolo-dimensione-aziendale.elenco-affidamenti-bancari-leasing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  font-family: var(--font-family-base);
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* Etiqueta general (mainLabel) */
+.option-grid__label {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+/* Sección de cada tipo de affidamento */
+.affidamento-sezione {
+  margin-bottom: var(--spacing-lg);
+}
+.affidamento-sezione__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Estructura table-like */
+.cda-grid-container {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+}
+.cda-grid-table {
+  display: table;
+  width: max-content;
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+.option-grid__column-titles {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: var(--color-neutral-100);
+  min-width: max-content;
+  padding: 8px 4px;
+  display: flex;
+  gap: 4px;
+}
+.cda-grid-body {
+  display: table-row-group;
+}
+.option-grid__row {
+  display: flex;
+  min-width: max-content;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.option-grid__column-title,
+.option-grid__column {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
+/* Anchos de columnas (adáptalos según tus necesidades) */
+.cda-column-width-denominazione {
+  flex-basis: 140px !important;
+  min-width: 140px;
+  max-width: 160px;
+  width: 140px;
+}
+.cda-column-width-fatturato {
+  flex-basis: 120px !important;
+  min-width: 120px;
+  max-width: 140px;
+  width: 120px;
+}
+.cda-column-width-calc {
+  flex-basis: 60px !important;
+  min-width: 60px;
+  max-width: 60px;
+  width: 60px;
+  text-align: center;
+}
+
+/* "Pill" de input */
+.option-grid__input-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  border: 1px solid var(--color-neutral-300);
+  background-color: var(--color-neutral-100);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-sizing: border-box;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+.option-grid__input-pill input {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  height: 100%;
+}
+.option-grid__input-pill input:focus {
+  outline: none;
+}
+
+/* Botón eliminar */
+.cda-impresa-header_option-grid__remove-btn {
+  color: var(--color-system-error);
+  border: none;
+  height: 28px;
+  cursor: pointer;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  text-decoration: underline;
+  padding: 0;
+}
+.cda-impresa-header_option-grid__remove-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Botón para añadir filas */
+.option-grid__add-row {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+.add-row-button {
+  background-color: #f3f4f6;
+  border: 2px dashed #9ca3af;
+  color: #111827;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+.add-row-button:hover {
+  background-color: #e5e7eb;
+  border-color: #6b7280;
+}
+
+/* Fila de totales */
+.cda-totali-row {
+  background-color: var(--color-neutral-50);
+  margin-top: var(--spacing-sm);
+}
+.cda-totale-label .option-grid__input-pill span {
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  width: 100%;
+}
+
+/* Ejemplo de estilo para mensajes de error (si fuera necesario) */
+.option-grid__input-pill--error {
+  border-left-width: 2px !important;
+  border-color: var(--color-system-warning, #856404) !important;
+  background-color: var(--color-system-warning-bg, #fff3cd);
+}
+
+.cda-totale-label strong{
+  /* background-color: red; */
+  width: 100%;
+  text-align: end;
+  font-size: var(--font-size-md);
+}

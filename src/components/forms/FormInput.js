@@ -9,6 +9,7 @@ import CustomSelector from "../imputs/CustomSelector";
 import CustomTextarea from "../imputs/CustomTextarea"; 
 import DynamicInputGrid from "../imputs/DynamicInputGrid"; 
 import CalcoloDimensioneAziendale from "../imputs/CalcoloDimensioneAziendale";
+import ElencoAffidamentiBancariLeasing from "../imputs/ElencoAffidamentiBancariLeasing";
 
 function FormInput({ config, value, onChange }) {
     const {
@@ -225,6 +226,16 @@ function FormInput({ config, value, onChange }) {
         case "calcoloDimensioneAziendale":
             return renderInputWithWrapper(
                 <CalcoloDimensioneAziendale 
+                    value={value}
+                    onChange={onChange}
+                    isOptional={config.isOptional}
+                    required={required !== false}
+                />
+            );
+
+        case "elencoAffidamentiBancariLeasing":
+            return renderInputWithWrapper(
+                <ElencoAffidamentiBancariLeasing
                     value={value}
                     onChange={onChange}
                     isOptional={config.isOptional}

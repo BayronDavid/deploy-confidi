@@ -40,9 +40,10 @@
      ============================== */
   --font-family-base: "Inter", sans-serif;
   --font-size-base: 12px;
+  --font-size-md: 14px;
   --font-weight-regular: 400;
   --font-weight-bold: 700;
-
+   --font-weight-semibold: 600;
   /* ==============================
      ESPACIADOS
      ============================== */
