@@ -8,7 +8,9 @@ import './DatiPage.css'
 function DatiPage() {
   return (
     <div className='dati-page__container'>
-      <h3>Compila i tuoi dati</h3>
+      <span>Compila i tuoi dati</span>
+      <br />
+      <br />
       <FormContainer formConfig={formConfig} />
     </div>
   )

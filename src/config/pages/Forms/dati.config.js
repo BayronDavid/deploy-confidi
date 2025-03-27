@@ -4,8 +4,9 @@ const formConfig = {
     // description: "Complete la información en cada sección.",
     isColumn: true,
     groups: [
+        // 1 - Dati del Richiedente
         {
-            id: "personalData",
+            id: "1",
             // title: "Información Personal", // This will be shown inside the accordion content if needed
             accordionTitle: "Dati del Richiedente", // This will be shown in accordion header
             isAccordion: true,
@@ -83,8 +84,9 @@ const formConfig = {
                 }
             ]
         },
+        // 2 - Dati del Legale Rappresentante"
         {
-            id: "address",
+            id: "2",
             accordionTitle: "Dati del Legale Rappresentante",
             isAccordion: true,
             defaultOpen: false,
@@ -143,8 +145,9 @@ const formConfig = {
                 }
             ]
         },
+        // 3 - Dati istituto di credito e tipologia di finanziamento
         {
-            id: "infoBanca_",
+            id: "3",
             accordionTitle: "Dati istituto di credito e tipologia di finanziamento",
             description:
                 "La tipologia e la percentuale di garanzia saranno definite successivamente in accordo con la banca finanziatrice",
@@ -270,8 +273,9 @@ const formConfig = {
 
             ]
         },
+        // 4 - Tipologia di fidejussione
         {
-            id: "fidejussione_accordion",
+            id: "4",
             // title: "Garanzie",
             accordionTitle: "Tipologia fidejussione",
             description:
@@ -379,8 +383,9 @@ const formConfig = {
                 }
             ]
         },
+        // 5 - Importo Mutuo e Durata Finalità
         {
-            id: "Importo Mutuo e Durata Finalità",
+            id: "5",
             accordionTitle: "Importo Mutuo e Durata Finalità",
             // description: "Puoi configurare ulteriori garanzie secondarie se necessario.",
             isAccordion: true,
@@ -467,8 +472,9 @@ const formConfig = {
                 }
             ]
         },
+        // 6 - Compagine Sociale
         {
-            id: "Compagine Sociale",
+            id: "6",
             accordionTitle: "Compagine Sociale",
             description: "La compagine sociale si riferisce all'insieme dei soci o azionisti di una società e alla ripartizione delle loro quote di partecipazione. In altre parole, rappresenta la struttura proprietaria dell'azienda, indicando chi ne detiene le quote o azioni e in quale misura.",
             isAccordion: true,
@@ -537,9 +543,9 @@ const formConfig = {
                 }
             ]
         },
-        // Calcolo dimensione
+        // 7 - Calcolo Dimensione Aziendale
         {
-            id: "calcoloDimensione",
+            id: "7",
             accordionTitle: "Calcolo Dimensione Aziendale",
             description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
@@ -558,9 +564,9 @@ const formConfig = {
                 }
             ]
         },
-        // Tamaño de la empresa
+        // 8 - Dimensione Aziendale
         {
-            id: "dimensioneAziendale",
+            id: "8",
             accordionTitle: "Dimensione Aziendale",
             description:
                 `   <p>Questa classificazione si basa sul Decreto Ministeriale del 18 aprile 2005:</p>
@@ -616,8 +622,9 @@ const formConfig = {
 
             ]
         },
+        // 9 - Elenco Affidamenti Bancari & Leasing
         {
-            id: "ElencoAffidamentiBancariLeasing",
+            id: "9",
             accordionTitle: "Elenco Affidamenti Bancari & Leasing",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
@@ -636,8 +643,9 @@ const formConfig = {
                 }
             ]
         },
+        // 10 - Elenco Proprietà immobiliari al di fuori della Provincia di Trento
         {
-            id: "elencoProprietaImmobiliariFuoriTrento",
+            id: "10",
             accordionTitle: "Elenco Proprietà immobiliari al di fuori della Provincia di Trento",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
@@ -656,10 +664,11 @@ const formConfig = {
                 }
             ]
         },
+        // 11 - Dichiarazioni e Impegni
         {
-            id: "t&c",
-            accordionTitle: "Il Richiedente dichiara di:",
-            // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
+            id: "11",
+            accordionTitle: "Dichiarazioni e Impegni",
+            description: "Il Richiedente dichiara di:",
             isAccordion: true,
             defaultOpen: false,
             layout: {
@@ -720,7 +729,7 @@ const formConfig = {
             ]
         },
         {
-            id: "t&c2",
+            id: "12",
             accordionTitle: "Il Richiedente si impegna a:",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,

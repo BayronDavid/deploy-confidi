@@ -256,14 +256,21 @@ export default function CalcoloDimensioneAziendale({
   // (si es la principal, es 100%).
   const getEnterprisePartialValue = (company, field, year, isMain) => {
     if (isMain) {
-      // 100% siempre
-      return Number(company[field]) || 0;
+        return Number(company[field]) || 0;
     }
-    const p = year === 1
-      ? Number(company.percentualeAssociazioneAnno1) || 0
-      : Number(company.percentualeAssociazioneAnno2) || 0;
+    // Determina la relación para el año
+    const relation = year === 1 ? company.tipoRelazioneAnno1 : company.tipoRelazioneAnno2;
+    let percentage;
+    if (relation.includes("collegata")) {
+        // Si es "collegata", se suma el 100%
+        percentage = 100;
+    } else {
+        percentage = year === 1 
+            ? Number(company.percentualeAssociazioneAnno1) || 0 
+            : Number(company.percentualeAssociazioneAnno2) || 0;
+    }
     const val = Number(company[field]) || 0;
-    return (val * p) / 100;
+    return (val * percentage) / 100;
   };
 
   // Para calcular el % final: (valor parcial / total) * 100
