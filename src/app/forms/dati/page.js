@@ -60,12 +60,19 @@ function DatiPage() {
     const docIDs = [...new Set(filteredMerge.map(item => item.compilativo_ID))];
     const selectedDocs = docsData.filter(doc => docIDs.includes(doc.compilativo_ID));
 
-    formConfig.groups = formConfig.groups.filter((item) => { return selectedDocs.some((doc) => doc.compilativo_ID.toString() === item.id) });
-
-    formConfig.modals = formConfig.modals.filter((item) => { return selectedDocs.some((doc) => doc.compilativo_ID.toString() === item.id) });
-
+    
     return { hasDocuments, selectedDocs };
   }, [filteredMerge, docsData]);
+
+  // Create a filtered version of formConfig based on selected docs
+  const filteredFormConfig = useMemo(() => {
+    if (!hasDocuments || selectedDocs.length === 0) return formConfig;
+    
+    // Create a deep copy to avoid modifying the original
+    const configCopy = JSON.parse(JSON.stringify(formConfig));
+  
+    return configCopy;
+  }, [formConfig, hasDocuments, selectedDocs]);
 
   // Render based on component state
   if (loading) {
@@ -81,7 +88,7 @@ function DatiPage() {
       <span>Compila i tuoi dati</span>
       <br />
       <br />
-      <FormContainer formConfig={formConfig} />
+      <FormContainer formConfig={filteredFormConfig} />
     </div>
   )
 }
