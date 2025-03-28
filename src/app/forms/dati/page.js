@@ -76,9 +76,6 @@ function DatiPage() {
     return <p>Nessun documento trovato per la combinazione selezionata.</p>;
   }
 
-  console.log({formConfig});
-  
-
   return (
     <div className='dati-page__container'>
       <span>Compila i tuoi dati</span>

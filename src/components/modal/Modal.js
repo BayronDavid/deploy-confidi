@@ -11,10 +11,10 @@ function Modal({ isOpen, onClose, onExited, title, children }) {
     if (isOpen) {
       setVisible(true);
       setClosing(false);
-    } else if (visible) {
+    } else {
       setClosing(true);
     }
-  }, [isOpen, visible]);
+  }, [isOpen]); 
 
   const handleTransitionEnd = () => {
     if (closing) {
@@ -23,13 +23,29 @@ function Modal({ isOpen, onClose, onExited, title, children }) {
     }
   };
 
+  const handleClose = () => {
+    onClose && onClose();
+    setClosing(true);
+  };
+
+  const handleOverlayClick = (e) => {
+    // Solo cerrará si el clic es directamente en el overlay (no en su contenido)
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
   if (!visible) return null;
   return (
-    <div className={`modal-overlay ${closing ? 'modal--closing' : 'modal--open'}`} onTransitionEnd={handleTransitionEnd}>
+    <div 
+      className={`modal-overlay ${closing ? 'modal--closing' : 'modal--open'}`} 
+      onTransitionEnd={handleTransitionEnd}
+      onClick={handleOverlayClick}
+    >
       <div className="modal-container">
         <div className="modal-header">
           <h3>{title}</h3>
-          <button className="modal-close" onClick={() => setClosing(true)}>
+          <button className="modal-close" onClick={handleClose}>
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
