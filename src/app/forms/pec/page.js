@@ -7,8 +7,36 @@ import Button from '@/components/buttons/Button';
 import Link from 'next/link';
 import { useFormsContext } from '@/context/FormsContext';
 import Loader from '@/components/ui/Loader';
-import JSZip from 'jszip'; // ← asegurarse de instalar jszip
+import JSZip from 'jszip'; 
 import { usePathname, useRouter } from 'next/navigation';
+
+const getDB = () => {
+  return new Promise((resolve, reject) => {
+    const request = window.indexedDB.open("docsConfidi", 1);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("files")) {
+        db.createObjectStore("files", { keyPath: "fileName" });
+      }
+    };
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject(event.target.error);
+  });
+};
+
+const getFileFromIDB = async (fName) => {
+  const db = await getDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("files", "readonly");
+    const store = tx.objectStore("files");
+    const request = store.get(fName);
+    request.onsuccess = (event) => {
+      const result = event.target.result;
+      resolve(result ? result.file : null);
+    };
+    request.onerror = (event) => reject(event.target.error);
+  });
+};
 
 function PecPage() {
   const router = useRouter();
@@ -22,18 +50,65 @@ function PecPage() {
     setIsDownloading(true);
     try {
       const zip = new JSZip();
-      // Recorrer filesStorage y agregar archivos que sean instancias File
-      for (const key in filesStorage) {
-        const fileObj = filesStorage[key];
-        if (fileObj instanceof File) {
-          zip.file(fileObj.name, fileObj);
+      // Extraer fileNames desde localStorage (serialized formData)
+      const formDataStr = localStorage.getItem('formData');
+      const fileNames = new Set();
+      if (formDataStr) {
+        const parsed = JSON.parse(formDataStr);
+        const extractFileNames = (obj) => {
+          if (obj && typeof obj === 'object') {
+            if (obj.__isFile && obj.fileName) {
+              fileNames.add(obj.fileName);
+            } else if (Array.isArray(obj)) {
+              obj.forEach(item => extractFileNames(item));
+            } else {
+              Object.values(obj).forEach(val => extractFileNames(val));
+            }
+          }
+        };
+        extractFileNames(parsed);
+      }
+      
+      // Para cada fileName, obtener el archivo almacenado en IndexedDB
+      for (const fName of fileNames) {
+        try {
+          const fileEntry = await getFileFromIDB(fName);
+          if (fileEntry) {
+            // Asegurarnos de que tenemos el Blob del archivo (contenido real)
+            let fileContent;
+            
+            // Si es un Blob o File, usarlo directamente
+            if (fileEntry instanceof Blob) {
+              fileContent = fileEntry;
+            } 
+            // Si es un objeto serializado con datos de archivo
+            else if (fileEntry.type && fileEntry.size) {
+              // Intentar recuperar los datos reales del archivo
+              if (fileEntry.arrayBuffer) {
+                const buffer = await fileEntry.arrayBuffer();
+                fileContent = new Blob([buffer], { type: fileEntry.type });
+              }
+            }
+            
+            if (fileContent) {
+              zip.file(fName, fileContent);
+              console.log(`Added ${fName} to ZIP`);
+            } else {
+              console.warn(`File ${fName} could not be added to ZIP: No valid content`);
+            }
+          } else {
+            console.warn(`File ${fName} not found in IndexedDB`);
+          }
+        } catch (error) {
+          console.error(`Error processing file ${fName}:`, error);
         }
       }
+      
       const zipBlob = await zip.generateAsync({ type: "blob" });
       const url = window.URL.createObjectURL(zipBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = "documents.zip";
+      a.download = "documenti.zip";
       document.body.appendChild(a);
       a.click();
       a.remove();

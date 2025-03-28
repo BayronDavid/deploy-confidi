@@ -80,6 +80,7 @@ export default function DocumentiPage() {
               doc_title: doc.document,
               // description: doc.description || "",
               doc_description: doc.description || "",
+              fileName: doc.fileName || null,
               tooltip: doc.tooltip || null,
               tc: doc.termsAndConditions || null,
               type: "documentRequest",

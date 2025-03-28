@@ -63,7 +63,7 @@ function Button({
         <>
             <span className="button__content">
                 {label && <span className="button__label">{label}</span>}
-                {icon && (typeof icon === "object" ? <FontAwesomeIcon icon={icon} /> : icon)}
+                {icon && (React.isValidElement(icon) ? icon : <FontAwesomeIcon icon={icon} />)}
                 {iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
             </span>
             {hasTooltip && (

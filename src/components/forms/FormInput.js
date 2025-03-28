@@ -34,6 +34,7 @@ function FormInput({ config, value, onChange }) {
         maxLength,
         multiple,
         maxSelections,
+        fileName,
     } = config;
     const { setIsCurrentFormValid } = useFormsContext();
 
@@ -182,6 +183,7 @@ function FormInput({ config, value, onChange }) {
                     value={value}
                     onPrimaryClick={(file) => onChange(file)}
                     onSkip={(skipped) => onChange(skipped ? "skipped" : null)}
+                    fileName={fileName || null}
                 />
             );
 

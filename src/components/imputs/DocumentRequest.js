@@ -14,6 +14,7 @@ function DocumentRequest({
     primaryButtonLabel = 'Carica',
     skipButtonLabel = 'Salta',
     onPrimaryClick,
+    fileName,
     onSkip,
     value,
     tooltip,
@@ -25,7 +26,7 @@ function DocumentRequest({
     const [hasAction, setHasAction] = useState(false);
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const maxFiles = 5;
-    const { getFileFromStorage, formSubmitAttempted } = useFormsContext();
+    const { formSubmitAttempted, saveFileToIDB, deleteFileFromIDB } = useFormsContext();
 
     //verificar si un valor es un archivo válido
     const isValidFileValue = (val) => {
@@ -91,7 +92,7 @@ function DocumentRequest({
     };
 
     // Al seleccionar archivos, se agrega hasta alcanzar el máximo permitido.
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
@@ -100,12 +101,69 @@ function DocumentRequest({
             allowedFiles = files.slice(0, maxFiles - selectedFiles.length);
         }
 
-        const newFiles = [...selectedFiles, ...allowedFiles];
+        const combinedFiles = [...selectedFiles, ...allowedFiles];
+        
+        // Primero eliminar TODOS los archivos antiguos en IndexedDB
+        // Esto asegura que no queden archivos huérfanos con el nombre base
+        if (fileName) {
+            try {
+                // Eliminar el archivo base sin sufijo
+                await deleteFileFromIDB(fileName);
+                
+                // Eliminar todos los posibles archivos con sufijo
+                for (let i = 1; i <= maxFiles; i++) {
+                    try {
+                        await deleteFileFromIDB(`${fileName}_${i}`);
+                    } catch (error) {
+                        // Ignorar errores si el archivo no existe
+                    }
+                }
+            } catch (error) {
+                // Ignorar errores si el archivo base no existe
+            }
+        }
+        
+        // Ahora crear los nuevos archivos con sufijo solo cuando hay múltiples archivos
+        const newFiles = combinedFiles.map((file, index) => {
+            // Solo usar sufijo numérico cuando hay múltiples archivos
+            let computedName;
+            if (fileName) {
+                if (combinedFiles.length > 1) {
+                    // Sufijo solo cuando hay múltiples archivos
+                    computedName = `${fileName}_${index + 1}`;
+                } else {
+                    // Sin sufijo para un solo archivo
+                    computedName = fileName;
+                }
+            } else {
+                computedName = file.name;
+            }
+            
+            if (computedName) {
+                Object.defineProperty(file, 'fileName', {
+                    value: computedName,
+                    writable: true,
+                    enumerable: true,
+                });
+            }
+            return file;
+        });
+
         setSelectedFiles(newFiles);
         setSkipped(false);
 
+        // Guardar cada archivo en IndexedDB con el nuevo nombre
+        for (const file of newFiles) {
+            if (file.fileName) {
+                try {
+                    await saveFileToIDB(file);
+                } catch (error) {
+                    console.error(`Error saving ${file.fileName}:`, error);
+                }
+            }
+        }
+
         if (typeof onPrimaryClick === 'function') {
-            // Si solo permitimos un archivo, enviamos solo el primero
             onPrimaryClick(newFiles.length === 1 ? newFiles[0] : newFiles);
             setHasAction(true);
         }
@@ -129,8 +187,15 @@ function DocumentRequest({
 
     // Permite eliminar un archivo individual de la lista.
     const handleRemoveFile = (index) => {
+        const fileToRemove = selectedFiles[index];
         const updatedFiles = selectedFiles.filter((_, i) => i !== index);
         setSelectedFiles(updatedFiles);
+
+        // Eliminar el archivo en IndexedDB
+        if (fileToRemove?.fileName) {
+            deleteFileFromIDB(fileToRemove.fileName);
+        }
+
         if (typeof onPrimaryClick === 'function') {
             onPrimaryClick(updatedFiles);
         }
@@ -189,7 +254,6 @@ function DocumentRequest({
                             iconUrl={"/ui/upload.svg"}
                             variant={skipped ? "primary" : "secondary"}
                             onClick={handlePrimaryButtonClick}
-                        // disabled={skipped || selectedFiles.length >= maxFiles}
                         />
                         {isOptional && (
                             <Button
@@ -222,9 +286,8 @@ function DocumentRequest({
                     title={title}
                 >
                     {HtmlRenderer(tooltip)}
-                    
-                    {tc && (
 
+                    {tc && (
                         <div className="document-request__modal_download_tc">
                             <a href={tc} target='_blank' >Scarica T&C <FontAwesomeIcon icon={faDownload} size='1x' /></a>
                         </div>
