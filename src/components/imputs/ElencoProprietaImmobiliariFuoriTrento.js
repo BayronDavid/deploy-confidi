@@ -355,13 +355,15 @@ export default function ElencoProprietaImmobiliariFuoriTrento({
                 </div>
             )}
 
-            {/* Botón para añadir nueva fila */}
-            <div className="option-grid__add-row">
-                <button type="button" className="add-row-button" onClick={handleAddProperty}>
-                    <FontAwesomeIcon icon={faPlus} />
-                    <span>{addButtonLabel}</span>
-                </button>
-            </div>
+            {/* Mostrar botón "Aggiungi immobile" solo si se ha seleccionado (true) */}
+            {hasImmobili === true && (
+                <div className="option-grid__add-row">
+                    <button type="button" className="add-row-button" onClick={handleAddProperty}>
+                        <FontAwesomeIcon icon={faPlus} />
+                        <span>{addButtonLabel}</span>
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

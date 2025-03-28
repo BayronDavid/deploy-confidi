@@ -229,7 +229,7 @@ function FormGroup({
         </div>
       )}
       
-      {group.description && <p>{HtmlRenderer(group.description)}</p>}
+      {/* {group.description && <p>{HtmlRenderer(group.description)}</p>} */}
       
       {/* Renderizar subgrupos si existen */}
       {group.subGroups ? (
