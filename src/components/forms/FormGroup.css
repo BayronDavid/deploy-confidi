@@ -325,3 +325,10 @@
     padding: 1rem;
   }
 }
+
+
+.modal-content-text {
+  min-height: 20dvh;
+  max-height: 55dvh;
+  overflow-y: auto;
+}

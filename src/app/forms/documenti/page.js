@@ -15,7 +15,6 @@ export default function DocumentiPage() {
   const categoriaId = formData?.servici?.Categoria?.[0] || null;
   const servicioId = formData?.servici?.Servicio?.[0] || null;
 
-  // 1. Data fetching effect
   useEffect(() => {
     async function fetchData() {
       try {
@@ -38,7 +37,6 @@ export default function DocumentiPage() {
     fetchData();
   }, []);
 
-  // 2. Filter merge data based on selected category and service
   const filteredMerge = useMemo(() => {
     if (!categoriaId || !servicioId) return [];
     return mergeData.filter(
@@ -48,7 +46,6 @@ export default function DocumentiPage() {
     );
   }, [mergeData, categoriaId, servicioId]);
 
-  // 3. Calculate documents and form config
   const { hasDocuments, selectedDocs, dynamicFormConfig } = useMemo(() => {
     // Check if we have any documents
     const hasDocuments = filteredMerge.length > 0;
@@ -88,7 +85,6 @@ export default function DocumentiPage() {
               isOptional: !isRequired,
               primaryButtonLabel: "Carica",
               skipButtonLabel: "No",
-              // Metadatos adicionales para referencia
               docType: docSlug,
               docId: doc.documento_ID
             };

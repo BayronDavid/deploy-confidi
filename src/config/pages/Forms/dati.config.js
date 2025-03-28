@@ -667,8 +667,7 @@ const formConfig = {
         // 11 - Dichiarazioni e Impegni
         {
             id: "11",
-            accordionTitle: "Dichiarazioni e Impegni",
-            description: "Il Richiedente dichiara di:",
+            accordionTitle: "Il Richiedente dichiara di:",
             isAccordion: true,
             defaultOpen: false,
             layout: {
@@ -728,8 +727,9 @@ const formConfig = {
                 }
             ]
         },
+        // 12 - Il Richiedente si impegna a:
         {
-            id: "12",
+            id: "14",
             accordionTitle: "Il Richiedente si impegna a:",
             // description: "Calcolo della dimensione aziendale secondo i parametri UE. Inserire i dati dell'impresa richiedente e delle eventuali imprese collegate o associate.",
             isAccordion: true,
@@ -772,6 +772,46 @@ const formConfig = {
             ]
         }
     ],
+    modals: [
+        {
+            id: "12",
+            title: "Informativa al socio/cliente in merito al trattamento dei dati personali",
+            content: `
+                    <p>
+                    Gentile Socio/Cliente, il Confidi pone da sempre particolare attenzione al rispetto degli obblighi di riservatezza nei confronti dei soci e della clientela e adotta nelle proprie attività ogni misura necessaria alla protezione dei dati relativi in essere.
+                    </p>
+
+                    <p>
+                    Ai sensi degli artt. 13 e 14 del Regolamento UE 2016/679 ed in generale in osservanza del principio di trasparenza previsto dal Regolamento medesimo, La informiamo che Confidi, in qualità di <strong>Titolare del Trattamento</strong>, procederà al trattamento dei dati personali, rispetto ai quali Lei riveste la qualifica di interessato ai sensi del menzionato Regolamento, forniti al momento della richiesta di servizi o che Le verranno in seguito richiesti, ovvero acquisiti da pubblici registri.
+                    </p>
+
+                    <p>
+                    La invitiamo quindi a leggere con attenzione le seguenti informazioni, disponibili presso tutti i nostri Uffici e anche sul sito internet <a href="http://www.confiditrentinoimprese.it">www.confiditrentinoimprese.it</a>, prima di firmare l’allegato modulo di consenso e di barrare le ulteriori opzioni di consenso in esso riportate.
+                    </p>
+                    `,
+            acceptButtonLabel: "Accetto"
+        },
+        {
+            id: "13",
+            title: "Iformativa Fondo di Garanzia ex legge 662/96",
+            content: `
+                    <h2>Cos’è la garanzia pubblica e cosa fare per ottenerla</h2>
+
+                    <p>
+                    Il <strong>Fondo di Garanzia</strong> (di seguito “il Fondo”) sostiene lo sviluppo delle micro, piccole e medie imprese Italiane concedendo una garanzia pubblica a fronte di finanziamenti concessi dalle banche.
+                    </p>
+
+                    <p>
+                    La garanzia concessa dal Fondo al Confidi ed escutibile dalla banca nel caso in cui né l’impresa né il Confidi siano in grado di adempiere alle proprie obbligazioni si chiama <strong>controgaranzia</strong>. La controgaranzia consente alla banca di ponderare a zero il prestito concesso all’impresa per la parte garantita a prima richiesta dal Confidi, con notevoli vantaggi per la banca in termini di assorbimento patrimoniale e quindi di allocazione del capitale nella gestione dei rischi.
+                    </p>
+
+                    <p>
+                    Rivolgendosi al Fondo, l'impresa non ottiene un contributo in denaro o l’erogazione diretta di un finanziamento agevolato, ma ha la concreta possibilità di ottenere attraverso banche, società di...
+                    </p>
+                    `,
+            acceptButtonLabel: "Accetto"
+        }
+    ]
 };
 
 export default formConfig;

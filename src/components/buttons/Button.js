@@ -6,15 +6,16 @@ import Modal from '../modal/Modal';
 
 function Button({
     label,
+    icon,           
     iconUrl,
     url,
     onClick,
     disabled = false,
-    variant = 'primary', // "primary", "secondary", "light", "dark"
-    size,               // "big", "small", "mobile"
+    variant = 'primary', 
+    size,              
     pulse = false,
     fancy = false,
-    subtle = false,     // <--- Add subtle hover effect prop
+    subtle = false,    
     tooltipTitle,
     children,
     width,
@@ -23,7 +24,7 @@ function Button({
 }) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false);
     const hasTooltip = Boolean(children);
-    const isIconOnly = iconUrl && !label;
+    const isIconOnly = (icon || iconUrl) && !label;
 
     // Construye las clases BEM según las props
     const classNames = [
@@ -32,12 +33,12 @@ function Button({
         `button--${variant}`,
         size && `button--${size}`,
         pulse && 'button--pulse',
-        fancy && 'button--fancy', // <--- Add fancy class if prop is true
-        subtle && 'button--subtle', // <--- Add subtle class if prop is true
+        fancy && 'button--fancy', 
+        subtle && 'button--subtle',
         disabled && 'button--disabled',
         hasTooltip && 'button--with-tooltip',
         isIconOnly && 'button--icon-only',
-        active && 'button--active' // <--- Aplica clase "active" si corresponde
+        active && 'button--active' 
     ]
         .filter(Boolean)
         .join(' ');
@@ -62,7 +63,7 @@ function Button({
         <>
             <span className="button__content">
                 {label && <span className="button__label">{label}</span>}
-                {iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
+                {icon ? icon : iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
             </span>
             {hasTooltip && (
                 <span className="button__tooltip-icon" onClick={handleTooltipClick}>

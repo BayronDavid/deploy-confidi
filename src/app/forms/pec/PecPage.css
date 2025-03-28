@@ -1,0 +1,61 @@
+.pec-page {
+  /* Usamos tus variables globales */
+  font-family: var(--font-family-base);
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.pec-page__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.check-icon {
+  color: var(--color-primary); 
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.pec-page__title {
+  color: var(--color-text-primary);
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Sección de botones de descarga */
+.pec-page__downloads {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+
+/* Link para volver al inicio */
+.pec-page__back {
+  margin-bottom: var(--spacing-lg);
+}
+
+.pec-page__back a {
+  text-decoration: none;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+}
+
+.pec-page__instructions {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.4;
+  margin-bottom: var(--spacing-md);
+}
+
+.pec-page__instructions a {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
