@@ -63,7 +63,8 @@ function Button({
         <>
             <span className="button__content">
                 {label && <span className="button__label">{label}</span>}
-                {icon ? icon : iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
+                {icon && (typeof icon === "object" ? <FontAwesomeIcon icon={icon} /> : icon)}
+                {iconUrl && <img src={iconUrl} alt="" className="button__icon" />}
             </span>
             {hasTooltip && (
                 <span className="button__tooltip-icon" onClick={handleTooltipClick}>

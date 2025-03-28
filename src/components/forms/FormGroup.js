@@ -239,15 +239,16 @@ function FormGroup({
               {subGroup.title && <h3>{subGroup.title}</h3>}
               {subGroup.description && <p>{HtmlRenderer(subGroup.description)}</p>}
               
-              <div className={`form-group__form-input ${
-                // Usar el layout del subgrupo específicamente o un layout seguro por defecto
-                getLayoutClasses(subGroup.layout)
-              }`}>
+              <div className={`form-group__form-input ${getLayoutClasses(subGroup.layout)}`}>
                 {(subGroup.inputs || []).map((input, index) => (
                   <FormInput
                     key={`${input.id}-${index}`}
                     config={{ ...input, enabled: input.enabled !== false && isGroupEnabled }}
-                    value={(localData[subGroup.id] || {})[input.id]}
+                    value={
+                      input.type === "DynamicInputGrid"
+                        ? ((localData[subGroup.id] || {})[input.id] ?? { selectedValues: [], optionsData: input.options || [] })
+                        : (localData[subGroup.id] || {})[input.id]
+                    }
                     onChange={(value) => handleInputChange(input.id, value, subGroup.id)}
                   />
                 ))}
@@ -261,7 +262,11 @@ function FormGroup({
             <FormInput
               key={`${input.id}-${index}`}
               config={{ ...input, enabled: input.enabled !== false && isGroupEnabled }}
-              value={localData[input.id]}
+              value={
+                input.type === "DynamicInputGrid"
+                  ? (localData[input.id] ?? { selectedValues: [], optionsData: input.options || [] })
+                  : localData[input.id]
+              }
               onChange={(value) => handleInputChange(input.id, value)}
             />
           ))}

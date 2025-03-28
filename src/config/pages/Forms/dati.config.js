@@ -487,11 +487,11 @@ const formConfig = {
             inputs: [
                 {
                     id: "campi_testo_multipli",
+                    label: "Compagine Sociale",
                     type: "DynamicInputGrid",
                     required: false,
-                    warningMessage: "È necessario compilare almeno una riga",
                     allowMultiple: true,
-                    allowAddRows: true, // Asegurarse que esté habilitado
+                    allowAddRows: true,
                     columns: [
                         {
                             id: "CognomeNomeoRagioneSociale",

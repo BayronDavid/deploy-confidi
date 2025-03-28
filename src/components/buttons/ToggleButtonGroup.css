@@ -1,0 +1,35 @@
+.toggle-button-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.toggle-button {
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-neutral-200);
+  color: var(--color-neutral-900);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.toggle-button:hover:not(.active):not(:disabled) {
+  background-color: var(--color-neutral-300);
+  border-color: var(--color-neutral-400);
+}
+
+.toggle-button.active {
+  background-color: var(--color-primary);
+  color: var(--color-neutral-100);
+  border-color: var(--color-primary);
+}
+
+.toggle-button:disabled {
+  cursor: not-allowed;
+  background-color: var(--color-neutral-400);
+  color: var(--color-neutral-600);
+}

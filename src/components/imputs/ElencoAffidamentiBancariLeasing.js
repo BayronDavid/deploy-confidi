@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import "./ElencoAffidamentiBancariLeasing.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPlus } from "@fortawesome/free-solid-svg-icons";
+import Button from "../buttons/Button";
+import ToggleButtonGroup from "../buttons/ToggleButtonGroup";
 
 /**
  * Componente único para "Affidamenti a Breve" y "Affidamenti a Scadenza".
@@ -102,6 +104,38 @@ export default function ElencoAffidamentiBancariLeasing({
             scadenza: item.scadenza || "",
         }));
     });
+
+    // Estado para saber si hay crediti (true, false o null)
+    const [hasCrediti, setHasCrediti] = useState(null);
+
+    // Función para manejar la respuesta de la pregunta "Hai crediti?"
+    const handleHasCrediti = (answer) => {
+        setHasCrediti(answer);
+        if (answer === false) {
+            const defaultBreve = {
+                id: "breve-default",
+                istitutoDiCredito: "Nessun credito",
+                formaTecnica: "",
+                importoAccordato: "0",
+                importoUtilizzato: "0",
+                tipologia: "",
+                garanziaAccessoria: "",
+            };
+            const defaultScadenza = {
+                id: "scad-default",
+                istitutoDiCredito: "Nessun credito",
+                formaTecnica: "",
+                importoOriginario: "0",
+                importoResiduo: "0",
+                periodicitaRata: "",
+                importoRata: "0",
+                scadenza: "",
+            };
+            setBreveEntries([defaultBreve]);
+            setScadenzaEntries([defaultScadenza]);
+            notifyChange([defaultBreve], [defaultScadenza]);
+        }
+    };
 
     //
     // Si llega un "value" externo (por ej. desde un formulario), sincronizamos.
@@ -227,6 +261,23 @@ export default function ElencoAffidamentiBancariLeasing({
     const totalScadenzaResiduo = scadenzaEntries.reduce(
         (acc, row) => acc + (parseFloat(row.importoResiduo) || 0),
         0
+    );
+
+    //
+    // Render de la sección de crediti / botones toggle
+    //
+    const renderCreditiToggle = () => (
+        <div className="option-grid__toggle">
+            <span>Hai crediti?</span>
+            <ToggleButtonGroup
+                options={[
+                    { label: "Sì", value: true },
+                    { label: "No", value: false }
+                ]}
+                activeValue={hasCrediti}
+                onChange={handleHasCrediti}
+            />
+        </div>
     );
 
     //
@@ -410,7 +461,7 @@ export default function ElencoAffidamentiBancariLeasing({
 
                             {/* col5: "Totale" */}
                             <div className="option-grid__column cda-column-width-denominazione ">
-                                
+
                             </div>
 
                             {/* col6 y col7 vacíos */}
@@ -598,7 +649,7 @@ export default function ElencoAffidamentiBancariLeasing({
                             <div className="option-grid__column cda-column-width-denominazione"></div>
                             <div className="option-grid__column cda-column-width-denominazione  cda-totale-label">
                                 {/* <div className="option-grid__input-pill"> */}
-                                    <strong>Totale</strong>
+                                <strong>Totale</strong>
                                 {/* </div> */}
                             </div>
 
@@ -632,7 +683,7 @@ export default function ElencoAffidamentiBancariLeasing({
 
                             {/* col7: "Totale" */}
                             <div className="option-grid__column cda-column-width-denominazione">
-                                
+
                             </div>
 
                             {/* col8 vacío */}
@@ -658,13 +709,20 @@ export default function ElencoAffidamentiBancariLeasing({
     return (
         <div className="calcolo-dimensione-aziendale elenco-affidamenti-bancari-leasing">
             {/* Título principal */}
-            <div className="option-grid__label">{mainLabel}</div>
+            {mainLabel && (<div className="option-grid__label">{mainLabel}</div>)}
+            {/* Sección de selección de crediti (siempre visible) */}
+            {renderCreditiToggle()}
 
-            {/* Sección Affidamenti a Breve */}
-            {renderAffidamentiBreve()}
-
-            {/* Sección Affidamenti a Scadenza */}
-            {renderAffidamentiScadenza()}
+            {/* Mostrar contenido según la selección */}
+            {hasCrediti === false && (
+                <p>Non sono stati inseriti crediti. I dati sono stati precompilati.</p>
+            )}
+            {hasCrediti === true && (
+                <>
+                    {renderAffidamentiBreve()}
+                    {renderAffidamentiScadenza()}
+                </>
+            )}
         </div>
     );
 }

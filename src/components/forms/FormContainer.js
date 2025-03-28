@@ -304,7 +304,7 @@ function FormContainer({ formConfig }) {
             );
           }
           if (group.inputs) {
-            return <FormGroup key={group.id} group={group} groupData={formData[group.id]} />;
+            return <FormGroup key={group.id} group={group} groupData={formData[group.id] || {}} />;
           }
           return (
             <div key={group.id}>
