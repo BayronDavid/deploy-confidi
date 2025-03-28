@@ -62,6 +62,8 @@ function DatiPage() {
 
     formConfig.groups = formConfig.groups.filter((item) => { return selectedDocs.some((doc) => doc.compilativo_ID.toString() === item.id) });
 
+    formConfig.modals = formConfig.modals.filter((item) => { return selectedDocs.some((doc) => doc.compilativo_ID.toString() === item.id) });
+
     return { hasDocuments, selectedDocs };
   }, [filteredMerge, docsData]);
 
@@ -73,6 +75,9 @@ function DatiPage() {
   if (!hasDocuments) {
     return <p>Nessun documento trovato per la combinazione selezionata.</p>;
   }
+
+  console.log({formConfig});
+  
 
   return (
     <div className='dati-page__container'>
