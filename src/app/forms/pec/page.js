@@ -91,8 +91,40 @@ function PecPage() {
             }
             
             if (fileContent) {
-              zip.file(fName, fileContent);
-              console.log(`Added ${fName} to ZIP`);
+              // Asegurar que el nombre del archivo tenga la extensión correcta
+              let finalFileName = fName;
+              
+              // Si tenemos el tipo MIME, verificar que el nombre tenga la extensión correspondiente
+              if (fileContent.type) {
+                const mimeToExtension = {
+                  'application/pdf': '.pdf',
+                  'image/jpeg': '.jpg',
+                  'image/png': '.png',
+                  'application/msword': '.doc',
+                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+                  'application/vnd.ms-excel': '.xls',
+                  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+                  // Añadir más mapeos de MIME a extensión según sea necesario
+                };
+                
+                // Obtener la extensión basada en el tipo MIME
+                const extensionFromMime = mimeToExtension[fileContent.type];
+                
+                // Verificar si el nombre ya tiene la extensión correcta
+                const hasCorrectExtension = extensionFromMime && 
+                  fName.toLowerCase().endsWith(extensionFromMime.toLowerCase());
+                
+                // Si no tiene extensión o no es la correcta, añadirla
+                if (extensionFromMime && !hasCorrectExtension) {
+                  // Eliminar cualquier extensión existente
+                  const baseName = fName.includes('.') ? 
+                    fName.substring(0, fName.lastIndexOf('.')) : fName;
+                  finalFileName = baseName + extensionFromMime;
+                }
+              }
+              
+              zip.file(finalFileName, fileContent);
+              console.log(`Added ${finalFileName} to ZIP`);
             } else {
               console.warn(`File ${fName} could not be added to ZIP: No valid content`);
             }
