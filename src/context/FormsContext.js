@@ -371,7 +371,8 @@ export function FormsProvider({ children }) {
                 setFormRef,
                 resetForm,
                 duplicateGroup,
-                deleteGroupInstance
+                deleteGroupInstance,
+                filesStorage  // <-- se expone para obtener archivos subidos
             }}
         >
             {children}

@@ -76,8 +76,10 @@ export default function DocumentiPage() {
 
             return {
               id: `doc_${doc.documento_ID}`,  // ID simple y consistente
-              title: doc.document,
-              description: doc.description || "",
+              // title: doc.document,
+              doc_title: doc.document,
+              // description: doc.description || "",
+              doc_description: doc.description || "",
               tooltip: doc.tooltip || null,
               tc: doc.termsAndConditions || null,
               type: "documentRequest",

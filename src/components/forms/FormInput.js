@@ -6,8 +6,8 @@ import DocumentRequest from "../imputs/DocumentRequest";
 import { useFormsContext } from "@/context/FormsContext";
 import CustomTextInput from "../imputs/CustomTextInput";
 import CustomSelector from "../imputs/CustomSelector";
-import CustomTextarea from "../imputs/CustomTextarea"; 
-import DynamicInputGrid from "../imputs/DynamicInputGrid"; 
+import CustomTextarea from "../imputs/CustomTextarea";
+import DynamicInputGrid from "../imputs/DynamicInputGrid";
 import CalcoloDimensioneAziendale from "../imputs/CalcoloDimensioneAziendale";
 import ElencoAffidamentiBancariLeasing from "../imputs/ElencoAffidamentiBancariLeasing";
 import ElencoProprietaImmobiliariFuoriTrento from "../imputs/ElencoProprietaImmobiliariFuoriTrento";
@@ -26,12 +26,14 @@ function FormInput({ config, value, onChange }) {
         tc,
         title,
         description,
+        doc_title,
+        doc_description,
         required,
-        pattern, // Añadimos soporte para pattern
-        minLength, // Añadimos soporte para minLength
-        maxLength, // Añadimos soporte para maxLength
-        multiple, // Para selectores múltiples
-        maxSelections, // Máximo de opciones seleccionables
+        pattern,
+        minLength,
+        maxLength,
+        multiple,
+        maxSelections,
     } = config;
     const { setIsCurrentFormValid } = useFormsContext();
 
@@ -71,8 +73,8 @@ function FormInput({ config, value, onChange }) {
                     Array.isArray(value.optionsData);
             } else if (type === "calcoloDimensioneAziendale") {
                 // Validación ajustada para "calcoloDimensioneAziendale"
-                isValid = value && 
-                    value.richiedente && 
+                isValid = value &&
+                    value.richiedente &&
                     value.richiedente.denominazioneCf !== "";
             } else {
                 // Validación para texto, email, tel, number, etc.
@@ -170,8 +172,8 @@ function FormInput({ config, value, onChange }) {
         case "documentRequest":
             return renderInputWithWrapper(
                 <DocumentRequest
-                    title={title}
-                    description={description}
+                    title={doc_title}
+                    description={doc_description}
                     tooltip={tooltip}
                     tc={tc}
                     isOptional={config.isOptional}
@@ -227,7 +229,7 @@ function FormInput({ config, value, onChange }) {
 
         case "calcoloDimensioneAziendale":
             return renderInputWithWrapper(
-                <CalcoloDimensioneAziendale 
+                <CalcoloDimensioneAziendale
                     value={value}
                     onChange={onChange}
                     isOptional={config.isOptional}
