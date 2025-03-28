@@ -10,11 +10,11 @@ export const DEFAULT_LOCALE = 'it';
 export const LanguageContext = createContext({
   locale: DEFAULT_LOCALE,
   setLocale: () => {},
-  t: (config, key) => "", // Función para obtener texto traducido
-  tForm: (formConfig, field, subField) => "", // Nueva función para formularios
+  t: (config, key) => "", // obtener texto traducido
+  tForm: (formConfig, field, subField) => "", //  formularios
 });
 
-// Función mejorada para obtener texto con mejor manejo de anidación
+// obtener texto con mejor manejo de anidación
 export const getText = (config, key, locale = DEFAULT_LOCALE) => {
   if (!config || !key) return "";
   

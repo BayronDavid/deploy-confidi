@@ -50,7 +50,7 @@ function CustomSelector({
     ? Array.isArray(value) && value.length > 0
     : value !== null && value !== undefined && value !== "";
 
-  // Función para validar el campo
+  // validar el campo
   const validateField = () => {
     const errors = [];
 

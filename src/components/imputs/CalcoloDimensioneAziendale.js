@@ -252,7 +252,7 @@ export default function CalcoloDimensioneAziendale({
   // (Por cada año y por cada métrica: Fatturato, Attivo, Occupati).
   const groupTotals = calculateTotals();
 
-  // Función para obtener el "valor parcial" de la empresa en base al % de asociación
+  // obtener el "valor parcial" de la empresa en base al % de asociación
   // (si es la principal, es 100%).
   const getEnterprisePartialValue = (company, field, year, isMain) => {
     if (isMain) {

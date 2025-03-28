@@ -15,7 +15,7 @@ if (typeof window === 'undefined' && isAuthEnabled) {
   User = require("@/models/User").default;
 }
 
-// Función para obtener bcrypt solo en el servidor cuando sea necesario
+// obtener bcrypt solo en el servidor cuando sea necesario
 const getBcrypt = async () => {
   if (typeof window !== 'undefined') return null; // En cliente, retornar null
   return (await import('bcryptjs')).default;

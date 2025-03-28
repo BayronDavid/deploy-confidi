@@ -40,7 +40,7 @@ const Header = () => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  // Función para generar la miga de pan estilizada
+  // generar la miga de pan estilizada
   const getBreadcrumbItems = () => {
     if (!pathname) return null;
     

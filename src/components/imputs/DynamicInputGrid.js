@@ -403,7 +403,7 @@ const DynamicInputGrid = ({
         }
     };
 
-    // Función para añadir una nueva fila basada en la primera
+    // añadir una nueva fila basada en la primera
     const handleAddRow = () => {
         if (optionsData.length === 0) return;
         const baseRow = optionsData[0];
@@ -439,7 +439,7 @@ const DynamicInputGrid = ({
         }
     };
 
-    // Función para eliminar una fila (excepto la primera)
+    // eliminar una fila (excepto la primera)
     const handleRemoveRow = (index) => {
         if (optionsData.length <= 1 || index === 0) return;
         const updatedOptions = [...optionsData];
@@ -469,7 +469,7 @@ const DynamicInputGrid = ({
         return false;
     };
 
-    // Función para obtener el estilo de ancho de cada columna
+    // obtener el estilo de ancho de cada columna
     const getColumnWidth = (column) => {
         if (column.width) {
             return { flex: `0 0 ${column.width}` };

@@ -25,19 +25,19 @@ export const authRoutes = [
   "/forgot-password",
 ];
 
-// Función para comprobar si una ruta necesita autenticación
+// comprobar si una ruta necesita autenticación
 export const isProtectedRoute = (path) => {
   if (!isAuthEnabled) return false;
   return protectedRoutes.some(route => path.startsWith(route));
 };
 
-// Función para comprobar si una ruta necesita permisos de administrador
+// comprobar si una ruta necesita permisos de administrador
 export const isAdminRoute = (path) => {
   if (!isAuthEnabled) return false;
   return adminRoutes.some(route => path.startsWith(route));
 };
 
-// Función para comprobar si una ruta es una página de autenticación
+// comprobar si una ruta es una página de autenticación
 export const isAuthRoute = (path) => {
   if (!isAuthEnabled) return false;
   return authRoutes.some(route => path.startsWith(route));

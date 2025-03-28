@@ -93,7 +93,7 @@ function FormInput({ config, value, onChange }) {
         return null;
     }
 
-    // Función para renderizar envoltorio (título/desc) si lo necesitas
+    // renderizar envoltorio (título/desc) si lo necesitas
     const renderInputWithWrapper = (inputElement) => (
         <>
             {title && <h3>{title}</h3>}

@@ -37,7 +37,7 @@ if (typeof window === 'undefined') {
   }
 }
 
-// Función para conectar con Mongoose
+// conectar con Mongoose
 export const connectMongoDB = async () => {
   // Si estamos en el cliente, o la autenticación está deshabilitada, no hacer nada
   if (typeof window !== 'undefined' || !isAuthEnabled) {

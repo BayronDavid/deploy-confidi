@@ -108,7 +108,7 @@ export default function ElencoAffidamentiBancariLeasing({
     // Estado para saber si hay crediti (true, false o null)
     const [hasCrediti, setHasCrediti] = useState(null);
 
-    // Función para manejar la respuesta de la pregunta "Hai crediti?"
+    // manejar la respuesta de la pregunta "Hai crediti?"
     const handleHasCrediti = (answer) => {
         setHasCrediti(answer);
         if (answer === false) {
