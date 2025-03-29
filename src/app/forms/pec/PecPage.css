@@ -59,3 +59,83 @@
   color: var(--color-secondary);
   text-decoration: underline;
 }
+
+
+/* ____________________ */
+
+.zip-summary {
+  width: 100%;
+}
+
+.zip-file-table-container {
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.zip-file-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  display: flex;
+}
+
+.zip-file-column {
+  flex: 1;
+  min-width: 0; 
+  border-right: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+}
+
+.zip-file-column:last-child {
+  border-right: none;
+}
+
+.zip-file-column .column-header {
+  background-color: #f8f8f8;
+  color: #333;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.zip-file-column .column-cells {
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.zip-file-column .column-cell {
+  padding: 0.1rem;
+  border-bottom: 1px solid #eaeaea;
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  min-width: max-content;
+  box-sizing: border-box;
+}
+
+.zip-file-column .column-cells::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.zip-file-column .column-cells::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.zip-file-column .column-cell:hover {
+  background-color: #f5f5f5;
+}
+
+.zip-total {
+  margin-top: 15px;
+  font-weight: 600;
+  text-align: right;
+}
