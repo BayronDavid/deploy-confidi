@@ -8,20 +8,51 @@ import { faTrash, faPlus, faExclamationCircle } from "@fortawesome/free-solid-sv
 import CustomSelector from "./CustomSelector";
 import { useFormsContext } from "@/context/FormsContext";
 
-// validar % di Associazione según tipo di relazione
+// Función mejorada para validar % di Associazione según tipo específico di relazione
 const validatePercentualeAssociazione = (relation, value) => {
   const num = Number(value);
   if (isNaN(num)) return false;
-  // Si la relación contiene "collegata", se requiere >=50%
-  if (relation.includes("collegata")) {
+  
+  // Relaciones que requieren 100% (o >= 50% si se permite edición)
+  if (relation === "collegata" || 
+      relation === "collegata_persona_fisica" || 
+      relation === "collegata_di_collegata") {
     return num >= 50;
   }
-  // Para "associata" u otras sin "collegata", se requiere entre 25 y 50%
-  return num >= 25 && num < 50;
+  
+  // Relaciones que requieren entre 25% y 50%
+  if (relation === "associata" || 
+      relation === "associata_di_collegata" || 
+      relation === "collegata_di_associata") {
+    return num >= 25 && num < 50;
+  }
+  
+  // Para "richiedente" siempre 100%, pero no debe validarse aquí
+  if (relation === "richiedente") {
+    return num === 100;
+  }
+  
+  // Por defecto, si no reconocemos la relación
+  return false;
+};
+
+// Helper para determinar si una relación debe estar fijada al 100%
+const shouldBeLockedAt100Percent = (relation) => {
+  return relation === "richiedente" || 
+         relation === "collegata" || 
+         relation === "collegata_persona_fisica" || 
+         relation === "collegata_di_collegata";
+};
+
+// Helper para obtener el rango permitido según relación
+const getPercentageRangeByRelation = (relation) => {
+  if (shouldBeLockedAt100Percent(relation)) {
+    return "100%";
+  }
+  return "da 25% a <50%";
 };
 
 export default function CalcoloDimensioneAziendale({
-  // Datos iniciales para la empresa principal
   initialRichiedente = {
     denominazioneCf: "",
     anno1: "2022",
@@ -37,14 +68,12 @@ export default function CalcoloDimensioneAziendale({
     percentualeAssociazioneAnno1: "100",
     percentualeAssociazioneAnno2: "100",
   },
-  // Lista inicial de empresas opcionales
   initialImprese = [],
   mainLabel = "Impresa Richiedente",
   addButtonLabel = "Aggiungi Impresa Collegata o associata",
   onChange,
   value,
 }) {
-  // Opciones para la relación entre empresas
   const tipoRelazioneOptions = [
     { value: "richiedente", label: "Richiedente" },
     { value: "associata", label: "Associata" },
@@ -55,7 +84,6 @@ export default function CalcoloDimensioneAziendale({
     { value: "collegata_persona_fisica", label: "Collegata Persona Fisica" },
   ];
 
-  // Estado para la empresa principal y las opcionales
   const [richiedente, setRichiedente] = useState(initialRichiedente);
 
   const [imprese, setImprese] = useState(
@@ -77,14 +105,10 @@ export default function CalcoloDimensioneAziendale({
     }))
   );
 
-  // Nuovo stato per tracciare errori di input
   const [inputErrors, setInputErrors] = useState({});
 
-  // Efecto para inicializar datos desde el valor proporcionado por el sistema
   useEffect(() => {
-    // Si hay un valor existente del formulario, lo usamos para inicializar
     if (value && typeof value === 'object') {
-      // Si tiene la estructura correcta con richiedente e imprese
       if (value.richiedente) {
         setRichiedente(prevRichiedente => ({
           ...prevRichiedente,
@@ -92,7 +116,6 @@ export default function CalcoloDimensioneAziendale({
         }));
       }
 
-      // Si tiene datos de empresas
       if (Array.isArray(value.imprese) && value.imprese.length > 0) {
         setImprese(value.imprese.map((item, idx) => ({
           id: item.id || `opt-${Date.now()}-${idx}`,
@@ -112,9 +135,8 @@ export default function CalcoloDimensioneAziendale({
         })));
       }
     }
-  }, []);  // Solo ejecutar al montar el componente para inicializar
+  }, []);
 
-  // HANDLERS
   const handleChangeRichiedente = (field, value) => {
     const updated = { ...richiedente, [field]: value };
     setRichiedente(updated);
@@ -159,11 +181,9 @@ export default function CalcoloDimensioneAziendale({
 
   const notifyChange = (mainData, impreseData) => {
     if (onChange) {
-      // Aseguramos compatibilidad con la estructura esperada por FormInput
       const formattedData = {
         richiedente: mainData,
         imprese: impreseData,
-        // Añadir esta propiedad para compatibilidad con la validación en FormInput
         impresaRichiedente: {
           denominazione: mainData.denominazioneCf || ""
         }
@@ -172,9 +192,6 @@ export default function CalcoloDimensioneAziendale({
     }
   };
 
-  // ===================== LÓGICA DE CÁLCULOS =====================
-  // Suma totales del grupo (empresa principal + opcionales)
-  // aplicando el porcentaje de asociación si existe.
   const calculateTotals = () => {
     let totals = {
       fatturatoAnno1: 0,
@@ -185,7 +202,6 @@ export default function CalcoloDimensioneAziendale({
       occupatiAnno2: 0,
     };
 
-    // Empresa principal (100% siempre)
     if (richiedente.fatturatoAnno1) {
       totals.fatturatoAnno1 += Number(richiedente.fatturatoAnno1);
     }
@@ -205,94 +221,82 @@ export default function CalcoloDimensioneAziendale({
       totals.occupatiAnno2 += Number(richiedente.occupatiAnno2);
     }
 
-    // Empresas opcionales
     imprese.forEach((imp) => {
-      const pA1 = imp.percentualeAssociazioneAnno1
-        ? Number(imp.percentualeAssociazioneAnno1)
-        : 0;
-      const pA2 = imp.percentualeAssociazioneAnno2
-        ? Number(imp.percentualeAssociazioneAnno2)
-        : 0;
+      const relationA1 = imp.tipoRelazioneAnno1;
+      const relationA2 = imp.tipoRelazioneAnno2;
+      
+      const pA1 = shouldBeLockedAt100Percent(relationA1) 
+        ? 100 
+        : (imp.percentualeAssociazioneAnno1 ? Number(imp.percentualeAssociazioneAnno1) : 0);
+      
+      const pA2 = shouldBeLockedAt100Percent(relationA2) 
+        ? 100 
+        : (imp.percentualeAssociazioneAnno2 ? Number(imp.percentualeAssociazioneAnno2) : 0);
 
-      // Fatturato
       if (imp.fatturatoAnno1) {
-        totals.fatturatoAnno1 +=
-          (Number(imp.fatturatoAnno1) * pA1) / 100;
+        totals.fatturatoAnno1 += (Number(imp.fatturatoAnno1) * pA1) / 100;
       }
       if (imp.fatturatoAnno2) {
-        totals.fatturatoAnno2 +=
-          (Number(imp.fatturatoAnno2) * pA2) / 100;
+        totals.fatturatoAnno2 += (Number(imp.fatturatoAnno2) * pA2) / 100;
       }
 
-      // Attivo
       if (imp.attivoAnno1) {
-        totals.attivoAnno1 +=
-          (Number(imp.attivoAnno1) * pA1) / 100;
+        totals.attivoAnno1 += (Number(imp.attivoAnno1) * pA1) / 100;
       }
       if (imp.attivoAnno2) {
-        totals.attivoAnno2 +=
-          (Number(imp.attivoAnno2) * pA2) / 100;
+        totals.attivoAnno2 += (Number(imp.attivoAnno2) * pA2) / 100;
       }
 
-      // Occupati
       if (imp.occupatiAnno1) {
-        totals.occupatiAnno1 +=
-          (Number(imp.occupatiAnno1) * pA1) / 100;
+        totals.occupatiAnno1 += (Number(imp.occupatiAnno1) * pA1) / 100;
       }
       if (imp.occupatiAnno2) {
-        totals.occupatiAnno2 +=
-          (Number(imp.occupatiAnno2) * pA2) / 100;
+        totals.occupatiAnno2 += (Number(imp.occupatiAnno2) * pA2) / 100;
       }
     });
 
     return totals;
   };
 
-  // Calcula el porcentaje de cada empresa respecto al total del grupo
-  // (Por cada año y por cada métrica: Fatturato, Attivo, Occupati).
   const groupTotals = calculateTotals();
 
-  // obtener el "valor parcial" de la empresa en base al % de asociación
-  // (si es la principal, es 100%).
   const getEnterprisePartialValue = (company, field, year, isMain) => {
     if (isMain) {
-        return Number(company[field]) || 0;
+      return Number(company[field]) || 0;
     }
-    // Determina la relación para el año
+    
     const relation = year === 1 ? company.tipoRelazioneAnno1 : company.tipoRelazioneAnno2;
+    
     let percentage;
-    if (relation.includes("collegata")) {
-        // Si es "collegata", se suma el 100%
-        percentage = 100;
+    if (shouldBeLockedAt100Percent(relation)) {
+      percentage = 100;
     } else {
-        percentage = year === 1 
-            ? Number(company.percentualeAssociazioneAnno1) || 0 
-            : Number(company.percentualeAssociazioneAnno2) || 0;
+      percentage = year === 1 
+        ? Number(company.percentualeAssociazioneAnno1) || 0 
+        : Number(company.percentualeAssociazioneAnno2) || 0;
     }
+    
     const val = Number(company[field]) || 0;
     return (val * percentage) / 100;
   };
 
-  // Para calcular el % final: (valor parcial / total) * 100
   const getPercentageOfGroup = (partialValue, total) => {
     if (!total || total === 0) return 0;
     return (partialValue / total) * 100;
   };
 
-  // cálculo de opciones de año basado en la fecha actual:
   const today = new Date();
   const referenceYear = (today.getMonth() === 0 && today.getDate() === 1)
     ? today.getFullYear()
     : today.getFullYear() - 1;
   const annoOptions = [referenceYear.toString(), (referenceYear - 1).toString()];
 
-  // handler para actualizar anno1 y anno2 en la empresa richiedente:
   const handleChangeAnno = (newAnno1) => {
     const newAnno1Number = Number(newAnno1);
     const updated = {
       ...richiedente,
-      anno1: newAnno1.toString(),              // Año seleccionado para Anno1
-      anno2: (newAnno1Number - 1).toString()     // Año calculado para Anno2
+      anno1: newAnno1.toString(),
+      anno2: (newAnno1Number - 1).toString()
     };
     setRichiedente(updated);
     notifyChange(updated, imprese);
@@ -300,10 +304,8 @@ export default function CalcoloDimensioneAziendale({
 
   const { formSubmitAttempted } = useFormsContext();
 
-  // Helper para determinar si un campo está vacío (obligatorio)
   const isFieldMissing = (val) => formSubmitAttempted && (!val || val.toString().trim() === "");
 
-  // Modifica di handleBlur per aggiornare lo stato in modo consistente (senza alerts)
   const handleBlur = (e, min, max) => {
     const { name, value } = e.target;
     const num = Number(value);
@@ -316,11 +318,7 @@ export default function CalcoloDimensioneAziendale({
     setInputErrors(prevErrors => ({ ...prevErrors, [name]: errorMsg }));
   };
 
-  // Renderiza las DOS FILAS (Año 1 / Año 2) para cada empresa
-  // con las 10 columnas requeridas, sustituyendo "Auto" por el cálculo real.
   const renderCompanyRows = (company, isMain = false) => {
-    // =========== PREPARA valores PARCIALES para cada AÑO ===========
-    // Año 1
     const partialFatturatoA1 = getEnterprisePartialValue(
       company,
       "fatturatoAnno1",
@@ -340,7 +338,6 @@ export default function CalcoloDimensioneAziendale({
       isMain
     );
 
-    // Año 2
     const partialFatturatoA2 = getEnterprisePartialValue(
       company,
       "fatturatoAnno2",
@@ -360,8 +357,6 @@ export default function CalcoloDimensioneAziendale({
       isMain
     );
 
-    // =========== CALCULA porcentaje de cada uno en el grupo ===========
-    // Año 1
     const fatturatoPercA1 = getPercentageOfGroup(
       partialFatturatoA1,
       groupTotals.fatturatoAnno1
@@ -375,7 +370,6 @@ export default function CalcoloDimensioneAziendale({
       groupTotals.occupatiAnno1
     );
 
-    // Año 2
     const fatturatoPercA2 = getPercentageOfGroup(
       partialFatturatoA2,
       groupTotals.fatturatoAnno2
@@ -389,7 +383,6 @@ export default function CalcoloDimensioneAziendale({
       groupTotals.occupatiAnno2
     );
 
-    // Extraemos campos para facilitar lectura
     const {
       denominazioneCf,
       anno1,
@@ -406,16 +399,16 @@ export default function CalcoloDimensioneAziendale({
       percentualeAssociazioneAnno2,
     } = company;
 
-    // Validación para % in Año 1 y validación extra para Año 2 (aunque no sean obligatorios)
+    const isLockedA1 = isMain || shouldBeLockedAt100Percent(tipoRelazioneAnno1);
+    const isLockedA2 = isMain || shouldBeLockedAt100Percent(tipoRelazioneAnno2);
+
     const percentValid = isMain ? true : validatePercentualeAssociazione(tipoRelazioneAnno1, percentualeAssociazioneAnno1);
     const percentValidA2 = isMain ? true : (percentualeAssociazioneAnno2 ? validatePercentualeAssociazione(tipoRelazioneAnno2, percentualeAssociazioneAnno2) : true);
 
-    const prefix = isMain ? "richiedente" : company.id; // per avere nomi univoci
+    const prefix = isMain ? "richiedente" : company.id;
 
-    // Fila 1 (Año 1)
     const rowAnno1 = (
       <div className="option-grid__row">
-        {/* (1) Denominazione e C.F. Impresa */}
         <div className="option-grid__column cda-column-width-denominazione">
           <div className={`option-grid__input-pill ${isFieldMissing(denominazioneCf) ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -431,7 +424,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (2) Anno di Riferimento */}
         <div className="option-grid__column cda-column-width-anno">
           {isMain ? (
             <CustomSelector
@@ -446,11 +438,9 @@ export default function CalcoloDimensioneAziendale({
             <div className="option-grid__input-pill">
               <span>{richiedente.anno1}</span>
             </div>
-
           )}
         </div>
 
-        {/* (3) Fatturato (Año 1) */}
         <div className="option-grid__column cda-column-width-fatturato">
           <div className={`option-grid__input-pill ${isFieldMissing(fatturatoAnno1) || inputErrors[`${prefix}_fatturatoAnno1`] ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -467,11 +457,9 @@ export default function CalcoloDimensioneAziendale({
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
-
           </div>
         </div>
 
-        {/* (4) Attivo (Año 1) */}
         <div className="option-grid__column cda-column-width-attivo">
           <div className={`option-grid__input-pill ${isFieldMissing(attivoAnno1) || inputErrors[`${prefix}_attivoAnno1`] ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -488,11 +476,9 @@ export default function CalcoloDimensioneAziendale({
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
-
           </div>
         </div>
 
-        {/* (5) Occupati (Año 1) */}
         <div className="option-grid__column cda-column-width-occupati">
           <div className={`option-grid__input-pill ${isFieldMissing(occupatiAnno1) ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -511,7 +497,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (6) Relazione & Collegamento - Anno 1 */}
         <div className="option-grid__column cda-column-width-relazione">
           {isMain ? (
             <CustomSelector
@@ -537,34 +522,31 @@ export default function CalcoloDimensioneAziendale({
           )}
         </div>
 
-        {/* (7) % di Associazione (Año 1) */}
         <div className="option-grid__column cda-column-width-percentuale">
           <div className={`option-grid__input-pill ${!percentValid ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               name={`${prefix}_percentualeAssociazioneAnno1`}
               placeholder="% A1"
-              value={isMain ? "100" : percentualeAssociazioneAnno1}
+              value={isLockedA1 ? "100" : percentualeAssociazioneAnno1}
               onChange={(e) =>
-                isMain
-                  ? null // No permitir cambios para la empresa principal
+                isLockedA1
+                  ? null
                   : handleChangeImpresa(
                     company.id,
                     "percentualeAssociazioneAnno1",
                     e.target.value
                   )
               }
-              readOnly={isMain}
+              readOnly={isLockedA1}
               onWheelCapture={(e) => e.preventDefault()}
-              onBlur={(e) => isMain ? null : handleBlur(e, 0, 100)}
+              onBlur={(e) => isLockedA1 ? null : handleBlur(e, 0, 100)}
               min="0"
               max="100"
             />
-           
           </div>
         </div>
 
-        {/* (8) Fatturato * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -579,7 +561,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (9) Attivo * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -594,7 +575,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (10) Occupati * % (Año 1) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -611,25 +591,20 @@ export default function CalcoloDimensioneAziendale({
       </div>
     );
 
-    // Fila 2 (Año 2)
     const rowAnno2 = (
       <div className="option-grid__row">
-        {/* (1) Denominazione e C.F. Impresa => vacío en la 2da fila */}
         <div className="option-grid__column cda-column-width-denominazione"></div>
 
-        {/* (2) Anno di Riferimento - se muestra el año calculado */}
         <div className="option-grid__column cda-column-width-anno">
           <div className="option-grid__input-pill">
             {isMain ? (
               <span>{richiedente.anno2}</span>
             ) : (
-              // Empresas opcionales usan el año de richiedente (corresponde a anno2)
               <span>{richiedente.anno2}</span>
             )}
           </div>
         </div>
 
-        {/* (3) Fatturato (Año 2) */}
         <div className="option-grid__column cda-column-width-fatturato">
           <div className={`option-grid__input-pill ${inputErrors[`${prefix}_fatturatoAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -646,11 +621,9 @@ export default function CalcoloDimensioneAziendale({
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
-
           </div>
         </div>
 
-        {/* (4) Attivo (Año 2) */}
         <div className="option-grid__column cda-column-width-attivo">
           <div className={`option-grid__input-pill ${inputErrors[`${prefix}_attivoAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -667,11 +640,9 @@ export default function CalcoloDimensioneAziendale({
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
-
           </div>
         </div>
 
-        {/* (5) Occupati (Año 2) */}
         <div className="option-grid__column cda-column-width-occupati">
           <div className={`option-grid__input-pill ${inputErrors[`${prefix}_occupatiAnno2`] ? "option-grid__input-pill--error" : ""}`}>
             <input
@@ -690,7 +661,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (6) Relazione & Collegamento - Anno 2 */}
         <div className="option-grid__column cda-column-width-relazione">
           {isMain ? (
             <CustomSelector
@@ -716,33 +686,31 @@ export default function CalcoloDimensioneAziendale({
           )}
         </div>
 
-        {/* (7) % di Associazione (Año 2) */}
         <div className="option-grid__column cda-column-width-percentuale">
           <div className={`option-grid__input-pill ${!percentValidA2 ? "option-grid__input-pill--error" : ""}`}>
             <input
               type="number"
               name={`${prefix}_percentualeAssociazioneAnno2`}
               placeholder="% A2"
-              value={isMain ? "100" : percentualeAssociazioneAnno2}
+              value={isLockedA2 ? "100" : percentualeAssociazioneAnno2}
               onChange={(e) =>
-                isMain
-                  ? null // No permitir cambios para la empresa principal
+                isLockedA2
+                  ? null
                   : handleChangeImpresa(
                     company.id,
                     "percentualeAssociazioneAnno2",
                     e.target.value
                   )
               }
-              readOnly={isMain}
+              readOnly={isLockedA2}
               onWheelCapture={(e) => e.preventDefault()}
-              onBlur={(e) => isMain ? null : handleBlur(e, 0, 100)}
+              onBlur={(e) => isLockedA2 ? null : handleBlur(e, 0, 100)}
               min="0"
               max="100"
             />
           </div>
         </div>
 
-        {/* (8) Fatturato * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -757,7 +725,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (9) Attivo * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -772,7 +739,6 @@ export default function CalcoloDimensioneAziendale({
           </div>
         </div>
 
-        {/* (10) Occupati * % (Año 2) */}
         <div className="option-grid__column cda-column-width-calc">
           <div className="option-grid__input-pill">
             <input
@@ -797,30 +763,23 @@ export default function CalcoloDimensioneAziendale({
     );
   };
 
-  // verificar campos obligatorios (Año 1) en una empresa
   const isMissingMandatory = (company) =>
     !company.denominazioneCf ||
     !company.fatturatoAnno1 ||
     !company.attivoAnno1 ||
     !company.occupatiAnno1;
 
-  // Se marca error si la empresa principal o alguna opcional no tiene completos sus campos del Año 1
   const missingRequired = isMissingMandatory(richiedente) || imprese.some(imp => isMissingMandatory(imp));
   const showWarning = formSubmitAttempted && missingRequired;
 
-  // acumular retroalimentación específica del % di Associazione
   const percentFeedbackMessages = imprese.reduce((msgs, imp, idx) => {
     if (!validatePercentualeAssociazione(imp.tipoRelazioneAnno1, imp.percentualeAssociazioneAnno1)) {
-      const guideline = imp.tipoRelazioneAnno1.includes("collegata")
-        ? "minimo 50%"
-        : "compreso tra 25% e 50%";
-      msgs.push(`Impresa ${idx + 1} (Anno 1): % di Associazione è ${imp.percentualeAssociazioneAnno1}% per Relazione "${imp.tipoRelazioneAnno1}". Il valore dovrebbe essere ${guideline}.`);
+      const rangeMessage = getPercentageRangeByRelation(imp.tipoRelazioneAnno1);
+      msgs.push(`Impresa ${idx + 1} (Anno 1): % di Associazione è ${imp.percentualeAssociazioneAnno1}% per Relazione "${imp.tipoRelazioneAnno1}". Il valore dovrebbe essere ${rangeMessage}.`);
     }
     if (imp.percentualeAssociazioneAnno2 && !validatePercentualeAssociazione(imp.tipoRelazioneAnno2, imp.percentualeAssociazioneAnno2)) {
-      const guideline = imp.tipoRelazioneAnno2.includes("collegata")
-        ? "minimo 50%"
-        : "compreso tra 25% e 50%";
-      msgs.push(`Impresa ${idx + 1} (Anno 2): % di Associazione è ${imp.percentualeAssociazioneAnno2}% per Relazione "${imp.tipoRelazioneAnno2}". Il valore dovrebbe essere ${guideline}.`);
+      const rangeMessage = getPercentageRangeByRelation(imp.tipoRelazioneAnno2);
+      msgs.push(`Impresa ${idx + 1} (Anno 2): % di Associazione è ${imp.percentualeAssociazioneAnno2}% per Relazione "${imp.tipoRelazioneAnno2}". Il valore dovrebbe essere ${rangeMessage}.`);
     }
     return msgs;
   }, []);
@@ -841,7 +800,6 @@ export default function CalcoloDimensioneAziendale({
     }
   });
   
-  // Controllo per cada impresa
   imprese.forEach((imp, idx) => {
     const prefix = `Impresa ${idx + 1}`;
     const impFields = [
@@ -869,13 +827,10 @@ export default function CalcoloDimensioneAziendale({
   
   return (
     <div className={`calcolo-dimensione-aziendale option-grid`}>
-      {/* Etiqueta principal */}
       <div className="option-grid__label">{HtmlRenderer(mainLabel)}</div>
 
       <div className={`cda-grid-container ${showWarning ? " option-grid--pending-action" : ""}`}>
-        {/* Estructura table-like */}
         <div className="cda-grid-table">
-          {/* Cabecera con 10 columnas fijas */}
           <div className="option-grid__column-titles">
             <div className="option-grid__column-title cda-column-width-denominazione">
               Denominazione e C.F. Impresa
@@ -909,14 +864,11 @@ export default function CalcoloDimensioneAziendale({
             </div>
           </div>
 
-          {/* Cuerpo de la tabla */}
           <div className="cda-grid-body">
-            {/* Empresa principal */}
             <div className="option-grid__list">
               {renderCompanyRows(richiedente, true)}
             </div>
 
-            {/* Empresas opcionales */}
             {imprese.map((imp, idx) => (
               <div key={imp.id} className="cda-impresa-optional">
                 <div className="cda-impresa-header">
@@ -934,24 +886,19 @@ export default function CalcoloDimensioneAziendale({
               </div>
             ))}
 
-            {/* Totales finales (Año 1 y Año 2) */}
             <div className="cda-impresa-optional cda-totali-section">
               <div className="option-grid__list">
-                {/* Total row for Anno 1 */}
                 <div className="option-grid__row cda-totali-row">
-                  {/* Columnas 1-5 vacías */}
                   <div className="option-grid__column cda-column-width-denominazione"></div>
                   <div className="option-grid__column cda-column-width-anno"></div>
                   <div className="option-grid__column cda-column-width-fatturato"></div>
                   <div className="option-grid__column cda-column-width-attivo"></div>
                   <div className="option-grid__column cda-column-width-occupati"></div>
 
-                  {/* (6) => Etiqueta Totale Anno1 */}
                   <div className="option-grid__column cda-column-width-relazione">
                     <strong>Totale Anno {richiedente.anno1}</strong>
                   </div>
 
-                  {/* (7) => Fatturato total A1 */}
                   <div className="option-grid__column cda-column-width-percentuale">
                     <div className="option-grid__input-pill">
                       <span>
@@ -960,7 +907,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (8) => Attivo total A1 */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>
@@ -969,7 +915,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (9) => Occupati total A1 */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>
@@ -978,7 +923,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (10) => Campo "fijo" o 100% */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>100%</span>
@@ -986,21 +930,17 @@ export default function CalcoloDimensioneAziendale({
                   </div>
                 </div>
 
-                {/* Total row for Anno 2 */}
                 <div className="option-grid__row cda-totali-row">
-                  {/* Columnas 1-5 vacías */}
                   <div className="option-grid__column cda-column-width-denominazione"></div>
                   <div className="option-grid__column cda-column-width-anno"></div>
                   <div className="option-grid__column cda-column-width-fatturato"></div>
                   <div className="option-grid__column cda-column-width-attivo"></div>
                   <div className="option-grid__column cda-column-width-occupati"></div>
 
-                  {/* (6) => Etiqueta Totale Anno2 */}
                   <div className="option-grid__column cda-column-width-relazione">
                     <strong>Totale Anno {richiedente.anno2}</strong>
                   </div>
 
-                  {/* (7) => Fatturato total A2 */}
                   <div className="option-grid__column cda-column-width-percentuale">
                     <div className="option-grid__input-pill">
                       <span>
@@ -1009,7 +949,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (8) => Attivo total A2 */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>
@@ -1018,7 +957,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (9) => Occupati total A2 */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>
@@ -1027,7 +965,6 @@ export default function CalcoloDimensioneAziendale({
                     </div>
                   </div>
 
-                  {/* (10) => Campo "fijo" o 100% */}
                   <div className="option-grid__column cda-column-width-calc">
                     <div className="option-grid__input-pill">
                       <span>100%</span>
@@ -1072,7 +1009,6 @@ export default function CalcoloDimensioneAziendale({
         </div>
       )}
 
-      {/* Botón para agregar nueva empresa */}
       <div className="option-grid__add-row">
         <button type="button" className="add-row-button" onClick={handleAddImpresa}>
           <FontAwesomeIcon icon={faPlus} />
