@@ -545,3 +545,24 @@
   display: flex;
   gap: 0.5rem;
 }
+
+/* Elimina los botones de incremento/decremento en navegadores WebKit */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+/* Elimina los botones de incremento/decremento en Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Añade estos estilos para manejar el comportamiento específico de scroll */
+.option-grid__input-pill input[type=number] {
+  scroll-behavior: auto;
+}
+
+.option-grid__input-pill input:focus {
+  outline: none;
+}

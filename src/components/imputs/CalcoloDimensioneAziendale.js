@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./DynamicInputGrid.css";
 import "./CalcoloDimensioneAziendale.css";
 import HtmlRenderer from "@/utils/HtmlRenderer";
@@ -107,6 +107,8 @@ export default function CalcoloDimensioneAziendale({
 
   const [inputErrors, setInputErrors] = useState({});
 
+  const componentRef = useRef(null);
+
   useEffect(() => {
     if (value && typeof value === 'object') {
       if (value.richiedente) {
@@ -135,6 +137,28 @@ export default function CalcoloDimensioneAziendale({
         })));
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const preventScrollInputChange = (e) => {
+      if (e.target.type === 'number') {
+        e.preventDefault();
+        e.target.blur();
+        return false;
+      }
+    };
+
+    const container = componentRef.current || document;
+
+    container.addEventListener('wheel', preventScrollInputChange, { capture: true });
+    container.addEventListener('mousewheel', preventScrollInputChange, { capture: true });
+    container.addEventListener('DOMMouseScroll', preventScrollInputChange, { capture: true });
+
+    return () => {
+      container.removeEventListener('wheel', preventScrollInputChange, { capture: true });
+      container.removeEventListener('mousewheel', preventScrollInputChange, { capture: true });
+      container.removeEventListener('DOMMouseScroll', preventScrollInputChange, { capture: true });
+    };
   }, []);
 
   const handleChangeRichiedente = (field, value) => {
@@ -318,6 +342,14 @@ export default function CalcoloDimensioneAziendale({
     setInputErrors(prevErrors => ({ ...prevErrors, [name]: errorMsg }));
   };
 
+  const handleInputWheel = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (document.activeElement === e.target) {
+      e.target.blur();
+    }
+  };
+
   const renderCompanyRows = (company, isMain = false) => {
     const partialFatturatoA1 = getEnterprisePartialValue(
       company,
@@ -453,7 +485,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("fatturatoAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "fatturatoAnno1", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -472,7 +506,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("attivoAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "attivoAnno1", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -490,7 +526,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("occupatiAnno1", e.target.value)
                   : handleChangeImpresa(company.id, "occupatiAnno1", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -539,7 +577,9 @@ export default function CalcoloDimensioneAziendale({
                   )
               }
               readOnly={isLockedA1}
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => isLockedA1 ? null : handleBlur(e, 0, 100)}
               min="0"
               max="100"
@@ -617,7 +657,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("fatturatoAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "fatturatoAnno2", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -636,7 +678,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("attivoAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "attivoAnno2", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -654,7 +698,9 @@ export default function CalcoloDimensioneAziendale({
                   ? handleChangeRichiedente("occupatiAnno2", e.target.value)
                   : handleChangeImpresa(company.id, "occupatiAnno2", e.target.value)
               }
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => handleBlur(e, 0)}
               min="0"
             />
@@ -703,7 +749,9 @@ export default function CalcoloDimensioneAziendale({
                   )
               }
               readOnly={isLockedA2}
-              onWheelCapture={(e) => e.preventDefault()}
+              onWheelCapture={handleInputWheel}
+              onMouseEnter={(e) => e.target.addEventListener('wheel', handleInputWheel, { passive: false })}
+              onMouseLeave={(e) => e.target.removeEventListener('wheel', handleInputWheel)}
               onBlur={(e) => isLockedA2 ? null : handleBlur(e, 0, 100)}
               min="0"
               max="100"
@@ -826,7 +874,7 @@ export default function CalcoloDimensioneAziendale({
   });
   
   return (
-    <div className={`calcolo-dimensione-aziendale option-grid`}>
+    <div className={`calcolo-dimensione-aziendale option-grid`} ref={componentRef}>
       <div className="option-grid__label">{HtmlRenderer(mainLabel)}</div>
 
       <div className={`cda-grid-container ${showWarning ? " option-grid--pending-action" : ""}`}>
